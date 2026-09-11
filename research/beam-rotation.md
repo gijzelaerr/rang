@@ -8,6 +8,37 @@ This is a concrete mathematical and numerical result in Rang, not a verified fir
 
 ## How we found the mode
 
+### Additional gain-nuisance check
+
+The local audit now optionally projects out complex direction-independent
+antenna gains together with the independent source/channel fluxes. Gains are
+linearized at unity, with log-amplitude derivative `(1[p=a]+1[q=a]) V` and
+phase derivative `i (1[p=a]-1[q=a]) V`. Redundant gauge columns are retained;
+least-squares projection uses their column space, not an invertible normal matrix.
+
+For the rotating ratio-1.1 toy at 1 mJy noise, the two common pointing modes
+survive both tested gain models:
+
+| Gain nuisance model | Gain columns | Local bounds on the two sky coordinates |
+| --- | ---: | ---: |
+| Fixed gains | 0 | 2.068, 1.916 arcsec |
+| One complex gain per antenna for the whole track | 16 | 2.075, 1.922 arcsec |
+| One complex gain per antenna per time | 384 | 2.549, 2.405 arcsec |
+
+Both free-gain models share gains across frequency. These are conditional local
+Fisher bounds, **not nonlinear joint gain/pointing recovery measurements**.
+Other pointing trajectories remain fixed. Frequency-independent gains are a
+substantial constraint; frequency-dependent calibration still needs testing.
+The fixture retains every fifth baseline/time/channel row, so its coverage
+must be revisited before interpreting a more flexible gain audit.
+Reproduce all seven audit cases with
+`.venv/bin/python examples/observability.py`; output is
+`outputs/observability/results.json`.
+
+An attempt to retrieve SARAO's public 27 MB L-band beam-metrics archive on
+2026-09-11 returned HTTP 502. No measured metrics were incorporated. The axis
+ratios above remain controlled assumptions, not fitted MeerKAT measurements.
+
 In the three-seed spectral-error pilot, flux-only joint fitting produced about 69 arcsec trajectory error. Almost all of it was shared by the array: 68.8 arcsec common versus 4.8 arcsec differential error. Of the common error energy, 99.9% lay in the two-dimensional trajectory family
 
 ```math

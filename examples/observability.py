@@ -47,6 +47,12 @@ def main():
         )
         row["beam_rotation"] = rotate
         results.append(row)
+    for gain_model in ("constant", "per_time"):
+        row = sky_locked_information(
+            sky, obs, 8, noise_jy=0.001, beam_axis_ratio=1.1, gain_model=gain_model
+        )
+        row["beam_rotation"] = True
+        results.append(row)
     output = ROOT / "outputs/observability"
     output.mkdir(parents=True, exist_ok=True)
     (output / "results.json").write_text(json.dumps(results, indent=2) + "\n")

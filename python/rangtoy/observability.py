@@ -143,13 +143,23 @@ def solve_sky_locked(
 
 
 def sky_locked_information(
-    components, observation, antenna_count, *, noise_jy, beam_axis_ratio=1.0
+    components,
+    observation,
+    antenna_count,
+    *,
+    noise_jy,
+    beam_axis_ratio=1.0,
+    gain_model="fixed",
 ):
     """Project common pointing derivatives off free source/channel fluxes.
 
     Linearize at zero pointing. Each source has an independent amplitude at
     each observed frequency, with no sky prior. This is a local Fisher audit,
     not a fit or an uncertainty interval for a nonlinear trajectory estimate.
+    Optional complex antenna gains are unconstrained nuisances, constant over
+    the observation (constant) or independent at each time (per_time). Both
+    models share gains across frequency. Linearization is at unit gains;
+    least-squares projection handles the redundant gain/sky gauge columns.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before constructing inputs")
@@ -157,6 +167,8 @@ def sky_locked_information(
         raise ValueError("noise must be finite and positive")
     if not np.isfinite(beam_axis_ratio) or beam_axis_ratio <= 0:
         raise ValueError("beam axis ratio must be finite and positive")
+    if gain_model not in ("fixed", "constant", "per_time"):
+        raise ValueError("gain_model must be fixed, constant or per_time")
     ntime = int(np.max(np.asarray(observation.time_index))) + 1
     angles = np.zeros(ntime)
     for t in range(ntime):
@@ -197,6 +209,38 @@ def sky_locked_information(
         [source * np.repeat(frequency == f, 2)[:, None] for f in np.unique(frequency)],
         axis=1,
     )
+    sky_count = nuisance.shape[1]
+    if gain_model != "fixed":
+        visibility = (
+            np.asarray(
+                predict(
+                    components,
+                    observation,
+                    common_offsets(jnp.zeros(2)),
+                    beam_axis_ratio=beam_axis_ratio,
+                )
+            )
+            / noise_jy
+        )
+        p, q = np.asarray(observation.antenna1), np.asarray(observation.antenna2)
+        time = np.asarray(observation.time_index)
+        groups = (
+            [np.ones(len(time), dtype=bool)]
+            if gain_model == "constant"
+            else [time == t for t in np.unique(time)]
+        )
+        columns = []
+        for group in groups:
+            for antenna in range(antenna_count):
+                first, second = (
+                    (p == antenna).astype(float),
+                    (q == antenna).astype(float),
+                )
+                # g_p conjugate(g_q): log amplitudes add, phases subtract.
+                for derivative in (first + second, 1j * (first - second)):
+                    value = visibility * group * derivative
+                    columns.append(np.stack((value.real, value.imag), axis=1).ravel())
+        nuisance = np.column_stack((nuisance, *columns))
     residual = pointing - nuisance @ np.linalg.lstsq(nuisance, pointing, rcond=None)[0]
     singular = np.linalg.svd(residual, compute_uv=False)
     raw_singular = np.linalg.svd(pointing, compute_uv=False)
@@ -208,7 +252,9 @@ def sky_locked_information(
     return {
         "beam_axis_ratio": beam_axis_ratio,
         "noise_jy_per_component": noise_jy,
-        "sky_nuisance_parameters": nuisance.shape[1],
+        "sky_nuisance_parameters": sky_count,
+        "gain_model": gain_model,
+        "gain_nuisance_parameters": nuisance.shape[1] - sky_count,
         "observable_common_modes": rank,
         "singular_values_per_arcmin": singular.tolist(),
         "known_sky_singular_values_per_arcmin": raw_singular.tolist(),

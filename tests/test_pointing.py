@@ -309,3 +309,22 @@ def test_sky_locked_fit_recovers_without_spectral_priors(reference):
     )
     assert not refused["identifiable"]
     assert refused["shift_arcmin"] is None
+
+
+def test_gain_nuisances_cannot_increase_pointing_information(reference):
+    _, components, obs = reference
+    results = [
+        sky_locked_information(
+            components, obs, 8, noise_jy=0.001, beam_axis_ratio=1.1, gain_model=model
+        )
+        for model in ("fixed", "constant", "per_time")
+    ]
+    fractions = [result["retained_derivative_norm_fraction"] for result in results]
+    assert fractions[0] >= fractions[1] >= fractions[2]
+    assert all(result["observable_common_modes"] == 2 for result in results)
+    circular = sky_locked_information(
+        components, obs, 8, noise_jy=0.001, gain_model="per_time"
+    )
+    assert circular["observable_common_modes"] == 0
+    with pytest.raises(ValueError, match="gain_model"):
+        sky_locked_information(components, obs, 8, noise_jy=0.001, gain_model="typo")
