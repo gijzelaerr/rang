@@ -1,30 +1,34 @@
 # Message draft — not sent
 
-Subject: Pointing solutions: a Gaussian-beam ambiguity worth checking?
+Subject: MeerKAT pointing experiments: beam errors and next comparison
 
 Hi Oleg,
 
-Following your suggestion to look at pointing solutions, I put together a
-small Rust/JAX experiment with component-list DFT prediction and smooth
-per-antenna pointing fits.
+Following your pointing suggestion and zero-mean feedback, Rang now has a
+Rust/JAX experiment with component-list DFT prediction and smooth per-antenna
+relative pointing, separate from an optional prior-constrained common offset.
 
-An interesting ambiguity appeared: for Gaussian beams, including rotating
-elliptical ones, a particular smooth pointing change can be compensated by
-sky-flux and antenna-gain changes, leaving every complex visibility unchanged.
-I have an explicit finite transformation and numerical controls; one example
-changes the pointing by about 35 arcseconds RMS with visibility differences
-at floating-point roundoff.
+The strongest new control is dish-to-dish beam width: synthetic 1% log-width
+scatter gives roughly 6–9 arcsec relative pointing errors even when a shared
+width is fitted. Adding seven relative widths brings this to 0.8–1.1 arcsec,
+close to the exact-known-beam control. These are eight-antenna, matched-family
+simulations, not measured MeerKAT beam errors or a claim of novel joint fitting.
 
-It also explains why the initial restricted-trajectory fits looked much
-better constrained. A central flux anchor alone doesn't remove these modes;
-non-Gaussian beam structure and additional off-axis anchors change the picture.
+Relative-pointing interval coverage improves substantially in a small noise
+pilot, but common-mode coverage remains weaker. The exact Gaussian ambiguity
+and the earlier negative mode-selection result are retained in the repository.
 
-I'm not claiming this is new—does the explicit pointing transformation ring
-a bell? I'd value your take on whether a diagnostic separating data-driven
-pointing information from prior constraints would be useful, and which
-measured MeerKAT beam model would make the best next test.
+The next hypothesis is to select pointing/beam freedom using separate limits
+on faint-signal distortion and model-error contamination, then test whether
+this beats a fairly tuned joint fit in quality or total computation. This is
+still a proposal. Which existing solver, measured beam errors and science-field
+dataset would make the most useful comparison? Is this selection question worth
+pursuing beyond established joint calibration and solution-interval methods?
 
-Derivation and reproducible controls:
-https://github.com/gijzelaerr/rang/blob/main/research/gaussian-gauge.md
+Overview and current limitations:
+https://github.com/gijzelaerr/rang
+
+Controlled beam-width result:
+https://github.com/gijzelaerr/rang/blob/main/research/antenna-beam-widths.md
 
 Gijs

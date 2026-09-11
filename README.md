@@ -1,174 +1,112 @@
 # Rang
 
-**Radio Astronomy Next Generation · MeerKAT calibration research**
+Radio Astronomy Next Generation — experimental MeerKAT pointing calibration.
 
-Reproducible experiments in direction-dependent calibration: recovering faint emission while accounting for uncertain telescope response. Rust provides the numerical core; Python provides research interfaces and experiment orchestration.
+Rang investigates smoothly time-varying antenna pointing errors together with
+uncertain sky, gains and beam response. It combines component-list DFT prediction
+and JAX automatic differentiation with Rust simulation and numerical kernels.
 
-[Pointing solutions](research/pointing-solutions.md) · [Results](research/first-results.md) · [Research direction](research/novelty.md) · [Experiment guide](examples/README.md)
+**Status: a tested research demonstrator, not an operational calibrator or a
+demonstrated novel algorithm.** The objective is better calibration and imaging
+at comparable cost, or comparable quality with substantially less computation.
+Neither advantage over state of the art has yet been established.
 
-## Current research lead: a pointing–sky–gain ambiguity
+## What we have learned
 
-**Practical solver convention:** following feedback from Oleg, use
-`solve_pointing(..., zero_mean_pointing=True)` to solve pointing relative to
-the array mean. The unweighted antenna mean is exactly zero in both axes at
-every spline time. This removes the shared trajectory from the fit; it does
-not establish that the telescope's physical mean pointing is zero. The
-unconstrained option remains available for controlled identifiability tests.
-With a fixed or restricted sky/gain model, imposing this convention can still
-leave model mismatch when the true mean is nonzero; it is not a universal
-visibility-preserving transformation for realistic beams.
+Small dish-to-dish beam differences can masquerade as pointing. In an
+eight-antenna simulation with synthetic 1% log-width scatter before removing
+the antenna mean:
 
-[Relative-pointing recovery tests](research/relative-pointing.md) now compare
-correct and biased sky models, with and without a physical shared offset.
-Held-out time samples now show an approximately elevenfold reduction in clean
-visibility prediction error versus gain/flux-only fitting in the matched toy.
-The nonzero shared-offset control still fails the noise-level residual check.
-[Public pointing-history inspection](research/pointing-history.md) records why
-the historical measurements are not yet used as within-track drift models.
+| Beam treatment | Relative pointing RMSE |
+| --- | ---: |
+| Ignore antenna differences; fit one shared width | 6.33–9.19 arcsec |
+| Fit shared width and seven relative antenna widths | 0.79–1.10 arcsec |
+| Supply the exact antenna widths (oracle) | 0.73–1.07 arcsec |
 
-**Robustness check:** [beam, gain-flexibility, temporal and missing-source
-stress tests](research/robustness-stress.md) now qualify the matched-model
-result. A 1% beam-width error biases off-axis flux ratios by 0.53–0.76%; an
-omitted 20 mJy source severely biases pointing. No state-of-the-art quality
-or compute advantage has yet been demonstrated.
+Ranges cover three seeds and two shared-pointing settings. These are matched-family
+synthetic tests, not measurements of MeerKAT beam errors. Joint sky/beam/pointing
+inference has prior art; this result strengthens our baseline rather than proving
+novelty. [Experiment, controls and reproduction](research/antenna-beam-widths.md).
 
-[Uncertainty checks and beam-width recovery](research/uncertainty-coverage.md)
-now show why a noise-level fit and valid flux uncertainties must be evaluated
-together: a wrong fixed beam misses all36 off-axis flux-ratio intervals in a
-small repeated-noise pilot; fitting one width parameter recovers34 of36.
+Other findings:
 
-[Independent beam-model selection](research/beam-model-selection.md) now
-demonstrates that improved visibility prediction can coexist with worse flux
-ratios; richer beam controls correct the tested low-dimensional errors.
-[Explicit common/relative pointing](research/common-pointing-priors.md) removes
-the shared-offset failure under the restricted matched model, without claiming
-general absolute-pointing identifiability.
+- **Relative and shared pointing must be distinguished.** The solver can impose
+  exactly zero antenna-mean relative pointing, following Oleg Smirnov's feedback.
+  An optional prior-constrained common trajectory is separate; its physical value
+  is not established by the zero-mean convention. [Common pointing](research/common-pointing-priors.md).
+- **Gaussian beams admit an exact pointing–sky–gain ambiguity**, including rotating
+  elliptical beams when the compensating sky and gain freedom is available.
+  [Derivation and numerical controls](research/gaussian-gauge.md).
+- **Good residuals do not guarantee accurate astronomy.** Beam mismatch can bias
+  flux even with nearly perfect injected-signal response. Relative-pointing
+  interval coverage improves when antenna widths are fitted, but shared-mode
+  coverage remains less reliable. [Flux-bias control](research/first-results.md) ·
+  [Coverage experiment](research/antenna-beam-widths.md#separate-relative-and-common-uncertainties).
+- **Negative results are retained.** Earlier mode selection did not improve
+  pointing accuracy over a fairly tuned joint fit. Polynomial gain compression
+  fails when the fitted order is too low.
+  [Mode selection](research/spectral-pointing.md) · [Chromatic gains](research/chromatic-gains.md).
 
-[Structured information-audit benchmarks](research/frequency-blocking.md)
-now preserve the dense result while reducing computation; this is a kernel
-benchmark, not yet an end-to-end calibration advantage.
-[A public MeerKAT Measurement Set inspection](research/measurement-set-inspection.md)
-adds a real-data ingestion path and records the antenna/coordinate metadata
-issues that must be resolved before a trustworthy pointing comparison.
+## Scope and limitations
 
-[Chromatic gain controls](research/chromatic-gains.md) now inject genuinely
-frequency-dependent gains. Polynomial log-gain fits retain the tested pointing
-accuracy with fewer parameters when the truth is in-family; a curvature
-counterexample shows why that compression must be validated.
+Main experiments use eight approximate MeerKAT core positions, scalar beams,
+four frequencies and a small component sky. The DFT includes the non-coplanar
+phase. The JAX solver supports smooth pointing, source fluxes/spectral indices,
+complex gains and selected beam parameters; it is a reference implementation,
+not a streaming or full-polarization pipeline.
 
-[Dish-to-dish beam-width tests](research/antenna-beam-widths.md) show another
-confounder: small antenna beam differences can be mistaken for pointing.
-Joint relative-width fitting restores the tested relative-pointing accuracy
-and interval coverage; shared-mode uncertainties remain less reliable.
+The katbeam adapter provides a simplified holography-informed scalar response,
+not complete measured antenna Jones beams. A public Measurement Set reader has
+been exercised, but antenna-label and pointing-coordinate conventions remain
+unresolved. **No real-data calibration or improved deconvolved image is claimed.**
+Structured projection benchmarks are not end-to-end calibrator speedups.
 
-**A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
-We derived and tested an exact transformation of pointing, sky fluxes and
-antenna gains for identical Gaussian beams—including rotating elliptical beams.
-The two predictions agree to about 10⁻¹⁵ Jy in the finite test.
+[Geometry and provenance](data/README.md) ·
+[Real-data inspection](research/measurement-set-inspection.md) ·
+[Compute benchmark](research/frequency-blocking.md)
 
-This revises our earlier interpretation: ellipticity restores information in
-a restricted two-mode trajectory model, but not when the remaining shared
-trajectory is free. Controlled non-Gaussian beam structure lifts the local
-ambiguity only weakly. A central flux calibrator alone does not remove it;
-additional non-collinear off-axis flux anchors do in the idealized audit.
+## Run a small example
 
-[Exact transformation, controls and research implications →](research/gaussian-gauge.md)
-
-A [katbeam-based follow-up](research/katbeam-pointing.md) tests a simplified
-holography-informed beam. Its native chromatic shape gives local data-only
-bounds near 8 arcsec in the toy; freezing the axis ratio worsens them to
-100–120 arcsec. Beam uncertainty and joint nonlinear recovery remain pending.
-
-The [information-budget diagnostic](research/information-budget.md) now
-separates visibility-only constraints from uncertain, correlated external
-flux priors. In the Gaussian toy, a 1% flux prior yields 6–7 arcsec local
-uncertainties while the same pointing modes remain unconstrained by the
-visibilities alone. These are local estimates, not nonlinear recovery results.
-
-This is a concrete research result, **not a verified novelty claim or real-data
-calibration demonstration**. The finite Gaussian ambiguity is tested exactly;
-non-Gaussian and external-anchor results are local information audits.
-
-The earlier [restricted-mode recovery and baseline-coverage results](research/beam-rotation.md)
-remain documented with their assumptions. General information-mode truncation
-did not improve pointing accuracy over a fairly tuned joint baseline; that
-[negative result is retained](research/spectral-pointing.md).
-
-## Smooth pointing-error solutions
-
-The current focus is recovering **smoothly time-varying, per-antenna pointing offsets** from a component-list sky model. A JAX reference path provides direct Fourier prediction, automatic derivatives and cubic-spline pointing fits alongside the Rust baseline.
+Requires Rust with edition-2024 support and Python 3.10+ with compatible dependency
+wheels. Install from public PyPI in an isolated environment:
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install --index-url https://pypi.org/simple -e '.[pointing,test]'
+.venv/bin/python -m pip --isolated install --index-url https://pypi.org/simple -e '.[pointing,beam,test]' ruff
+cargo build --offline --release
 .venv/bin/python examples/pointing.py --output outputs/pointing
 ```
 
-The example holds out interior time samples and saves fitted trajectories, truth and prediction metrics. The first solver assumes a fixed, correct sky and Gaussian beam. [Model, API and limitations →](research/pointing-solutions.md)
+This smoke example fits smooth pointing with a fixed, correct Gaussian beam
+and sky; it is not the joint antenna-width campaign above. That campaign's
+command is in its [experiment report](research/antenna-beam-widths.md#implementation-and-reproduction).
+Generated outputs belong in ignored `outputs/`; reusing a destination can replace
+previous generated files.
 
-Initial control: **2.0 arcsec trajectory RMSE**, with held-out residuals reduced from **2.64 to 0.95 mJy/component** against 1 mJy injected noise. One seed, not a robustness claim.
-
-<details>
-<summary>View per-antenna pointing trajectories</summary>
-
-![Simulated and recovered pointing offsets for eight antennas](research/figures/pointing-trajectories.svg)
-
-</details>
-
-## First result
-
-### Sky uncertainty and pointing recovery
-
-The [latest 20-seed experiment](research/sky-uncertainty.md) introduces 2% source-flux errors. Fixed-sky calibration gives **30.24 arcsec** pointing RMSE; joint flux/pointing inference gives **2.48 arcsec**, close to the **2.40 arcsec** correct-sky control. Overly tight flux priors leave **28.19 arcsec** error. The solver now supports per-component flux uncertainty; positions, spectra and beam shape remain fixed.
-
-### Beam-width control
-
-**Preserving an injected signal does not establish accurate source flux.** In a controlled 20-seed experiment, a 2% beam-width error produces a 71% flux overestimate despite a 99.75% injection response. Fitting beam width resolves the bias when the true error belongs to the fitted model family.
-
-| Joint calibration model | Recovered flux | Injection response | Held-out residual RMS |
-|:--|--:|--:|--:|
-| Sky + pointing, fixed beam width | 34.27 mJy | 99.75% | 11.71 mJy |
-| Sky + pointing + beam width | 20.12 mJy | 99.99% | 9.98 mJy |
-
-True source flux: **20 mJy**. Noise: **10 mJy per visibility component**. Values are means across seeds 1–20, not uncertainty intervals. [Full results and controls →](research/first-results.md)
-
-## Quick start
-
-Requires Rust with edition-2024 support and Python 3.10+. The Rust core has no external crate dependencies.
+The original Rust toy also runs without Python dependencies:
 
 ```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install --index-url https://pypi.org/simple -e '.[plot,test]'
-.venv/bin/python examples/toy.py --seeds 7 11 19 --beam-error 0.02 --output outputs/demo
+python3 examples/toy.py --seeds 7 --no-plot --output outputs/demo
 ```
 
-The script builds the optimized Rust executable and writes JSON results and PNG/PDF plots. Without plotting dependencies, run `python3 examples/toy.py --no-plot`. See the [experiment guide](examples/README.md) for the Python API and metric definitions.
+[Experiment guide](examples/README.md) · [Full local checks](CONTRIBUTING.md)
 
-## Research direction
+## Next research decision
 
-The active physical lead is the [symmetry-aware pointing audit](research/beam-rotation.md). The broader decision-rule proposal below remains a separate, unproven extension.
+We have enough infrastructure to test a focused hypothesis: can selecting
+pointing/beam parameters using separate limits on signal distortion and
+model-error contamination beat a well-tuned joint fit? The proposed decision rule
+is not yet implemented or validated. The next phase prioritizes a falsifiable
+quality/cost comparison, not further simulator expansion.
 
-We are investigating **calibration-mode selection with separate signal-distortion and model-error contamination budgets**. A differential response test can miss an additive flux bias; the proposed second budget addresses sensitivity to plausible model errors.
-
-Joint sky/beam inference is established prior work. The current adaptive protection prototype has **not** improved on ordinary joint fitting. The dual-budget extension is a specified hypothesis, not an implemented or validated new algorithm. Its [prior-art comparison and acceptance criteria](research/novelty.md) define what must be demonstrated before claiming a contribution.
-
-## Scientific status
-
-The simulator uses a scalar RIME with the full non-coplanar phase, a Gaussian primary beam and eight approximate MeerKAT core antenna positions. It fits pointing offsets, a faint extended-source amplitude and optionally shared beam width.
-
-This is a controlled research demonstrator, **not an operational MeerKAT calibrator**. Verified full-array geometry, measured beams, uncertain bright-source spectra and imaging-domain validation remain outstanding. [Assumptions and provenance →](data/README.md)
+[Current assessment and verification](research/status.md) ·
+[Future plan and go/no-go criteria](research/development-roadmap.md) ·
+[Prior-art boundaries](research/novelty.md)
 
 ## Repository guide
 
-| Location | Contents |
-|:--|:--|
-| `src/` | Visibility simulation, analytic derivatives and calibration solvers |
-| `python/rangtoy/` | Python interface to the Rust executable |
-| `examples/` | Reproducible campaigns and comparison plots |
-| `tests/` | Python integration and scientific regression tests |
-| `research/` | Results, mathematical proposals and primary-source references |
-| `data/` | Geometry provenance and limitations |
-
-## Development
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for local checks and research reporting standards. Retain negative results: a lower residual alone is not evidence of more faithful astronomy.
+- `src/`: Rust simulation, fitting and projection kernels.
+- `python/rangtoy/`: Python interfaces and JAX inference/audit implementations.
+- `examples/` and `tests/`: reproducible experiments and regression tests.
+- `research/`: derivations, reports and compact result archives.
+- `data/`: fixture provenance and limitations.

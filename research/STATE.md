@@ -4,6 +4,26 @@ Updated 2026-09-11.
 
 ## Latest checkpoint
 
+Handoff documentation supersedes the historical in-progress entries below:
+`research/status.md` is the current scientific assessment and
+`research/development-roadmap.md` specifies the next go/no-go experiment.
+The antenna-beam work was committed and pushed as `2b5211a`.
+README smoke testing found complex gains could not be serialized by
+`examples/pointing.py`; real/imaginary arrays now preserve these outputs and
+an end-to-end CLI regression covers the failure. Both README examples run;
+the seed-7 joint antenna-width campaign converged in all eight cases.
+Final verification passed: release build, 12 Rust and 107 Python tests with no
+skips, Clippy, Rust/Ruff formatting, Ruff lint, byte-compilation and whitespace
+checks. All 20 result JSON archives parse and handoff local file links resolve.
+Verified environment and smoke results are recorded in `research/status.md`.
+This checkpoint includes the documentation, export fix and regression test;
+next research work is the roadmap's focused algorithm comparison, not a novelty
+claim. Generated outputs and local environments remain ignored and uncommitted.
+
+## Historical checkpoint log
+
+Entries below describe their state at the time, not outstanding current work.
+
 - Antenna-beam checkpoint full verification passed: release build,12Rust tests,106Python tests, Clippy, Rust formatting, Ruff lint/format and whitespace checks. This includes the relative/common uncertainty split and existing solver paths. Ready to commit; continue after checkpoint.
 
 - Component-wise coverage replay completed: omitted antenna widths relative17.0%, common41.3%, total26.3%; jointwidth relative95.7%, common85.4%, total89.4%. Mean median relative std0.868 vs0.899arcsec: bias removal, not interval inflation. Same12noise/fixedtruth71, correlated coordinates; no precise coverage guarantee. Replay archived separately (`antenna-beam-coverage-components.json`), not counted as new independent trials. Report `antenna-beam-widths.md` and README linked; latest full checks running after uncertainty split. Next independent adequacy/signal-recovery validation; no novelty or measured-data calibration claim.

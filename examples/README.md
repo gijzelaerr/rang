@@ -1,6 +1,9 @@
 # MeerKAT pointing-calibration toy
 
-This is a runnable numerical research experiment: Rust does the simulation, derivatives, matrix algebra and fitting; Python runs campaigns and produces tables and standalone plots. The Rust crate has no external dependencies. The Python interface currently exchanges JSON with a Rust executable, rather than using native extension bindings.
+This section documents the original Rust toy, not the full current JAX solver.
+Start with the [project overview](../README.md) for current results. The original
+toy uses a JSON executable interface; newer information audits also use a Rust
+C-ABI projection kernel. The Rust crate has no external dependencies.
 
 ## Run
 
@@ -14,7 +17,7 @@ Matplotlib is required for plots. If needed, install the Python package and plot
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install -e '.[plot,test]'
+.venv/bin/python -m pip --isolated install --index-url https://pypi.org/simple -e '.[plot,test]'
 .venv/bin/python examples/toy.py --seeds 7 11 19
 ```
 

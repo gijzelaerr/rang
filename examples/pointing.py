@@ -145,7 +145,16 @@ def main():
         "training_rows": int((~heldout).sum()),
         "heldout_rows": int(heldout.sum()),
         "truth_arcmin": truth.tolist(),
-        **{k: v.tolist() if isinstance(v, np.ndarray) else v for k, v in fit.items()},
+        **{
+            k: (
+                {"real": v.real.tolist(), "imag": v.imag.tolist()}
+                if np.iscomplexobj(v)
+                else v.tolist()
+            )
+            if isinstance(v, np.ndarray)
+            else v
+            for k, v in fit.items()
+        },
     }
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "results.json").write_text(json.dumps(result, indent=2) + "\n")

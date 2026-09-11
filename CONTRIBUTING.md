@@ -7,7 +7,7 @@ Contributions should make a scientific claim easier to reproduce, test or reject
 Create the Python environment described in the README, then run all checks before committing:
 
 ```sh
-.venv/bin/python -m pip install --index-url https://pypi.org/simple -e '.[pointing,test]' ruff
+.venv/bin/python -m pip --isolated install --index-url https://pypi.org/simple -e '.[pointing,beam,test]' ruff
 cargo build --offline --release
 cargo test --offline --release
 cargo clippy --offline --all-targets -- -D warnings
