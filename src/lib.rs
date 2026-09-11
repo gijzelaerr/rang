@@ -720,6 +720,47 @@ pub fn run(config: Config) -> Result<Experiment, String> {
     })
 }
 
+/// Deterministic cross-language fixture; no random noise or fitted solutions.
+pub fn pointing_reference_json() -> String {
+    let samples: Vec<_> = samples().into_iter().step_by(5).collect();
+    let theta: Vec<_> = (0..NPAR).map(|i| 0.4 * (i as f64).sin()).collect();
+    let sky = bright_sky();
+    let op = Operator::new(&samples, sky.clone());
+    let (model, jac) = op.evaluate(&theta, 0.0, true);
+    let rows = samples
+        .iter()
+        .enumerate()
+        .map(|(i, s)| {
+            numbers(&[
+                s.uvw[0] * C / s.freq,
+                s.uvw[1] * C / s.freq,
+                s.uvw[2] * C / s.freq,
+                s.freq,
+                s.p as f64,
+                s.q as f64,
+                (i * 5 / (FREQUENCIES.len() * NANT * (NANT - 1) / 2)) as f64,
+                s.angle,
+            ])
+        })
+        .collect::<Vec<_>>()
+        .join(",");
+    let sources = sky
+        .iter()
+        .map(|s| numbers(&[s.l, s.m, s.flux, s.alpha]))
+        .collect::<Vec<_>>()
+        .join(",");
+    let jac = jac
+        .iter()
+        .map(|row| numbers(row))
+        .collect::<Vec<_>>()
+        .join(",");
+    format!(
+        "{{\"rows\":[{rows}],\"sources\":[{sources}],\"pointing_arcmin\":{},\"vis_re_im\":{},\"jacobian\":[{jac}],\"antenna_count\":{NANT},\"time_count\":{NTIME}}}",
+        numbers(&theta),
+        numbers(&model)
+    )
+}
+
 fn numbers(values: &[f64]) -> String {
     format!(
         "[{}]",

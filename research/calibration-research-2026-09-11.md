@@ -14,13 +14,12 @@ This is a targeted search of primary papers and author-maintained software, incl
 
 ## 1. What the geometry actually requires
 
-Three issues should be kept separate:
+Two issues should be kept separate:
 
 | Issue | Appropriate model | What is inferred? |
 | --- | --- | --- |
 | Non-coplanar baselines and a wide field on the celestial sphere | Three-component baseline vector and spherical sky, or an equivalent operator retaining the w-term | Normally the geometry is known; its effect must be computed accurately |
 | A spatially extended ionosphere above a curved Earth | Rays through curved shells or a three-dimensional electron-density field | Only combinations supported by ray coverage, bandwidth, time coverage, and priors |
-| Nearby emitters, including satellite interference | Finite-distance propagation with spherical wavefronts | Potentially positions, trajectories, and interfering signals |
 
 For a far-field sky, a convenient full-polarization model is
 

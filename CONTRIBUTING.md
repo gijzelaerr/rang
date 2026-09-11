@@ -1,0 +1,39 @@
+# Contributing to Rang
+
+Contributions should make a scientific claim easier to reproduce, test or reject. Use Rust for numerical kernels and Python for interfaces, experiments and analysis.
+
+## Local checks
+
+Create the Python environment described in the README, then run all checks before committing:
+
+```sh
+.venv/bin/python -m pip install --index-url https://pypi.org/simple -e '.[pointing,test]' ruff
+cargo build --offline --release
+cargo test --offline --release
+cargo clippy --offline --all-targets -- -D warnings
+cargo fmt --check
+.venv/bin/python -m pytest -q
+.venv/bin/ruff check python examples tests
+.venv/bin/ruff format --check python examples tests
+git diff --check
+```
+
+## Scientific reporting
+
+The optional JAX tests are skipped when JAX is absent. Install the `pointing`
+extra as above for full verification. JAX is the explicitly requested
+automatic-differentiation reference path alongside the Rust core.
+
+- Separate proposals, implemented algorithms and measured results.
+- Record seeds, configuration, tolerances, provenance and executable or source revision.
+- Match sky assumptions, priors, observations and tuning effort between baselines.
+- Report absolute flux error, signal response, residual distortion and held-out prediction separately.
+- Distinguish realization scatter from posterior uncertainty and confidence intervals.
+- Preserve failures and null results. Do not select only favorable seeds.
+- Cite the closest primary literature and identify the specific difference being tested.
+
+Generated campaigns belong in ignored `outputs/`. Retain compact numerical summaries and reproduction commands in `research/`. Do not commit observational data without documenting provenance and redistribution terms.
+
+## Reporting an issue
+
+Include the command, configuration and seed, expected and observed behavior, Rust/Python versions, and a minimal reproducer. For scientific discrepancies, include the relevant control and identify whether the metric is measured in visibility or image space.

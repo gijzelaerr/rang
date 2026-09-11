@@ -123,11 +123,12 @@ ruff format --check python examples tests
 ```
 
 Rust checks include beam normalization, uvw length preservation, baseline conjugacy, analytic derivatives, eigen decomposition, noiseless pointing recovery, quadrature convergence and the frozen linear budget. Python checks exercise the executable boundary, invalid inputs, reproducibility, zero-error control and the default recovery comparison.
-# Beam-width extension
+
+## Beam-width extension
 
 The experiment now also includes `joint_beam`: joint sky/pointing inference with
 one shared log-width parameter and a 1% prior. The JSON field
 `fitted_beam_width_error` is fractional (0.02 means 2%); `pointing_arcmin` remains
 a 16-element array. The 20-seed results and limitations are in
 [the first results note](../research/first-results.md). Older five-method results
-below remain historical controls, not measurements of the new width-fitting model.
+above remain historical controls, not measurements of the new width-fitting model.

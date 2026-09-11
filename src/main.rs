@@ -8,12 +8,16 @@ fn main() {
 }
 
 fn entry() -> Result<(), String> {
+    if std::env::args().skip(1).collect::<Vec<_>>() == ["--pointing-reference"] {
+        println!("{}", rang_toy::pointing_reference_json());
+        return Ok(());
+    }
     let mut config = Config::default();
     let mut args = std::env::args().skip(1);
     while let Some(key) = args.next() {
         if key == "--help" {
             println!(
-                "rang-toy [--seed INTEGER] [--noise JY] [--pointing ARCMIN] [--beam-error FRACTION] [--budget FRACTION] [--target-flux JY]\nPrint a JSON result to stdout. No files are written."
+                "rang-toy [--seed INTEGER] [--noise JY] [--pointing ARCMIN] [--beam-error FRACTION] [--budget FRACTION] [--target-flux JY]\nUse --pointing-reference alone for a deterministic cross-language fixture.\nPrint a JSON result to stdout. No files are written."
             );
             return Ok(());
         }

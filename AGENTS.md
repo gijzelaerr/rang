@@ -8,6 +8,9 @@
 
 ## Implementation languages
 
+- Use public PyPI only for this project, never the Spotify package registry.
+- The user explicitly requested JAX DFT prediction and automatic differentiation for the smooth pointing-solver reference path; retain the existing Rust baseline.
+
 - Use Rust for computational kernels and performance-sensitive simulation and calibration work.
 - Use Python for astronomer-facing interfaces, experiment scripting and pipeline orchestration.
 - Validate numerical correctness before claiming performance or scientific improvements.

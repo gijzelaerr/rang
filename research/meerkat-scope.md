@@ -2,13 +2,15 @@
 
 Updated 11 September 2026. Active scope; supersedes the original generic low-frequency experiment.
 
+Current focus: [smooth time-varying per-antenna pointing offsets](pointing-solutions.md), using a component-list sky, direct Fourier prediction and JAX automatic differentiation. This explicit user-requested reference path complements the Rust implementation.
+
 Implementation update: the [first runnable toy](../examples/README.md) now tests the pointing/sky ambiguity with Rust and Python. It is an intentionally reduced first stage: eight approximate core coordinates, a Gaussian beam, constant antenna-frame pointing offsets, known bright sky and one uncertain source amplitude. Measured beams, full-array survey geometry and real data remain future steps. Its initial result shows no added benefit from adaptive protection over joint fitting.
 
 ## Research question
 
 Can MeerKAT science observations constrain small physical pointing and primary-beam corrections, selected according to their distinguishability from uncertain sky emission, while limiting distortion of faint emission and source spectra?
 
-The user selected MeerKAT only. L-band continuum imaging is the initial working choice for a focused experiment, not an additional user requirement. Starlink terminals, satellites, auxiliary receivers and operator coordination are outside this experiment. They are not necessary to test the proposed calibration principle.
+The project focuses on MeerKAT. L-band continuum imaging is the initial working choice for a focused experiment.
 
 ## Why this target
 
@@ -48,6 +50,8 @@ Use smooth time models or state-space priors for pointing corrections, with scal
 Treat residual phase errors as a diagnostic and controlled nuisance. Add a simple dispersive model when supported by the data, especially in a later UHF experiment. Three-dimensional atmospheric tomography is not a prerequisite. This is prioritization, not an assumption that MeerKAT is unaffected by the ionosphere.
 
 ## What might be new
+
+The [current contribution assessment](novelty.md) sharpens this question following the beam-mismatch experiment: selection must consider model-error contamination separately from science-signal distortion. The original single-budget prototype below has not demonstrated an advantage.
 
 Use the uncertain-sky elimination, information comparison and estimator-response constraint derived in the [initial report](calibration-research-2026-09-11.md), now with pointing and beam derivatives in the calibration Jacobian B. Select and regularize combinations that the current observation supports; retain uncertainty for combinations constrained mostly by priors.
 
