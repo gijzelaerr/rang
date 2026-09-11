@@ -160,9 +160,15 @@ def solve_pointing(
     noise_jy,
     smoothness=1.0,
     offset_prior_arcmin=3.0,
+    flux_prior_jy=None,
     max_nfev=100,
 ):
-    """Fit smooth per-antenna offsets, holding the component sky fixed.
+    """Fit smooth offsets, optionally jointly fitting component flux densities.
+
+    flux_prior_jy is a scalar or per-source Gaussian prior sigma around the
+    supplied flux. Zero fixes that source; None holds the entire sky fixed.
+    Spectra, positions and beam shape remain fixed. Additive flux corrections
+    support signed CLEAN components; positivity is not imposed.
 
     Minimize whitened residuals + smoothness * integrated curvature² + a
     zero-centred knot-value prior. Curvature leaves constant/linear drift
@@ -206,17 +212,30 @@ def solve_pointing(
         raise ValueError("noise_jy must be finite and positive")
     design_jax, penalty_jax = jnp.asarray(design), jnp.asarray(penalty)
     shape = (len(knots_s), antenna_count, 2)
+    pointing_size = int(np.prod(shape))
+    flux_sigma = np.broadcast_to(
+        np.asarray(0.0 if flux_prior_jy is None else flux_prior_jy, float),
+        np.shape(components.flux_jy),
+    )
+    if not np.isfinite(flux_sigma).all() or np.any(flux_sigma < 0):
+        raise ValueError("flux prior sigmas must be finite and nonnegative")
+    free = np.flatnonzero(flux_sigma > 0)
+
+    def sky(flat):
+        flux = components.flux_jy.at[free].add(flat[pointing_size:] * flux_sigma[free])
+        return components._replace(flux_jy=flux)
 
     def residual(flat):
-        coefficients = flat.reshape(shape)
+        coefficients = flat[:pointing_size].reshape(shape)
         offsets = jnp.einsum("tk,kad->tad", design_jax, coefficients)
-        model = predict(components, obs, offsets)
+        model = predict(sky(flat), obs, offsets)
         curvature = jnp.einsum("rk,kad->rad", penalty_jax, coefficients)
         return jnp.concatenate(
             (
                 real_stack((model - data) / sigma),
                 jnp.sqrt(smoothness) * curvature.reshape(-1),
-                flat / offset_prior_arcmin,
+                flat[:pointing_size] / offset_prior_arcmin,
+                flat[pointing_size:],
             )
         )
 
@@ -224,18 +243,20 @@ def solve_pointing(
     jacobian = jax.jit(jax.jacfwd(residual))
     result = least_squares(
         lambda p: np.asarray(residual_jit(p)),
-        np.zeros(np.prod(shape)),
+        np.zeros(pointing_size + len(free)),
         jac=lambda p: np.asarray(jacobian(p)),
         max_nfev=max_nfev,
         ftol=1e-10,
         xtol=1e-10,
         gtol=1e-10,
     )
-    coefficients = result.x.reshape(shape)
+    coefficients = result.x[:pointing_size].reshape(shape)
     singular = np.linalg.svd(result.jac[: 2 * n], compute_uv=False)
     cutoff = singular[0] * max(2 * n, result.x.size) * np.finfo(float).eps
     rank = int(np.sum(singular > cutoff))
     return {
+        "flux_jy": np.asarray(sky(jnp.asarray(result.x)).flux_jy),
+        "flux_prior_jy": flux_sigma.copy(),
         "offsets_arcmin": np.einsum("tk,kad->tad", design, coefficients),
         "knot_offsets_arcmin": coefficients,
         "knots_s": np.asarray(knots_s),

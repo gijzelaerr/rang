@@ -114,3 +114,53 @@ def test_smooth_pointing_recovery(reference):
 def test_invalid_knots(knots):
     with pytest.raises(ValueError):
         spline_design([0, 1], knots)
+
+
+def test_joint_flux_recovers_pointing_with_wrong_sky(reference):
+    _, components, obs = reference
+    times = np.linspace(0, 21600, 24)
+    knots = np.linspace(0, 21600, 4)
+    design, _ = spline_design(times, knots)
+    truth = np.einsum(
+        "tk,kad->tad", design, np.random.default_rng(19).normal(0, 0.3, (4, 8, 2))
+    )
+    data = predict(components, obs, jnp.asarray(truth))
+    wrong = components._replace(
+        flux_jy=components.flux_jy * jnp.array([1, 1.02, 0.98, 1.02])
+    )
+    fixed = solve_pointing(
+        wrong, obs, data, times, knots, 8, noise_jy=1e-4, smoothness=0.01
+    )
+    joint = solve_pointing(
+        wrong,
+        obs,
+        data,
+        times,
+        knots,
+        8,
+        noise_jy=1e-4,
+        smoothness=0.01,
+        flux_prior_jy=[0, 0.035, 0.025, 0.015],
+    )
+    assert joint["success"], joint["message"]
+    assert np.sqrt(np.mean((fixed["offsets_arcmin"] - truth) ** 2)) > 0.2
+    assert np.sqrt(np.mean((joint["offsets_arcmin"] - truth) ** 2)) < 0.002
+    np.testing.assert_allclose(joint["flux_jy"], components.flux_jy, atol=1e-5)
+    assert joint["flux_jy"][0] == float(components.flux_jy[0])
+    assert joint["parameter_count"] == fixed["parameter_count"] + 3
+
+
+@pytest.mark.parametrize("sigma", [-1, np.nan, np.inf])
+def test_invalid_flux_prior(reference, sigma):
+    _, components, obs = reference
+    with pytest.raises(ValueError, match="flux prior"):
+        solve_pointing(
+            components,
+            obs,
+            np.zeros(len(obs.frequency_hz)),
+            np.linspace(0, 21600, 24),
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            flux_prior_jy=sigma,
+        )

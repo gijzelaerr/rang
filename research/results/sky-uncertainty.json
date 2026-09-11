@@ -1,0 +1,296 @@
+{
+  "description": "20 paired seeds per condition. Standard deviations are sample scatter, not posterior uncertainty. Raw per-seed runs regenerate with examples/sky_uncertainty.py.",
+  "campaigns": {
+    "mismatch": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "fractional_flux_error": 0.02,
+      "fractional_flux_prior": 0.05,
+      "fixture_sha256": "49e7154a4988a7e9676f399a3fa70f1fde356177e5394908bc8f5d37367e74d5",
+      "noise_jy_per_component": 0.001,
+      "smoothness": 0.01,
+      "offset_prior_arcmin": 3,
+      "knots_s": [
+        0,
+        4320,
+        8640,
+        12960,
+        17280,
+        21600
+      ],
+      "jax_version": "0.11.1",
+      "truth_flux_jy": [
+        1,
+        0.7,
+        0.5,
+        0.3
+      ],
+      "model_flux_jy": [
+        1,
+        0.714,
+        0.49,
+        0.306
+      ],
+      "summary": {
+        "known_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.4022094187973555,
+            "std": 0.27170013326884374
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0662285036625003,
+            "std": 0.041159998537185494
+          },
+          "flux_rmse_mjy": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "fixed_wrong_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 30.237339868037793,
+            "std": 0.18744556532848305
+          },
+          "heldout_rms_mjy": {
+            "mean": 3.682221513184841,
+            "std": 0.0862172321745866
+          },
+          "flux_rmse_mjy": {
+            "mean": 10.519822558706345,
+            "std": 1.8225036628030615e-15
+          }
+        },
+        "joint_flux_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.4751033421164936,
+            "std": 0.26819340967647787
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0667737829130937,
+            "std": 0.03982291837247484
+          },
+          "flux_rmse_mjy": {
+            "mean": 0.17037808278349909,
+            "std": 0.07098922586971909
+          }
+        }
+      },
+      "converged_fits": 60,
+      "failed_fits": []
+    },
+    "matched": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "fractional_flux_error": 0,
+      "fractional_flux_prior": 0.05,
+      "fixture_sha256": "49e7154a4988a7e9676f399a3fa70f1fde356177e5394908bc8f5d37367e74d5",
+      "noise_jy_per_component": 0.001,
+      "smoothness": 0.01,
+      "offset_prior_arcmin": 3,
+      "knots_s": [
+        0,
+        4320,
+        8640,
+        12960,
+        17280,
+        21600
+      ],
+      "jax_version": "0.11.1",
+      "truth_flux_jy": [
+        1,
+        0.7,
+        0.5,
+        0.3
+      ],
+      "model_flux_jy": [
+        1,
+        0.7,
+        0.5,
+        0.3
+      ],
+      "summary": {
+        "known_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.4022094187973555,
+            "std": 0.27170013326884374
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0662285036625003,
+            "std": 0.041159998537185494
+          },
+          "flux_rmse_mjy": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "fixed_wrong_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.4022094187973555,
+            "std": 0.27170013326884374
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0662285036625003,
+            "std": 0.041159998537185494
+          },
+          "flux_rmse_mjy": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "joint_flux_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.474953714153065,
+            "std": 0.26807237723260985
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0667666624081993,
+            "std": 0.03982569297286987
+          },
+          "flux_rmse_mjy": {
+            "mean": 0.17033960486957986,
+            "std": 0.070913813836424
+          }
+        }
+      },
+      "converged_fits": 60,
+      "failed_fits": []
+    },
+    "tight_prior": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "fractional_flux_error": 0.02,
+      "fractional_flux_prior": 0.0001,
+      "fixture_sha256": "49e7154a4988a7e9676f399a3fa70f1fde356177e5394908bc8f5d37367e74d5",
+      "noise_jy_per_component": 0.001,
+      "smoothness": 0.01,
+      "offset_prior_arcmin": 3,
+      "knots_s": [
+        0,
+        4320,
+        8640,
+        12960,
+        17280,
+        21600
+      ],
+      "jax_version": "0.11.1",
+      "truth_flux_jy": [
+        1,
+        0.7,
+        0.5,
+        0.3
+      ],
+      "model_flux_jy": [
+        1,
+        0.714,
+        0.49,
+        0.306
+      ],
+      "summary": {
+        "known_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.4022094187973555,
+            "std": 0.27170013326884374
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0662285036625003,
+            "std": 0.041159998537185494
+          },
+          "flux_rmse_mjy": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "fixed_wrong_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 30.237339868037793,
+            "std": 0.18744556532848305
+          },
+          "heldout_rms_mjy": {
+            "mean": 3.682221513184841,
+            "std": 0.0862172321745866
+          },
+          "flux_rmse_mjy": {
+            "mean": 10.519822558706345,
+            "std": 1.8225036628030615e-15
+          }
+        },
+        "joint_flux_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 28.186958688577164,
+            "std": 0.19635707673900618
+          },
+          "heldout_rms_mjy": {
+            "mean": 3.3531947200613934,
+            "std": 0.0837608331478909
+          },
+          "flux_rmse_mjy": {
+            "mean": 9.667089849592248,
+            "std": 0.011011192008431895
+          }
+        }
+      },
+      "converged_fits": 60,
+      "failed_fits": []
+    }
+  }
+}

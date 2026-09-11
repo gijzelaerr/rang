@@ -4,6 +4,10 @@ Updated 2026-09-11.
 
 ## Latest checkpoint
 
+- Added optional per-component Gaussian flux priors to smooth-pointing inference; zero sigma fixes a component, None preserves fixed-sky behavior. Returns fitted fluxes; prior-normalized additive corrections are differentiated jointly with spline coefficients.
+- Three 20-seed campaigns (180 converged fits, including duplicate paired controls): 2% source-flux errors cause 30.237 arcsec fixed-sky pointing RMSE; 5% joint flux priors recover 2.475 arcsec vs 2.402 correct-sky control. Held-out RMS 3.682 → 1.067 mJy/component. Overconfident 0.01% priors leave 28.187 arcsec error. Matched-sky joint fit costs a small increase to 2.475 arcsec.
+- Results and reproduction: `research/sky-uncertainty.md`, `research/results/sky-uncertainty.json`, `examples/sky_uncertainty.py`. Fixed source layout/sign pattern, exact central flux anchor and correct spectra/beam remain limitations. No new-algorithm claim.
+
 - Converted all 18 display equations across four research documents to GitHub-supported fenced math blocks; equations unchanged. Documented the formatting convention in CONTRIBUTING.md.
 
 - User/professor focus: pointing-error solutions; explicitly requested component-list conversion, DFT prediction, JAX automatic differentiation and smoothly time-varying per-antenna offsets. Implemented optional `rangtoy.pointing` with natural cubic spline trajectories, integrated-curvature regularization and SciPy least squares using JAX Jacobians.

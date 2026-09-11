@@ -29,6 +29,12 @@ Initial control: **2.0 arcsec trajectory RMSE**, with held-out residuals reduced
 
 ## First result
 
+### Sky uncertainty and pointing recovery
+
+The [latest 20-seed experiment](research/sky-uncertainty.md) introduces 2% source-flux errors. Fixed-sky calibration gives **30.24 arcsec** pointing RMSE; joint flux/pointing inference gives **2.48 arcsec**, close to the **2.40 arcsec** correct-sky control. Overly tight flux priors leave **28.19 arcsec** error. The solver now supports per-component flux uncertainty; positions, spectra and beam shape remain fixed.
+
+### Beam-width control
+
 **Preserving an injected signal does not establish accurate source flux.** In a controlled 20-seed experiment, a 2% beam-width error produces a 71% flux overestimate despite a 99.75% injection response. Fitting beam width resolves the bias when the true error belongs to the fitted model family.
 
 | Joint calibration model | Recovered flux | Injection response | Held-out residual RMS |
