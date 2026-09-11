@@ -24,8 +24,6 @@ a bell? I'd value your take on whether a diagnostic separating data-driven
 pointing information from prior constraints would be useful, and which
 measured MeerKAT beam model would make the best next test.
 
-Short note: https://github.com/gijzelaerr/rang/blob/main/research/review-brief.md
-
 Derivation and reproducible controls:
 https://github.com/gijzelaerr/rang/blob/main/research/gaussian-gauge.md
 

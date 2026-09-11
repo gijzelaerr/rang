@@ -21,8 +21,6 @@ additional non-collinear off-axis flux anchors do in the idealized audit.
 
 [Exact transformation, controls and research implications →](research/gaussian-gauge.md)
 
-[Start with the short technical-review brief →](research/review-brief.md)
-
 This is a concrete research result, **not a verified novelty claim or real-data
 calibration demonstration**. The finite Gaussian ambiguity is tested exactly;
 non-Gaussian and external-anchor results are local information audits.

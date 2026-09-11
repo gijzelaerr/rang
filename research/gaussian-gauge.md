@@ -2,7 +2,7 @@
 
 Gijs Molenaar · Rang research note · 11 September 2026 · Draft for technical review
 
-[Short review brief](review-brief.md) · [Numerical results](results/gaussian-gauge.json)
+[Numerical results](results/gaussian-gauge.json)
 
 ## Result and correction to the earlier interpretation
 
