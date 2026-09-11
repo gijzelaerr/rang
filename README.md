@@ -56,6 +56,11 @@ frequency-dependent gains. Polynomial log-gain fits retain the tested pointing
 accuracy with fewer parameters when the truth is in-family; a curvature
 counterexample shows why that compression must be validated.
 
+[Dish-to-dish beam-width tests](research/antenna-beam-widths.md) show another
+confounder: small antenna beam differences can be mistaken for pointing.
+Joint relative-width fitting restores the tested relative-pointing accuracy
+and interval coverage; shared-mode uncertainties remain less reliable.
+
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and
 antenna gains for identical Gaussian beams—including rotating elliptical beams.

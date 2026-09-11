@@ -210,6 +210,7 @@ def solve_pointing(
     estimate_uncertainty=False,
     beam_log_width_prior=None,
     beam_shape_prior=None,
+    beam_antenna_log_width_prior=None,
     common_pointing_prior_arcmin=None,
     max_nfev=100,
 ):
@@ -244,6 +245,9 @@ def solve_pointing(
     over the observed frequency interval. Independent coefficient priors use
     gain_prior_sigma; this is not the same prior as independent channel gains.
     Polynomial fits also return a (time, frequency, antenna) gain cube.
+    beam_antenna_log_width_prior enables constant per-antenna log-width
+    deviations with exactly zero antenna mean; its sigma applies to orthonormal
+    contrast coefficients. Optional shared beam parameters represent the mean.
     estimate_uncertainty returns local Gauss–Newton marginal standard deviations
     including the priors. These are conditional on the beam/sky/trajectory model,
     not exact posterior intervals or protection against model mismatch.
@@ -282,6 +286,19 @@ def solve_pointing(
     design, penalty = spline_design(times_s, knots_s)
     obs = Observation(*(jnp.asarray(a) for a in observation))
     prediction = resolve_predictor(obs, predictor, beam_axis_ratio=beam_axis_ratio)
+    if beam_antenna_log_width_prior is not None:
+        if (
+            not np.isfinite(beam_antenna_log_width_prior)
+            or beam_antenna_log_width_prior <= 0
+        ):
+            raise ValueError("antenna beam prior must be positive and finite")
+        if not callable(getattr(prediction, "with_antenna_shape", None)):
+            raise ValueError("predictor must support with_antenna_shape")
+    antenna_beam_basis = jnp.asarray(
+        null_space(np.ones((1, antenna_count)))
+        if beam_antenna_log_width_prior is not None
+        else np.zeros((antenna_count, 0))
+    )
     shape_sigma = np.zeros(3)
     if beam_shape_prior is not None:
         shape_sigma = np.asarray(beam_shape_prior, float)
@@ -411,7 +428,8 @@ def solve_pointing(
         )
     gain_end = sky_end + (int(np.prod(gain_shape)) if gain_scale is not None else 0)
     beam_end = gain_end + len(free_beam)
-    total_size = beam_end + (
+    antenna_beam_end = beam_end + antenna_beam_basis.shape[1]
+    total_size = antenna_beam_end + (
         2 * len(knots_s) if common_pointing_prior_arcmin is not None else 0
     )
 
@@ -424,9 +442,21 @@ def solve_pointing(
 
     def common_coefficients(flat):
         return (
-            flat[beam_end:].reshape(len(knots_s), 2) * common_pointing_prior_arcmin
+            flat[antenna_beam_end:].reshape(len(knots_s), 2)
+            * common_pointing_prior_arcmin
             if common_pointing_prior_arcmin is not None
             else jnp.zeros((len(knots_s), 2))
+        )
+
+    def antenna_beam_parameters(flat):
+        return (
+            antenna_beam_basis
+            @ flat[beam_end:antenna_beam_end]
+            * (
+                0.0
+                if beam_antenna_log_width_prior is None
+                else beam_antenna_log_width_prior
+            )
         )
 
     def log_width(flat):
@@ -475,6 +505,14 @@ def solve_pointing(
         if beam_shape_prior is not None:
             model = prediction.with_shape(
                 sky(flat), obs, offsets, beam_parameters(flat)
+            )
+        if beam_antenna_log_width_prior is not None:
+            model = prediction.with_antenna_shape(
+                sky(flat),
+                obs,
+                offsets,
+                beam_parameters(flat),
+                antenna_beam_parameters(flat),
             )
         gain = gains(flat)
         model = (
@@ -566,22 +604,44 @@ def solve_pointing(
 
         def outputs(flat):
             offsets = jnp.einsum("tk,kad->tad", design_jax, total_coefficients(flat))
+            relative_offsets = jnp.einsum(
+                "tk,kad->tad", design_jax, unpack_pointing(flat)
+            )
+            common_offsets = design_jax @ common_coefficients(flat)
             flux = sky(flat).flux_jy
-            return jnp.concatenate((offsets.reshape(-1), flux, beam_parameters(flat)))
+            return jnp.concatenate(
+                (
+                    offsets.reshape(-1),
+                    relative_offsets.reshape(-1),
+                    common_offsets.reshape(-1),
+                    flux,
+                    beam_parameters(flat),
+                    antenna_beam_parameters(flat),
+                )
+            )
 
         output_jac = (
             np.asarray(jax.jacfwd(outputs)(jnp.asarray(full_solution))) @ transform
         )
         std = propagated_standard_deviation(result.jac, output_jac)
         offset_size = len(times_s) * antenna_count * 2
+        flux_start = 2 * offset_size + 2 * len(times_s)
+        beam_start = flux_start + len(components.flux_jy)
         uncertainty = {
             "method": "local_gauss_newton_with_priors",
             "offset_std_arcmin": std[:offset_size].reshape(
                 len(times_s), antenna_count, 2
             ),
-            "flux_std_jy": std[offset_size:-3],
-            "beam_log_width_std": float(std[-3]),
-            "beam_shape_std": std[-3:],
+            "relative_offset_std_arcmin": std[offset_size : 2 * offset_size].reshape(
+                len(times_s), antenna_count, 2
+            ),
+            "common_offset_std_arcmin": std[2 * offset_size : flux_start].reshape(
+                len(times_s), 2
+            ),
+            "flux_std_jy": std[flux_start:beam_start],
+            "beam_log_width_std": float(std[beam_start]),
+            "beam_shape_std": std[beam_start : beam_start + 3],
+            "beam_antenna_log_width_std": std[beam_start + 3 :],
             "noise_rescaled_from_residuals": False,
         }
         fitted_flux = np.asarray(sky(jnp.asarray(full_solution)).flux_jy)
@@ -605,6 +665,10 @@ def solve_pointing(
             beam_parameters(jnp.asarray(full_solution))
         ),
         "beam_shape_prior": shape_sigma.copy(),
+        "beam_antenna_log_width": np.asarray(
+            antenna_beam_parameters(jnp.asarray(full_solution))
+        ),
+        "beam_antenna_log_width_prior": beam_antenna_log_width_prior,
         "flux_jy": np.asarray(sky(jnp.asarray(full_solution)).flux_jy),
         "zero_mean_pointing": bool(zero_mean_pointing),
         "fit_pointing": bool(fit_pointing),

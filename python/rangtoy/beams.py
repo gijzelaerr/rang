@@ -97,7 +97,9 @@ def cosine_taper(radius_squared):
 
 
 @partial(jax.jit, static_argnames=("profile",))
-def voltage_beam(x_rad, y_rad, frequency_hz, table, profile="cosine"):
+def voltage_beam(
+    x_rad, y_rad, frequency_hz, table, profile="cosine", width_multiplier=1.0
+):
     """Voltage at row-by-source beam coordinates; no frequency extrapolation."""
     squint = jnp.stack(
         [
@@ -125,6 +127,7 @@ def voltage_beam(x_rad, y_rad, frequency_hz, table, profile="cosine"):
         ],
         axis=1,
     )
+    width = width * jnp.asarray(width_multiplier)[..., None]
     radius2 = ((x_rad - squint[:, 0, None]) / width[:, 0, None]) ** 2 + (
         (y_rad - squint[:, 1, None]) / width[:, 1, None]
     ) ** 2
@@ -136,7 +139,14 @@ def voltage_beam(x_rad, y_rad, frequency_hz, table, profile="cosine"):
 
 
 @partial(jax.jit, static_argnames=("profile",))
-def predict_tabulated(components, observation, offsets_arcmin, table, profile="cosine"):
+def predict_tabulated(
+    components,
+    observation,
+    offsets_arcmin,
+    table,
+    profile="cosine",
+    antenna_log_width=None,
+):
     """Scalar component DFT with the same full w phase as the analytic baseline."""
     obs = observation
     lm = components.lmn[:, :2]
@@ -151,6 +161,7 @@ def predict_tabulated(components, observation, offsets_arcmin, table, profile="c
             obs.frequency_hz,
             table,
             profile,
+            1.0 if antenna_log_width is None else jnp.exp(antenna_log_width[antenna]),
         )
 
     direction = components.lmn - jnp.array([0.0, 0.0, 1.0])
@@ -165,15 +176,32 @@ def predict_tabulated(components, observation, offsets_arcmin, table, profile="c
     )
 
 
-def make_beam_predictor(table, profile="cosine", metadata=None):
+def make_beam_predictor(
+    table, profile="cosine", metadata=None, *, antenna_log_width=None
+):
     """Create a predictor callback accepted by Rang's pointing solver and audit."""
     if profile not in ("cosine", "gaussian"):
         raise ValueError("profile must be cosine or gaussian")
     table = beam_table(*table)
+    if antenna_log_width is not None:
+        widths = np.asarray(antenna_log_width, float)
+        with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+            multipliers = np.exp(widths)
+        if (
+            widths.ndim != 1
+            or not len(widths)
+            or not np.isfinite(widths).all()
+            or not np.isfinite(multipliers).all()
+            or np.any(multipliers <= 0)
+        ):
+            raise ValueError(
+                "antenna_log_width must be a finite vector with positive finite exponentials"
+            )
+        antenna_log_width = jnp.asarray(widths)
 
     def prediction(components, observation, offsets_arcmin):
         return predict_tabulated(
-            components, observation, offsets_arcmin, table, profile
+            components, observation, offsets_arcmin, table, profile, antenna_log_width
         )
 
     def validate(observation):
@@ -184,28 +212,67 @@ def make_beam_predictor(table, profile="cosine", metadata=None):
             or np.any(frequency > float(table.frequency_hz[-1]))
         ):
             raise ValueError("observation frequency lies outside the beam table")
+        if antenna_log_width is not None:
+            for indices in (observation.antenna1, observation.antenna2):
+                indices = np.asarray(indices)
+                if not np.issubdtype(indices.dtype, np.integer) or np.any(
+                    (indices < 0) | (indices >= len(antenna_log_width))
+                ):
+                    raise ValueError("antenna indices lie outside antenna_log_width")
 
     def with_log_width(components, observation, offsets_arcmin, log_width):
         adjusted = table._replace(fwhm_rad=table.fwhm_rad * jnp.exp(log_width))
         return predict_tabulated(
-            components, observation, offsets_arcmin, adjusted, profile
+            components,
+            observation,
+            offsets_arcmin,
+            adjusted,
+            profile,
+            antenna_log_width,
         )
 
-    def with_shape(components, observation, offsets_arcmin, parameters):
+    def shaped_table(parameters):
         # Parameters: log geometric width at 1.3 GHz, log-width slope per
         # 0.4 GHz, log(y/x FWHM) correction. Squint is unchanged.
         frequency_coordinate = (table.frequency_hz - 1.3e9) / 0.4e9
         width = parameters[0] + parameters[1] * frequency_coordinate
         axes = parameters[2] * jnp.array([-0.5, 0.5])
-        adjusted = table._replace(
-            fwhm_rad=table.fwhm_rad * jnp.exp(width[:, None] + axes)
-        )
+        return table._replace(fwhm_rad=table.fwhm_rad * jnp.exp(width[:, None] + axes))
+
+    def with_shape(components, observation, offsets_arcmin, parameters):
         return predict_tabulated(
-            components, observation, offsets_arcmin, adjusted, profile
+            components,
+            observation,
+            offsets_arcmin,
+            shaped_table(parameters),
+            profile,
+            antenna_log_width,
+        )
+
+    def with_antenna_shape(
+        components, observation, offsets_arcmin, parameters, relative_widths
+    ):
+        widths = relative_widths
+        if antenna_log_width is not None:
+            if len(widths) != len(antenna_log_width):
+                raise ValueError("fitted and known antenna width counts must match")
+            widths = widths + antenna_log_width
+        return predict_tabulated(
+            components,
+            observation,
+            offsets_arcmin,
+            shaped_table(parameters),
+            profile,
+            widths,
         )
 
     prediction.validate_observation = validate
     prediction.with_log_width = with_log_width
     prediction.with_shape = with_shape
+    prediction.with_antenna_shape = with_antenna_shape
     prediction.metadata = dict(metadata or {}, profile=profile)
+    if antenna_log_width is not None:
+        prediction.metadata["antenna_log_width"] = np.asarray(
+            antenna_log_width
+        ).tolist()
     return prediction

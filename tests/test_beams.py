@@ -175,6 +175,114 @@ def test_joint_width_recovery_and_derivative(fixture):
     np.testing.assert_allclose(fit["offsets_arcmin"], 0, atol=1e-4)
 
 
+def test_antenna_widths_match_uniform_table_change_and_derivatives(fixture):
+    pytest.importorskip("katbeam")
+    sky, obs = fixture
+    table, _ = load_katbeam()
+    offsets = jnp.full((24, 8, 2), 0.2)
+    nominal = make_beam_predictor(table)
+    uniform = make_beam_predictor(table, antenna_log_width=np.full(8, 0.01))
+    uniform.validate_observation(obs)
+    np.testing.assert_allclose(
+        uniform(sky, obs, offsets),
+        nominal.with_log_width(sky, obs, offsets, 0.01),
+        atol=1e-13,
+    )
+    widths = jnp.linspace(-0.02, 0.02, 8)
+    function = lambda delta: predict_tabulated(
+        sky, obs, offsets, table, antenna_log_width=widths.at[3].add(delta)
+    )
+    derivative = jax.jacfwd(function)(0.0)
+    step = 1e-5
+    np.testing.assert_allclose(
+        derivative, (function(step) - function(-step)) / (2 * step), atol=1e-9
+    )
+    unaffected = (np.asarray(obs.antenna1) != 3) & (np.asarray(obs.antenna2) != 3)
+    np.testing.assert_array_equal(derivative[unaffected], 0)
+    assert np.linalg.norm(derivative) > 0
+    for invalid in ([], [np.nan], [[0]], [1000]):
+        with pytest.raises(ValueError, match="antenna_log_width"):
+            make_beam_predictor(table, antenna_log_width=invalid)
+    with pytest.raises(ValueError, match="antenna indices"):
+        make_beam_predictor(table, antenna_log_width=[0]).validate_observation(obs)
+
+
+def test_joint_relative_antenna_width_and_common_pointing_recovery(fixture):
+    pytest.importorskip("katbeam")
+    sky, obs = fixture
+    table, _ = load_katbeam()
+    predictor = make_beam_predictor(table)
+    widths = jnp.linspace(-0.015, 0.015, 8)
+    offsets = jnp.full((24, 8, 2), 0.2)
+    parameters = jnp.array([0.01, 0.0, 0.0])
+    function = lambda a: predictor.with_antenna_shape(
+        sky, obs, offsets, parameters, widths.at[2].add(a)
+    )
+    step = 1e-5
+    np.testing.assert_allclose(
+        jax.jacfwd(function)(0.0),
+        (function(step) - function(-step)) / (2 * step),
+        atol=1e-9,
+    )
+    fit = solve_pointing(
+        sky,
+        obs,
+        function(0.0),
+        np.linspace(0, 21600, 24),
+        [0, 21600],
+        8,
+        noise_jy=1e-5,
+        zero_mean_pointing=True,
+        gain_prior_sigma=(0.1, 0.1),
+        beam_log_width_prior=0.03,
+        beam_antenna_log_width_prior=0.03,
+        common_pointing_prior_arcmin=1.0,
+        predictor=predictor,
+        estimate_uncertainty=True,
+    )
+    assert fit["success"]
+    np.testing.assert_allclose(fit["beam_antenna_log_width"], widths, atol=1e-6)
+    assert abs(fit["beam_antenna_log_width"].mean()) < 1e-16
+    np.testing.assert_allclose(fit["offsets_arcmin"], offsets, atol=1e-4)
+    assert fit["beam_width_multiplier"] == pytest.approx(np.exp(0.01), abs=1e-6)
+    assert np.all(fit["uncertainty"]["beam_antenna_log_width_std"] > 0)
+    assert fit["uncertainty"]["flux_std_jy"].shape == (4,)
+    assert fit["uncertainty"]["relative_offset_std_arcmin"].shape == (24, 8, 2)
+    assert fit["uncertainty"]["common_offset_std_arcmin"].shape == (24, 2)
+    assert np.all(fit["uncertainty"]["common_offset_std_arcmin"] > 0)
+
+
+@pytest.mark.parametrize("prior", [0.0, -0.01, np.nan])
+def test_invalid_relative_antenna_width_prior(fixture, prior):
+    sky, obs = fixture
+    with pytest.raises(ValueError, match="antenna beam prior"):
+        solve_pointing(
+            sky,
+            obs,
+            np.zeros(len(obs.time_index), complex),
+            np.linspace(0, 21600, 24),
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            beam_antenna_log_width_prior=prior,
+        )
+
+
+def test_antenna_width_fit_requires_predictor_support(fixture):
+    sky, obs = fixture
+    with pytest.raises(ValueError, match="with_antenna_shape"):
+        solve_pointing(
+            sky,
+            obs,
+            np.zeros(len(obs.time_index), complex),
+            np.linspace(0, 21600, 24),
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            beam_antenna_log_width_prior=0.03,
+        )
+
+
 def test_beam_shape_derivatives_and_joint_recovery(fixture):
     pytest.importorskip("katbeam")
     sky, obs = fixture

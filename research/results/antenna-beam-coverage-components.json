@@ -1,0 +1,2359 @@
+{
+  "scope": "Diagnostic replay of the same 24 fixed-truth noise configurations in antenna-beam-widths.json; not additional independent trials.",
+  "campaigns": [
+    {
+      "fixture_sha256": "2b962dfbe8105fc2e0eb833e0bc0c4d122132fd4e7b54c7fdc168243a127e61b",
+      "beam": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam"
+      },
+      "antenna_beam_log_width_std_before_demeaning": 0.01,
+      "known_antenna_beam": false,
+      "noise_per_real_component_jy": 0.001,
+      "joint_gains": true,
+      "truth_seed": 71,
+      "coverage": true,
+      "beam_log_width_prior": 0.03,
+      "beam_antenna_log_width_prior": null,
+      "common_pointing_prior_arcmin": 0.5,
+      "gain_per_channel": false,
+      "gain_frequency_degree": 2,
+      "chromatic_gain_truth_scale": 1,
+      "chromatic_gain_curvature_scale": 0.5,
+      "spectral_index_prior": 0.1,
+      "true_fractional_beam_width_error": 0,
+      "pointing_ripple_arcmin": 0,
+      "missing_source_jy": 0,
+      "held_out": true,
+      "holdout_mode": "interleaved",
+      "test_time_indices": [
+        2,
+        6,
+        10,
+        14,
+        18,
+        22
+      ],
+      "train_rows": 2016,
+      "test_rows": 672,
+      "limitations": "Synthetic beam/spline model with specified perturbations. Held-out mode withholds whole times listed in test_time_indices (interpolation, not extrapolation); hyperparameters fixed beforehand. Coverage uses correlated coordinates, not independent trials, and local Gauss-Newton intervals including priors. Injected log gains optionally have linear and quadratic frequency dependence with smooth temporal coefficients; fitted gains may be per-channel or polynomial. Gain slopes and prior scales are assumptions, not empirical measurements. Polynomial coefficient priors differ from independent-channel priors. Absolute flux scale and common spectral slope are prior-dependent. Historical pointing records are not injected. Timings include compilation and are not a controlled performance benchmark.",
+      "results": [
+        {
+          "seed": 1,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9996210432237627,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 1.8051144169985491,
+          "relative_rmse_arcsec": 7.469242448980448,
+          "common_pointing_rmse_arcsec": 2.517201256412947,
+          "maximum_mean_arcsec": 3.9844015293863544,
+          "clean_visibility_rms_mjy": 2.033198955552129,
+          "whitened_residual_mean_square": 2.9549705348071504,
+          "flux_fractional_error": [
+            0.0031294310325926666,
+            0.004983461985721416,
+            0.0016172524555022605,
+            0.0039030598158005247
+          ],
+          "spectral_index_error": [
+            -0.003939076956839593,
+            -0.0012368793304303738,
+            -0.006974451908692059,
+            -0.003863519925598524
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0018482469916372146,
+          "pointing_coverage_95_fraction": 0.3020833333333333,
+          "pointing_standardized_error_rms": 5.046369719565159,
+          "median_pointing_std_arcsec": 1.5151294315522807,
+          "relative_pointing_coverage_95_fraction": 0.16666666666666666,
+          "relative_median_pointing_std_arcsec": 0.8655856588271991,
+          "common_pointing_coverage_95_fraction": 0.4375,
+          "common_median_pointing_std_arcsec": 1.2399611203517729,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020502085074091417,
+            0.014378685165138393,
+            0.010242330198766544,
+            0.00615927572920195
+          ],
+          "beam_log_width_std": 0.001173280679593615,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            3.9058662572362315e-19,
+            0.000677614757877143,
+            0.0006915002750696416,
+            0.0004001393051804455
+          ],
+          "train_whitened_residual_mean_square": 2.867913170763257,
+          "train_clean_visibility_rms_mjy": 1.993554748810804,
+          "test_whitened_residual_mean_square": 3.2161426269388325,
+          "test_clean_visibility_rms_mjy": 2.147745413664002
+        },
+        {
+          "seed": 2,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0009602067150747,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6635734999981651,
+          "relative_rmse_arcsec": 7.346430422057697,
+          "common_pointing_rmse_arcsec": 3.2436791747816747,
+          "maximum_mean_arcsec": 5.472238133611274,
+          "clean_visibility_rms_mjy": 2.031805768158822,
+          "whitened_residual_mean_square": 2.9996639907737,
+          "flux_fractional_error": [
+            0.0039263367449087205,
+            0.005475202934454915,
+            0.0016543278546958806,
+            0.0024588108531709008
+          ],
+          "spectral_index_error": [
+            0.016373217207424684,
+            0.018240243053524008,
+            0.011986107458535233,
+            0.012779780496956716
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0022631231068003244,
+          "pointing_coverage_95_fraction": 0.3385416666666667,
+          "pointing_standardized_error_rms": 5.13112138111323,
+          "median_pointing_std_arcsec": 1.5195128814052241,
+          "relative_pointing_coverage_95_fraction": 0.16666666666666666,
+          "relative_median_pointing_std_arcsec": 0.8680093781679992,
+          "common_pointing_coverage_95_fraction": 0.3541666666666667,
+          "common_median_pointing_std_arcsec": 1.2433830288959926,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020518635799347113,
+            0.01438590927512005,
+            0.01024284739941882,
+            0.006150502891268621
+          ],
+          "beam_log_width_std": 0.0011768271935495675,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            2.512421964645401e-18,
+            0.0006775002531874435,
+            0.0006910372241351745,
+            0.0003992799544845275
+          ],
+          "train_whitened_residual_mean_square": 2.8986651208589516,
+          "train_clean_visibility_rms_mjy": 1.9954188838280056,
+          "test_whitened_residual_mean_square": 3.302660600517944,
+          "test_clean_visibility_rms_mjy": 2.137252711375431
+        },
+        {
+          "seed": 3,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0012939243275638,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6536542089997965,
+          "relative_rmse_arcsec": 7.466072189416828,
+          "common_pointing_rmse_arcsec": 2.2281257274760993,
+          "maximum_mean_arcsec": 3.4428454404876256,
+          "clean_visibility_rms_mjy": 2.0231613599491123,
+          "whitened_residual_mean_square": 2.915349196404477,
+          "flux_fractional_error": [
+            0.0038298304895858504,
+            0.0031655514744675095,
+            0.0007243149080622402,
+            0.004184934543852048
+          ],
+          "spectral_index_error": [
+            -0.008413772993035251,
+            -0.010226736244040247,
+            -0.014253723886100356,
+            -0.008432945445383977
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0030936673599438747,
+          "pointing_coverage_95_fraction": 0.23177083333333334,
+          "pointing_standardized_error_rms": 4.915242154128694,
+          "median_pointing_std_arcsec": 1.5212383165128271,
+          "relative_pointing_coverage_95_fraction": 0.15885416666666666,
+          "relative_median_pointing_std_arcsec": 0.8689269821739982,
+          "common_pointing_coverage_95_fraction": 0.5208333333333334,
+          "common_median_pointing_std_arcsec": 1.2463461731549907,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020522255887238293,
+            0.014356795710983302,
+            0.010236132362801884,
+            0.006162782212611766
+          ],
+          "beam_log_width_std": 0.0011783059216862342,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            false,
+            true
+          ],
+          "flux_ratio_std": [
+            4.377225513919164e-18,
+            0.0006765380265029912,
+            0.0006907488509595101,
+            0.00040045232227290577
+          ],
+          "train_whitened_residual_mean_square": 2.834716824362711,
+          "train_clean_visibility_rms_mjy": 1.9889192400986029,
+          "test_whitened_residual_mean_square": 3.1572463125297747,
+          "test_clean_visibility_rms_mjy": 2.122575869706748
+        },
+        {
+          "seed": 4,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0010875885637398,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6572910830000183,
+          "relative_rmse_arcsec": 7.301156179351636,
+          "common_pointing_rmse_arcsec": 3.0255937677559026,
+          "maximum_mean_arcsec": 4.240640055258804,
+          "clean_visibility_rms_mjy": 2.03375193521409,
+          "whitened_residual_mean_square": 2.9981152625531355,
+          "flux_fractional_error": [
+            0.003967201490074457,
+            0.005139307164941043,
+            0.0006678085191174077,
+            0.0037430747422790844
+          ],
+          "spectral_index_error": [
+            0.01515213032625995,
+            0.016746983177375663,
+            0.009255587608482552,
+            0.014057169001361003
+          ],
+          "maximum_flux_ratio_fractional_error": 0.00328635533716648,
+          "pointing_coverage_95_fraction": 0.2604166666666667,
+          "pointing_standardized_error_rms": 5.062306326017409,
+          "median_pointing_std_arcsec": 1.5203823992077101,
+          "relative_pointing_coverage_95_fraction": 0.14583333333333334,
+          "relative_median_pointing_std_arcsec": 0.8682393870759365,
+          "common_pointing_coverage_95_fraction": 0.3541666666666667,
+          "common_median_pointing_std_arcsec": 1.2445355092992938,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020519725249784154,
+            0.01438128557437499,
+            0.0102328970317924,
+            0.006158457782833075
+          ],
+          "beam_log_width_std": 0.0011773894462197194,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            false,
+            true
+          ],
+          "flux_ratio_std": [
+            1.2569145086593162e-18,
+            0.0006773353830395844,
+            0.0006905205831833146,
+            0.0003998745613886652
+          ],
+          "train_whitened_residual_mean_square": 2.915255251014392,
+          "train_clean_visibility_rms_mjy": 1.9929699529926517,
+          "test_whitened_residual_mean_square": 3.246695297169368,
+          "test_clean_visibility_rms_mjy": 2.1514646256338072
+        },
+        {
+          "seed": 5,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0033951688864822,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6556401249981718,
+          "relative_rmse_arcsec": 7.485991078385377,
+          "common_pointing_rmse_arcsec": 2.643865790625171,
+          "maximum_mean_arcsec": 4.349147889584288,
+          "clean_visibility_rms_mjy": 2.0287700949219736,
+          "whitened_residual_mean_square": 3.013952625293825,
+          "flux_fractional_error": [
+            0.004867612928751708,
+            0.0036235539601703337,
+            -0.0005210854165168533,
+            0.002684384923869576
+          ],
+          "spectral_index_error": [
+            0.0009822243256237817,
+            -0.00202123682257771,
+            -0.008766461073624332,
+            -0.003323225760225701
+          ],
+          "maximum_flux_ratio_fractional_error": 0.005362595307020435,
+          "pointing_coverage_95_fraction": 0.22395833333333334,
+          "pointing_standardized_error_rms": 5.036363828265383,
+          "median_pointing_std_arcsec": 1.5282868649350498,
+          "relative_pointing_coverage_95_fraction": 0.15364583333333334,
+          "relative_median_pointing_std_arcsec": 0.8726297593209301,
+          "common_pointing_coverage_95_fraction": 0.4375,
+          "common_median_pointing_std_arcsec": 1.2516580483599324,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020547781739404452,
+            0.014366369643625553,
+            0.010225558599893114,
+            0.006154872166325018
+          ],
+          "beam_log_width_std": 0.0011841014807648027,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            false,
+            true
+          ],
+          "flux_ratio_std": [
+            8.19096084654711e-19,
+            0.0006763316427837186,
+            0.0006894093814198272,
+            0.0003994811671158588
+          ],
+          "train_whitened_residual_mean_square": 2.889794857877504,
+          "train_clean_visibility_rms_mjy": 1.9920053406884022,
+          "test_whitened_residual_mean_square": 3.3864259275427893,
+          "test_clean_visibility_rms_mjy": 2.1352696692000066
+        },
+        {
+          "seed": 6,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9992670792010245,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6542912919976516,
+          "relative_rmse_arcsec": 7.480702606846314,
+          "common_pointing_rmse_arcsec": 3.645348100903349,
+          "maximum_mean_arcsec": 5.756180510200131,
+          "clean_visibility_rms_mjy": 2.033181733700215,
+          "whitened_residual_mean_square": 2.977292054314079,
+          "flux_fractional_error": [
+            0.0031452357598760194,
+            0.006113440907086876,
+            0.0023094188037451335,
+            0.0030772924847379812
+          ],
+          "spectral_index_error": [
+            0.00978686880138746,
+            0.014690877432745442,
+            0.008812374425997582,
+            0.008691348403254917
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0029588987131683453,
+          "pointing_coverage_95_fraction": 0.3333333333333333,
+          "pointing_standardized_error_rms": 5.343912787644062,
+          "median_pointing_std_arcsec": 1.5135344607173344,
+          "relative_pointing_coverage_95_fraction": 0.17708333333333334,
+          "relative_median_pointing_std_arcsec": 0.8649329767326854,
+          "common_pointing_coverage_95_fraction": 0.375,
+          "common_median_pointing_std_arcsec": 1.2385360395043667,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020498871556679274,
+            0.014392364063907962,
+            0.010247637045678408,
+            0.006153146500895993
+          ],
+          "beam_log_width_std": 0.0011720579051452636,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            false,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            1.1329011008886276e-18,
+            0.0006781204635465037,
+            0.0006918457869841691,
+            0.0003996523086899542
+          ],
+          "train_whitened_residual_mean_square": 2.866455817830774,
+          "train_clean_visibility_rms_mjy": 1.997020481937666,
+          "test_whitened_residual_mean_square": 3.309800763763992,
+          "test_clean_visibility_rms_mjy": 2.137998931985985
+        },
+        {
+          "seed": 7,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0004489838973603,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6777755420007452,
+          "relative_rmse_arcsec": 7.2595093944922455,
+          "common_pointing_rmse_arcsec": 2.302235509360425,
+          "maximum_mean_arcsec": 3.298883078288614,
+          "clean_visibility_rms_mjy": 2.031081532615229,
+          "whitened_residual_mean_square": 2.925772515386701,
+          "flux_fractional_error": [
+            0.003157485151091155,
+            0.004047607810395704,
+            0.0007878987484490896,
+            0.0037869188687116306
+          ],
+          "spectral_index_error": [
+            -0.02677283062723379,
+            -0.025625993387039525,
+            -0.031203901165405723,
+            -0.026560094522438682
+          ],
+          "maximum_flux_ratio_fractional_error": 0.002362128018498666,
+          "pointing_coverage_95_fraction": 0.2526041666666667,
+          "pointing_standardized_error_rms": 4.867158089314904,
+          "median_pointing_std_arcsec": 1.5181069590223735,
+          "relative_pointing_coverage_95_fraction": 0.18229166666666666,
+          "relative_median_pointing_std_arcsec": 0.8671601667430472,
+          "common_pointing_coverage_95_fraction": 0.5,
+          "common_median_pointing_std_arcsec": 1.2435944520894942,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020508992516654164,
+            0.014369748742071078,
+            0.010237017683480268,
+            0.006160479319252982
+          ],
+          "beam_log_width_std": 0.001175649288990393,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            4.377013103075246e-19,
+            0.0006772706337343238,
+            0.000691028229937545,
+            0.00040036646638737136
+          ],
+          "train_whitened_residual_mean_square": 2.8295903129925515,
+          "train_clean_visibility_rms_mjy": 1.990370530257704,
+          "test_whitened_residual_mean_square": 3.2143191225691514,
+          "test_clean_visibility_rms_mjy": 2.1485912187681286
+        },
+        {
+          "seed": 8,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0003963841909507,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6530620000012277,
+          "relative_rmse_arcsec": 7.296890123143024,
+          "common_pointing_rmse_arcsec": 2.053453545612857,
+          "maximum_mean_arcsec": 2.966266917422659,
+          "clean_visibility_rms_mjy": 2.030283931653778,
+          "whitened_residual_mean_square": 3.001076511862055,
+          "flux_fractional_error": [
+            0.0035558484002078394,
+            0.004603535556001015,
+            0.0017547549638570192,
+            0.0034206206203815093
+          ],
+          "spectral_index_error": [
+            0.004363059968540917,
+            0.005630665753755371,
+            0.0015388415210914053,
+            0.0029659520926265115
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0017947117135752588,
+          "pointing_coverage_95_fraction": 0.28125,
+          "pointing_standardized_error_rms": 4.83558234051157,
+          "median_pointing_std_arcsec": 1.5172787950202935,
+          "relative_pointing_coverage_95_fraction": 0.1875,
+          "relative_median_pointing_std_arcsec": 0.8671295374494647,
+          "common_pointing_coverage_95_fraction": 0.625,
+          "common_median_pointing_std_arcsec": 1.2425217365180703,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.02051169236350635,
+            0.014373882105985072,
+            0.010244182127449604,
+            0.006156594189037801
+          ],
+          "beam_log_width_std": 0.0011754724604185452,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            4.913406988313088e-19,
+            0.0006772797170672025,
+            0.0006913434399109055,
+            0.0003999643453601764
+          ],
+          "train_whitened_residual_mean_square": 2.903268517085328,
+          "train_clean_visibility_rms_mjy": 1.9915503668045635,
+          "test_whitened_residual_mean_square": 3.2945004961922337,
+          "test_clean_visibility_rms_mjy": 2.142286811322872
+        },
+        {
+          "seed": 9,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.998928882469942,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6542459999982384,
+          "relative_rmse_arcsec": 7.152715761427823,
+          "common_pointing_rmse_arcsec": 3.9086756071017734,
+          "maximum_mean_arcsec": 6.104480144472119,
+          "clean_visibility_rms_mjy": 2.0325156516200864,
+          "whitened_residual_mean_square": 3.1216372931936918,
+          "flux_fractional_error": [
+            0.0029579775633832295,
+            0.004247747823113102,
+            0.0008754511203057369,
+            0.0072948452438299505
+          ],
+          "spectral_index_error": [
+            0.01167594812526862,
+            0.013220844185732994,
+            0.008168631740169352,
+            0.018644470467930607
+          ],
+          "maximum_flux_ratio_fractional_error": 0.004324077157233486,
+          "pointing_coverage_95_fraction": 0.21354166666666666,
+          "pointing_standardized_error_rms": 5.174223888315338,
+          "median_pointing_std_arcsec": 1.5141577977124439,
+          "relative_pointing_coverage_95_fraction": 0.1640625,
+          "relative_median_pointing_std_arcsec": 0.8643285841179302,
+          "common_pointing_coverage_95_fraction": 0.3125,
+          "common_median_pointing_std_arcsec": 1.2412217252208515,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020493046087468113,
+            0.014364285852474994,
+            0.010231982687086506,
+            0.0061784325737153445
+          ],
+          "beam_log_width_std": 0.0011715563892019632,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            false
+          ],
+          "flux_ratio_std": [
+            7.647131164501638e-20,
+            0.000677433067789107,
+            0.0006910681335287607,
+            0.0004020810448499307
+          ],
+          "train_whitened_residual_mean_square": 3.020996223722781,
+          "train_clean_visibility_rms_mjy": 1.9947154870946913,
+          "test_whitened_residual_mean_square": 3.423560501606422,
+          "test_clean_visibility_rms_mjy": 2.141917335696283
+        },
+        {
+          "seed": 10,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0010638387015218,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6485870409997005,
+          "relative_rmse_arcsec": 7.667525558633283,
+          "common_pointing_rmse_arcsec": 3.5078856570801435,
+          "maximum_mean_arcsec": 5.236648074571015,
+          "clean_visibility_rms_mjy": 2.0346038327990037,
+          "whitened_residual_mean_square": 2.9201939085715813,
+          "flux_fractional_error": [
+            0.004080518434943059,
+            0.005607833489502445,
+            0.0008788782298225772,
+            0.0037134418404456415
+          ],
+          "spectral_index_error": [
+            0.029761966481302027,
+            0.03201809094700414,
+            0.024213502332242398,
+            0.02933077283404384
+          ],
+          "maximum_flux_ratio_fractional_error": 0.003188628945924421,
+          "pointing_coverage_95_fraction": 0.23958333333333334,
+          "pointing_standardized_error_rms": 5.381867109165669,
+          "median_pointing_std_arcsec": 1.5199308075902684,
+          "relative_pointing_coverage_95_fraction": 0.140625,
+          "relative_median_pointing_std_arcsec": 0.8680919926857592,
+          "common_pointing_coverage_95_fraction": 0.3541666666666667,
+          "common_median_pointing_std_arcsec": 1.2448485927672208,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.02051944847697825,
+            0.014386172059011588,
+            0.01023376028872725,
+            0.006157501349353833
+          ],
+          "beam_log_width_std": 0.001177312786854028,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            false,
+            true
+          ],
+          "flux_ratio_std": [
+            4.1716263732257797e-19,
+            0.0006775280867861084,
+            0.0006905681782800215,
+            0.0003998777862594858
+          ],
+          "train_whitened_residual_mean_square": 2.8184255671250704,
+          "train_clean_visibility_rms_mjy": 1.9970884457516835,
+          "test_whitened_residual_mean_square": 3.225498932911114,
+          "test_clean_visibility_rms_mjy": 2.1432135323613823
+        },
+        {
+          "seed": 11,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.001574883033414,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6584237920033047,
+          "relative_rmse_arcsec": 7.259076724677678,
+          "common_pointing_rmse_arcsec": 3.2180911935359675,
+          "maximum_mean_arcsec": 5.2192750413162,
+          "clean_visibility_rms_mjy": 2.031530979016058,
+          "whitened_residual_mean_square": 2.943699329432918,
+          "flux_fractional_error": [
+            0.003920165526405839,
+            0.003969166773976518,
+            -0.00012555750631715323,
+            0.004154680220393114
+          ],
+          "spectral_index_error": [
+            -0.00774808995513343,
+            -0.007957918537218944,
+            -0.014836968317051502,
+            -0.007732928064885236
+          ],
+          "maximum_flux_ratio_fractional_error": 0.004029925059431005,
+          "pointing_coverage_95_fraction": 0.21875,
+          "pointing_standardized_error_rms": 5.018019438525445,
+          "median_pointing_std_arcsec": 1.5221873426098627,
+          "relative_pointing_coverage_95_fraction": 0.1953125,
+          "relative_median_pointing_std_arcsec": 0.8691572161810677,
+          "common_pointing_coverage_95_fraction": 0.3333333333333333,
+          "common_median_pointing_std_arcsec": 1.2470712022438748,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.02052426376791859,
+            0.01436840302659154,
+            0.010227524602004798,
+            0.006162649983033909
+          ],
+          "beam_log_width_std": 0.0011789236597045745,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            false,
+            true
+          ],
+          "flux_ratio_std": [
+            5.033879633442722e-19,
+            0.0006768778918947689,
+            0.0006900132750096389,
+            0.00040042877568911356
+          ],
+          "train_whitened_residual_mean_square": 2.848054468063614,
+          "train_clean_visibility_rms_mjy": 1.9902975107749339,
+          "test_whitened_residual_mean_square": 3.2306339135408293,
+          "test_clean_visibility_rms_mjy": 2.150492950608553
+        },
+        {
+          "seed": 12,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 253,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0024031163514,
+          "fitted_relative_antenna_log_width": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "antenna_log_width_rmse": 0.009049820924468053,
+          "solve_seconds_including_compilation": 0.6543449580021843,
+          "relative_rmse_arcsec": 7.3284400492337,
+          "common_pointing_rmse_arcsec": 2.9220189613121677,
+          "maximum_mean_arcsec": 4.408044674574255,
+          "clean_visibility_rms_mjy": 2.030808935823049,
+          "whitened_residual_mean_square": 2.974836977968865,
+          "flux_fractional_error": [
+            0.0041576655754398395,
+            0.0038586628301837678,
+            -0.00042794200898033097,
+            0.0028229121581071492
+          ],
+          "spectral_index_error": [
+            -0.01976682698062593,
+            -0.020950093501001965,
+            -0.027679633907073953,
+            -0.02292843420332269
+          ],
+          "maximum_flux_ratio_fractional_error": 0.004566621101072199,
+          "pointing_coverage_95_fraction": 0.2578125,
+          "pointing_standardized_error_rms": 4.997040836196413,
+          "median_pointing_std_arcsec": 1.5249873723404757,
+          "relative_pointing_coverage_95_fraction": 0.19791666666666666,
+          "relative_median_pointing_std_arcsec": 0.8707982166719634,
+          "common_pointing_coverage_95_fraction": 0.3541666666666667,
+          "common_median_pointing_std_arcsec": 1.248965616173549,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020534143845773307,
+            0.01437034378155918,
+            0.01022694581541489,
+            0.006155981785592337
+          ],
+          "beam_log_width_std": 0.0011813096063975853,
+          "beam_antenna_log_width_std": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            false,
+            true
+          ],
+          "flux_ratio_std": [
+            7.164542756744402e-20,
+            0.0006767653898314493,
+            0.0006898997275813633,
+            0.0003997300881905378
+          ],
+          "train_whitened_residual_mean_square": 2.822967890277368,
+          "train_clean_visibility_rms_mjy": 1.9899246237686292,
+          "test_whitened_residual_mean_square": 3.4304442410433573,
+          "test_clean_visibility_rms_mjy": 2.148799597550414
+        }
+      ]
+    },
+    {
+      "fixture_sha256": "2b962dfbe8105fc2e0eb833e0bc0c4d122132fd4e7b54c7fdc168243a127e61b",
+      "beam": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam"
+      },
+      "antenna_beam_log_width_std_before_demeaning": 0.01,
+      "known_antenna_beam": false,
+      "noise_per_real_component_jy": 0.001,
+      "joint_gains": true,
+      "truth_seed": 71,
+      "coverage": true,
+      "beam_log_width_prior": 0.03,
+      "beam_antenna_log_width_prior": 0.03,
+      "common_pointing_prior_arcmin": 0.5,
+      "gain_per_channel": false,
+      "gain_frequency_degree": 2,
+      "chromatic_gain_truth_scale": 1,
+      "chromatic_gain_curvature_scale": 0.5,
+      "spectral_index_prior": 0.1,
+      "true_fractional_beam_width_error": 0,
+      "pointing_ripple_arcmin": 0,
+      "missing_source_jy": 0,
+      "held_out": true,
+      "holdout_mode": "interleaved",
+      "test_time_indices": [
+        2,
+        6,
+        10,
+        14,
+        18,
+        22
+      ],
+      "train_rows": 2016,
+      "test_rows": 672,
+      "limitations": "Synthetic beam/spline model with specified perturbations. Held-out mode withholds whole times listed in test_time_indices (interpolation, not extrapolation); hyperparameters fixed beforehand. Coverage uses correlated coordinates, not independent trials, and local Gauss-Newton intervals including priors. Injected log gains optionally have linear and quadratic frequency dependence with smooth temporal coefficients; fitted gains may be per-channel or polynomial. Gain slopes and prior scales are assumptions, not empirical measurements. Polynomial coefficient priors differ from independent-channel priors. Absolute flux scale and common spectral slope are prior-dependent. Historical pointing records are not injected. Timings include compilation and are not a controlled performance benchmark.",
+      "results": [
+        {
+          "seed": 1,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9981918567153057,
+          "fitted_relative_antenna_log_width": [
+            0.0073198412495524955,
+            -0.01522690409481491,
+            -0.01341670887726548,
+            0.008088663843498274,
+            0.00443137072619765,
+            0.0036692009893489123,
+            0.008609228652827825,
+            -0.003474692489344769
+          ],
+          "antenna_log_width_rmse": 0.00014281930803586383,
+          "solve_seconds_including_compilation": 1.8212159169997904,
+          "relative_rmse_arcsec": 0.935693637712972,
+          "common_pointing_rmse_arcsec": 1.0809921213249165,
+          "maximum_mean_arcsec": 1.7743333031987811,
+          "clean_visibility_rms_mjy": 0.351888482871047,
+          "whitened_residual_mean_square": 0.971389284277483,
+          "flux_fractional_error": [
+            0.00242691499377079,
+            0.004202991540968037,
+            0.003995926376175296,
+            0.0037717717832357334
+          ],
+          "spectral_index_error": [
+            -0.008683002231022474,
+            -0.005513836043552933,
+            -0.006339191139600353,
+            -0.00703192646944073
+          ],
+          "maximum_flux_ratio_fractional_error": 0.001771776596010799,
+          "pointing_coverage_95_fraction": 0.9713541666666666,
+          "pointing_standardized_error_rms": 0.9154760308422418,
+          "median_pointing_std_arcsec": 1.5288954827699521,
+          "relative_pointing_coverage_95_fraction": 0.9713541666666666,
+          "relative_median_pointing_std_arcsec": 0.8967181350462929,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.237305750268609,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020484668879179838,
+            0.014365386859583105,
+            0.010265100818785127,
+            0.006157555333401906
+          ],
+          "beam_log_width_std": 0.0011697041943361751,
+          "beam_antenna_log_width_std": [
+            0.0002709083718844403,
+            0.00026285399222561234,
+            0.0002622505625128873,
+            0.000272075288425246,
+            0.00026552401465972667,
+            0.00026732609238729044,
+            0.000276311137194758,
+            0.0002612160494224107
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            1.9631542787839825e-19,
+            0.000677873647181434,
+            0.0006935034262898475,
+            0.0004005384567686361
+          ],
+          "train_whitened_residual_mean_square": 0.942591816577342,
+          "train_clean_visibility_rms_mjy": 0.34986684900508336,
+          "test_whitened_residual_mean_square": 1.057781687377906,
+          "test_clean_visibility_rms_mjy": 0.35788487172680433
+        },
+        {
+          "seed": 2,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9994899373469288,
+          "fitted_relative_antenna_log_width": [
+            0.007547303883513261,
+            -0.015731976992592392,
+            -0.013274014562965996,
+            0.007624558107038758,
+            0.004447683269125833,
+            0.004051615158596615,
+            0.009169098970720466,
+            -0.0038342678334365465
+          ],
+          "antenna_log_width_rmse": 0.00030027824483552177,
+          "solve_seconds_including_compilation": 0.66447241700007,
+          "relative_rmse_arcsec": 0.955977054214197,
+          "common_pointing_rmse_arcsec": 2.305520568064191,
+          "maximum_mean_arcsec": 3.404537784295123,
+          "clean_visibility_rms_mjy": 0.36975263004405623,
+          "whitened_residual_mean_square": 0.9748658931335805,
+          "flux_fractional_error": [
+            0.003201342871184565,
+            0.004677190322628144,
+            0.004097783933434185,
+            0.002313462025696378
+          ],
+          "spectral_index_error": [
+            0.011291563542919936,
+            0.013620831857455107,
+            0.012441936438853052,
+            0.009299318013915925
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0014711378348233328,
+          "pointing_coverage_95_fraction": 0.7473958333333334,
+          "pointing_standardized_error_rms": 1.5632387224399478,
+          "median_pointing_std_arcsec": 1.533367918338345,
+          "relative_pointing_coverage_95_fraction": 0.9401041666666666,
+          "relative_median_pointing_std_arcsec": 0.8993053713579504,
+          "common_pointing_coverage_95_fraction": 0.5208333333333334,
+          "common_median_pointing_std_arcsec": 1.240633390742797,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020500709763877488,
+            0.01437232567785137,
+            0.01026625590498068,
+            0.006148683246171676
+          ],
+          "beam_log_width_std": 0.0011731375230614124,
+          "beam_antenna_log_width_std": [
+            0.0002718552260356241,
+            0.0002635701008763354,
+            0.0002630034771037385,
+            0.0002725458763453201,
+            0.0002662889567700373,
+            0.0002682720278181538,
+            0.00027745565867187824,
+            0.0002618232719120976
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            9.268530412911737e-19,
+            0.0006777607037347488,
+            0.0006930924046824382,
+            0.00039968321893474513
+          ],
+          "train_whitened_residual_mean_square": 0.9121148606651632,
+          "train_clean_visibility_rms_mjy": 0.36530156304987665,
+          "test_whitened_residual_mean_square": 1.1631189905388335,
+          "test_clean_visibility_rms_mjy": 0.38279542029384056
+        },
+        {
+          "seed": 3,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9998656503356799,
+          "fitted_relative_antenna_log_width": [
+            0.007353718183916549,
+            -0.01528356878423014,
+            -0.013302197221845745,
+            0.007329180028109222,
+            0.00477280860785605,
+            0.003730081963974156,
+            0.008646836037953878,
+            -0.0032468588157339726
+          ],
+          "antenna_log_width_rmse": 0.00026257589075103784,
+          "solve_seconds_including_compilation": 0.6489901249988179,
+          "relative_rmse_arcsec": 0.9702635241157206,
+          "common_pointing_rmse_arcsec": 1.4323732103178826,
+          "maximum_mean_arcsec": 2.3121164420487474,
+          "clean_visibility_rms_mjy": 0.3246800375256229,
+          "whitened_residual_mean_square": 0.975839506379707,
+          "flux_fractional_error": [
+            0.003112677715249479,
+            0.002337039611068459,
+            0.003092478027969303,
+            0.004028665332278525
+          ],
+          "spectral_index_error": [
+            -0.014839659276466688,
+            -0.016266932318409144,
+            -0.015273437980113158,
+            -0.013307018903755297
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0009131452900341674,
+          "pointing_coverage_95_fraction": 0.9427083333333334,
+          "pointing_standardized_error_rms": 1.0714113895938056,
+          "median_pointing_std_arcsec": 1.536469493506313,
+          "relative_pointing_coverage_95_fraction": 0.9322916666666666,
+          "relative_median_pointing_std_arcsec": 0.8998014936616711,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.2436444983124362,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020504864831712207,
+            0.014343041564156124,
+            0.010258968799790855,
+            0.00616100747442717
+          ],
+          "beam_log_width_std": 0.0011747214687084725,
+          "beam_antenna_log_width_std": [
+            0.0002718616368742224,
+            0.0002637635437839177,
+            0.00026316694207469116,
+            0.00027252004968352346,
+            0.0002666233867612916,
+            0.00026828106323368423,
+            0.00027728277333883465,
+            0.00026218740753295225
+          ],
+          "beam_antenna_width_coverage_95_fraction": 0.875,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            2.7680937301425867e-18,
+            0.000676764650582581,
+            0.0006927473821218851,
+            0.00040085033038095877
+          ],
+          "train_whitened_residual_mean_square": 0.9459750306502521,
+          "train_clean_visibility_rms_mjy": 0.32592467914591416,
+          "test_whitened_residual_mean_square": 1.0654329335680706,
+          "test_clean_visibility_rms_mjy": 0.3209171507437056
+        },
+        {
+          "seed": 4,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9995660885584879,
+          "fitted_relative_antenna_log_width": [
+            0.006976910143586081,
+            -0.015623501830842036,
+            -0.013731393281900863,
+            0.008320947371337541,
+            0.004767381691179429,
+            0.0042427576342627385,
+            0.00837936621569221,
+            -0.003332467943315101
+          ],
+          "antenna_log_width_rmse": 0.0002817549669492485,
+          "solve_seconds_including_compilation": 0.644931082999392,
+          "relative_rmse_arcsec": 1.1081893336219437,
+          "common_pointing_rmse_arcsec": 1.073119711902903,
+          "maximum_mean_arcsec": 1.8201505262970186,
+          "clean_visibility_rms_mjy": 0.3557329561276091,
+          "whitened_residual_mean_square": 0.9586662770013616,
+          "flux_fractional_error": [
+            0.003226328658783695,
+            0.0043224051281762765,
+            0.0031194950399098254,
+            0.00366682831970766
+          ],
+          "spectral_index_error": [
+            0.010057689470643005,
+            0.012125791131183394,
+            0.009733719559767873,
+            0.010706478166520261
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0010925515390507456,
+          "pointing_coverage_95_fraction": 0.9635416666666666,
+          "pointing_standardized_error_rms": 0.9956864764679763,
+          "median_pointing_std_arcsec": 1.5348564390340866,
+          "relative_pointing_coverage_95_fraction": 0.8958333333333334,
+          "relative_median_pointing_std_arcsec": 0.8991947763830715,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.2416296705913918,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020501342460277672,
+            0.014367339104884535,
+            0.010256325262493262,
+            0.0061570209943255525
+          ],
+          "beam_log_width_std": 0.0011735552051998976,
+          "beam_antenna_log_width_std": [
+            0.00027149190995878856,
+            0.0002635732506916248,
+            0.0002629582121588141,
+            0.00027298310905271437,
+            0.00026648827475228055,
+            0.00026838185310932075,
+            0.0002769668544538749,
+            0.0002620083092973156
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            2.282198477612018e-18,
+            0.000677588058970178,
+            0.0006925836782155063,
+            0.00040031029334971563
+          ],
+          "train_whitened_residual_mean_square": 0.9333088669785569,
+          "train_clean_visibility_rms_mjy": 0.3509002529403134,
+          "test_whitened_residual_mean_square": 1.0347385070697759,
+          "test_clean_visibility_rms_mjy": 0.36985237833549495
+        },
+        {
+          "seed": 5,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0018996660348616,
+          "fitted_relative_antenna_log_width": [
+            0.00700152262363781,
+            -0.015552668890887224,
+            -0.013597098690486751,
+            0.007936796053327087,
+            0.004388921724243806,
+            0.004083318702279946,
+            0.008862280208027085,
+            -0.003123071730141762
+          ],
+          "antenna_log_width_rmse": 0.0002037334694625825,
+          "solve_seconds_including_compilation": 0.6453936660000181,
+          "relative_rmse_arcsec": 0.8340723586645898,
+          "common_pointing_rmse_arcsec": 0.6403494219662637,
+          "maximum_mean_arcsec": 1.1166166841086709,
+          "clean_visibility_rms_mjy": 0.3472530535804506,
+          "whitened_residual_mean_square": 0.9793607442233675,
+          "flux_fractional_error": [
+            0.0041389476274462655,
+            0.0028421799221882704,
+            0.0018493757761084417,
+            0.002620180499903313
+          ],
+          "spectral_index_error": [
+            -0.004181136012850528,
+            -0.00669043116177459,
+            -0.00850219436089561,
+            -0.006744736807210883
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0022801344940832635,
+          "pointing_coverage_95_fraction": 1,
+          "pointing_standardized_error_rms": 0.6613888217610939,
+          "median_pointing_std_arcsec": 1.5432558840322625,
+          "relative_pointing_coverage_95_fraction": 0.9583333333333334,
+          "relative_median_pointing_std_arcsec": 0.9038469010363243,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.2488771802908338,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020529733308464065,
+            0.0143529959419748,
+            0.010248218128006283,
+            0.006153539118090466
+          ],
+          "beam_log_width_std": 0.0011803357700680755,
+          "beam_antenna_log_width_std": [
+            0.00027285103533332427,
+            0.00026489027690634106,
+            0.00026429801138936677,
+            0.0002741009145848534,
+            0.0002675804316100559,
+            0.00026963037024101095,
+            0.0002786466149802031,
+            0.0002633873369244147
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            4.371242902248228e-19,
+            0.0006765972339690046,
+            0.0006914216731314134,
+            0.00039992812953807213
+          ],
+          "train_whitened_residual_mean_square": 0.9543934292789626,
+          "train_clean_visibility_rms_mjy": 0.3423739028669533,
+          "test_whitened_residual_mean_square": 1.0542626890565816,
+          "test_clean_visibility_rms_mjy": 0.361495594427843
+        },
+        {
+          "seed": 6,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9977900738349575,
+          "fitted_relative_antenna_log_width": [
+            0.006748522872612725,
+            -0.015347557554946187,
+            -0.013419899144661481,
+            0.007775415622390783,
+            0.004647724704497088,
+            0.003976952370274225,
+            0.008899868902055406,
+            -0.003281027772222559
+          ],
+          "antenna_log_width_rmse": 0.00020946051812560686,
+          "solve_seconds_including_compilation": 0.6587462499992398,
+          "relative_rmse_arcsec": 0.9834850759611198,
+          "common_pointing_rmse_arcsec": 2.629884630117308,
+          "maximum_mean_arcsec": 4.0187907063483275,
+          "clean_visibility_rms_mjy": 0.3695675745915748,
+          "whitened_residual_mean_square": 0.9631577204476458,
+          "flux_fractional_error": [
+            0.0024132415900250948,
+            0.0053065323300214295,
+            0.00470447924455164,
+            0.0030020445371006232
+          ],
+          "spectral_index_error": [
+            0.0045325399777589315,
+            0.00989099159589657,
+            0.009035999588284271,
+            0.005165189029222805
+          ],
+          "maximum_flux_ratio_fractional_error": 0.002886325339644502,
+          "pointing_coverage_95_fraction": 0.6145833333333334,
+          "pointing_standardized_error_rms": 1.78186883871571,
+          "median_pointing_std_arcsec": 1.5277000218806718,
+          "relative_pointing_coverage_95_fraction": 0.9583333333333334,
+          "relative_median_pointing_std_arcsec": 0.8965035696743615,
+          "common_pointing_coverage_95_fraction": 0.4375,
+          "common_median_pointing_std_arcsec": 1.2357838816169633,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020480799265084927,
+            0.014378647836776235,
+            0.010270540473279542,
+            0.00615175398168425
+          ],
+          "beam_log_width_std": 0.001168351536921118,
+          "beam_antenna_log_width_std": [
+            0.00027039117160338345,
+            0.00026264752612023686,
+            0.00026204732890818216,
+            0.00027167151099322367,
+            0.00026547115312025354,
+            0.00026727606023541436,
+            0.00027630297569348106,
+            0.00026109690367926206
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            false,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            9.930303538166346e-19,
+            0.0006783868891140959,
+            0.0006938589023312678,
+            0.0004000941697046236
+          ],
+          "train_whitened_residual_mean_square": 0.9379436729479182,
+          "train_clean_visibility_rms_mjy": 0.37042560352760223,
+          "test_whitened_residual_mean_square": 1.0387998629468287,
+          "test_clean_visibility_rms_mjy": 0.3669814511819796
+        },
+        {
+          "seed": 7,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 12,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.999031550686499,
+          "fitted_relative_antenna_log_width": [
+            0.007168028473371668,
+            -0.015249380645147553,
+            -0.01309079289535628,
+            0.008074731689682925,
+            0.004634647539279528,
+            0.0037672677206124962,
+            0.008335557318045795,
+            -0.003640059200488578
+          ],
+          "antenna_log_width_rmse": 0.00019098224315458736,
+          "solve_seconds_including_compilation": 0.6906922079979267,
+          "relative_rmse_arcsec": 0.8290920159348062,
+          "common_pointing_rmse_arcsec": 0.4024002879916205,
+          "maximum_mean_arcsec": 1.3440590574367648,
+          "clean_visibility_rms_mjy": 0.33253738011914946,
+          "whitened_residual_mean_square": 0.953097980133852,
+          "flux_fractional_error": [
+            0.002468104642226354,
+            0.0032387751424127753,
+            0.003149625318948024,
+            0.0036846256820088907
+          ],
+          "spectral_index_error": [
+            -0.03131887617165141,
+            -0.029790712136251285,
+            -0.03043014892933349,
+            -0.029519541704855268
+          ],
+          "maximum_flux_ratio_fractional_error": 0.001213525930799264,
+          "pointing_coverage_95_fraction": 1,
+          "pointing_standardized_error_rms": 0.5415752536554761,
+          "median_pointing_std_arcsec": 1.5328501769869385,
+          "relative_pointing_coverage_95_fraction": 0.9817708333333334,
+          "relative_median_pointing_std_arcsec": 0.8976570970727381,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.240969272101061,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020491855552151446,
+            0.014356053446799757,
+            0.010259631806687272,
+            0.006158941805043928
+          ],
+          "beam_log_width_std": 0.001172109267761046,
+          "beam_antenna_log_width_std": [
+            0.0002712742325955225,
+            0.0002633097444136825,
+            0.0002627725624791428,
+            0.00027251515467791964,
+            0.0002660864901769142,
+            0.00026782627885359075,
+            0.0002766175176771263,
+            0.00026159260210151903
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            1.065841538162155e-18,
+            0.0006775022107875266,
+            0.0006930179867391917,
+            0.00040078375833675406
+          ],
+          "train_whitened_residual_mean_square": 0.944609089252308,
+          "train_clean_visibility_rms_mjy": 0.3322462521410351,
+          "test_whitened_residual_mean_square": 0.9785646527784843,
+          "test_clean_visibility_rms_mjy": 0.3334092388053126
+        },
+        {
+          "seed": 8,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9989439980061995,
+          "fitted_relative_antenna_log_width": [
+            0.007503254678221578,
+            -0.015263377070997097,
+            -0.013537114941351274,
+            0.007988939230553826,
+            0.004672361785670137,
+            0.003803091480619855,
+            0.008656913675848182,
+            -0.003824068838565208
+          ],
+          "antenna_log_width_rmse": 0.00019697572221747582,
+          "solve_seconds_including_compilation": 0.6563614170008805,
+          "relative_rmse_arcsec": 0.8932018825210689,
+          "common_pointing_rmse_arcsec": 0.7017760944227684,
+          "maximum_mean_arcsec": 1.4453729654597471,
+          "clean_visibility_rms_mjy": 0.3390176731215835,
+          "whitened_residual_mean_square": 0.9947595308738987,
+          "flux_fractional_error": [
+            0.002842261445986205,
+            0.003777247810099693,
+            0.004160254911838468,
+            0.0033268703937914257
+          ],
+          "spectral_index_error": [
+            -0.0005471310545274166,
+            0.0011281713553344952,
+            0.0020685843681149674,
+            -0.00027343653737610385
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0013142580010059302,
+          "pointing_coverage_95_fraction": 1,
+          "pointing_standardized_error_rms": 0.6941810955115987,
+          "median_pointing_std_arcsec": 1.5318626532631692,
+          "relative_pointing_coverage_95_fraction": 0.9739583333333334,
+          "relative_median_pointing_std_arcsec": 0.8979515998153008,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.2397955542691876,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020494015878558064,
+            0.014359905918162085,
+            0.01026721134420389,
+            0.006155094627589972
+          ],
+          "beam_log_width_std": 0.0011718229924038326,
+          "beam_antenna_log_width_std": [
+            0.0002714859012238093,
+            0.0002632824426935395,
+            0.0002626644500965006,
+            0.00027244316057617576,
+            0.00026609358290164304,
+            0.00026782832317358236,
+            0.0002767917668725594,
+            0.00026151169876356857
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            2.1346262361214253e-18,
+            0.0006775120976698076,
+            0.0006933640798062111,
+            0.00040037842651425063
+          ],
+          "train_whitened_residual_mean_square": 0.9483938397246902,
+          "train_clean_visibility_rms_mjy": 0.3398053172333616,
+          "test_whitened_residual_mean_square": 1.1338566043215246,
+          "test_clean_visibility_rms_mjy": 0.3366436838779168
+        },
+        {
+          "seed": 9,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9974763460720456,
+          "fitted_relative_antenna_log_width": [
+            0.007391780894065642,
+            -0.01578055134869964,
+            -0.013629667496241255,
+            0.008336017103929975,
+            0.005089576482938799,
+            0.0036487246553265954,
+            0.008694993305392158,
+            -0.0037508735967122777
+          ],
+          "antenna_log_width_rmse": 0.0003155586565311169,
+          "solve_seconds_including_compilation": 0.6538795420019596,
+          "relative_rmse_arcsec": 0.8994198727815448,
+          "common_pointing_rmse_arcsec": 2.636072419699041,
+          "maximum_mean_arcsec": 3.575138505803962,
+          "clean_visibility_rms_mjy": 0.365172008896219,
+          "whitened_residual_mean_square": 0.9994546701169372,
+          "flux_fractional_error": [
+            0.002242891035387995,
+            0.0033677546675292547,
+            0.0033406070145345357,
+            0.007186206747031854
+          ],
+          "spectral_index_error": [
+            0.006650225514450048,
+            0.008522243852514988,
+            0.008699601726563366,
+            0.015271400581306382
+          ],
+          "maximum_flux_ratio_fractional_error": 0.004932253205145898,
+          "pointing_coverage_95_fraction": 0.6744791666666666,
+          "pointing_standardized_error_rms": 1.75192610843136,
+          "median_pointing_std_arcsec": 1.529112883363474,
+          "relative_pointing_coverage_95_fraction": 0.9869791666666666,
+          "relative_median_pointing_std_arcsec": 0.8946565472812459,
+          "common_pointing_coverage_95_fraction": 0.4166666666666667,
+          "common_median_pointing_std_arcsec": 1.2384648296777203,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020475373110252427,
+            0.014349565707760815,
+            0.010255628669827994,
+            0.006176846857994457
+          ],
+          "beam_log_width_std": 0.001167919873194873,
+          "beam_antenna_log_width_std": [
+            0.0002704399688966419,
+            0.0002623232693440183,
+            0.0002617444821649242,
+            0.00027172112161657233,
+            0.00026537632530131193,
+            0.00026681857767829386,
+            0.0002758508167361667,
+            0.00026063442515819325
+          ],
+          "beam_antenna_width_coverage_95_fraction": 0.875,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            false
+          ],
+          "flux_ratio_std": [
+            8.499978257393529e-19,
+            0.0006776298963075967,
+            0.0006931266656483284,
+            0.00040249852251117056
+          ],
+          "train_whitened_residual_mean_square": 0.9742448788149172,
+          "train_clean_visibility_rms_mjy": 0.3635387229432527,
+          "test_whitened_residual_mean_square": 1.0750840440229972,
+          "test_clean_visibility_rms_mjy": 0.3700286138767754
+        },
+        {
+          "seed": 10,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 7,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 0.9996041182360337,
+          "fitted_relative_antenna_log_width": [
+            0.007261234831500609,
+            -0.015171726374534131,
+            -0.01349774895038098,
+            0.0077574340058205035,
+            0.0042487978508119716,
+            0.003812522051392476,
+            0.008803939290020579,
+            -0.003214452704631032
+          ],
+          "antenna_log_width_rmse": 0.0002016604749389012,
+          "solve_seconds_including_compilation": 0.6481265410002379,
+          "relative_rmse_arcsec": 1.0644173271476525,
+          "common_pointing_rmse_arcsec": 1.6677853177388167,
+          "maximum_mean_arcsec": 2.7735753965679475,
+          "clean_visibility_rms_mjy": 0.37116554895905013,
+          "whitened_residual_mean_square": 0.9531494695290761,
+          "flux_fractional_error": [
+            0.0033589880737450173,
+            0.004840162814950144,
+            0.0032553392455874075,
+            0.0035815190715708933
+          ],
+          "spectral_index_error": [
+            0.02441041158914814,
+            0.027179169890622523,
+            0.024282562087475812,
+            0.025589168631795722
+          ],
+          "maximum_flux_ratio_fractional_error": 0.00147621614876714,
+          "pointing_coverage_95_fraction": 0.8697916666666666,
+          "pointing_standardized_error_rms": 1.2972951147049163,
+          "median_pointing_std_arcsec": 1.535211168109424,
+          "relative_pointing_coverage_95_fraction": 0.9557291666666666,
+          "relative_median_pointing_std_arcsec": 0.8996431925795689,
+          "common_pointing_coverage_95_fraction": 0.875,
+          "common_median_pointing_std_arcsec": 1.24209017526326,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.020501686228855537,
+            0.014373087184222545,
+            0.01025652880117596,
+            0.006155790626687159
+          ],
+          "beam_log_width_std": 0.0011736421797221295,
+          "beam_antenna_log_width_std": [
+            0.00027169075283793153,
+            0.0002636457935883864,
+            0.00026301819220787045,
+            0.0002726756139650607,
+            0.000266216712471325,
+            0.0002682220444950411,
+            0.00027727045123776035,
+            0.0002620828957057943
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            1.3375927718458395e-18,
+            0.0006777985972767163,
+            0.0006925769294806388,
+            0.0004002847474700024
+          ],
+          "train_whitened_residual_mean_square": 0.9163210824442308,
+          "train_clean_visibility_rms_mjy": 0.370935180445883,
+          "test_whitened_residual_mean_square": 1.0636346307836118,
+          "test_clean_visibility_rms_mjy": 0.3718557982054774
+        },
+        {
+          "seed": 11,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 12,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0000888909600751,
+          "fitted_relative_antenna_log_width": [
+            0.006996745435999524,
+            -0.01545141036296657,
+            -0.013133640741658337,
+            0.007650346427140347,
+            0.0043759162807852185,
+            0.004192924966386721,
+            0.008795406221017375,
+            -0.0034262882267042743
+          ],
+          "antenna_log_width_rmse": 0.00019808710798522306,
+          "solve_seconds_including_compilation": 0.6443460000009509,
+          "relative_rmse_arcsec": 0.9083503670931291,
+          "common_pointing_rmse_arcsec": 1.364023438363604,
+          "maximum_mean_arcsec": 2.0632561616981335,
+          "clean_visibility_rms_mjy": 0.33333166856286023,
+          "whitened_residual_mean_square": 0.9759251685378457,
+          "flux_fractional_error": [
+            0.0031944044145846284,
+            0.0032062561801302625,
+            0.0022438054829370113,
+            0.004075951992533966
+          ],
+          "spectral_index_error": [
+            -0.012725429932356591,
+            -0.012425096788470036,
+            -0.014396379090685918,
+            -0.011012239090560039
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0009475720034566315,
+          "pointing_coverage_95_fraction": 0.9609375,
+          "pointing_standardized_error_rms": 1.0106434494493892,
+          "median_pointing_std_arcsec": 1.5370198237036687,
+          "relative_pointing_coverage_95_fraction": 0.9791666666666666,
+          "relative_median_pointing_std_arcsec": 0.9002333035818786,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.2442554590988628,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.02050625893463785,
+            0.014355279380122769,
+            0.0102501567326996,
+            0.006161219743651446
+          ],
+          "beam_log_width_std": 0.0011751811953797703,
+          "beam_antenna_log_width_std": [
+            0.0002717854341101368,
+            0.00026388109874400667,
+            0.0002633404116071991,
+            0.00027286845964201873,
+            0.0002665440340251762,
+            0.00026863421286093555,
+            0.0002775305343336195,
+            0.0002622635284256668
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            9.616481884824812e-19,
+            0.0006771444066725103,
+            0.0006920249826286824,
+            0.0004008633378104136
+          ],
+          "train_whitened_residual_mean_square": 0.952438587799647,
+          "train_clean_visibility_rms_mjy": 0.3320613124272371,
+          "test_whitened_residual_mean_square": 1.046384910752442,
+          "test_clean_visibility_rms_mjy": 0.3371140154827511
+        },
+        {
+          "seed": 12,
+          "case": "joint_flux",
+          "common_offset_per_axis_arcmin": 0,
+          "success": true,
+          "nfev": 8,
+          "parameter_count": 260,
+          "true_antenna_log_width": [
+            0.007202239257854587,
+            -0.015452788513028727,
+            -0.013350832813204727,
+            0.007941683683785105,
+            0.004561413941242976,
+            0.003896304892130253,
+            0.008671413395212081,
+            -0.003469433843991545
+          ],
+          "beam_width_multiplier": 1.0009078975987196,
+          "fitted_relative_antenna_log_width": [
+            0.0070692421720478,
+            -0.01523511724258538,
+            -0.013253887247381304,
+            0.00802783515760185,
+            0.00427667033578718,
+            0.004367280787555994,
+            0.008548940933380628,
+            -0.003800964896406772
+          ],
+          "antenna_log_width_rmse": 0.0002524131245413432,
+          "solve_seconds_including_compilation": 0.6589934170006018,
+          "relative_rmse_arcsec": 0.9070934406645811,
+          "common_pointing_rmse_arcsec": 0.8714127762875719,
+          "maximum_mean_arcsec": 1.2946031813586611,
+          "clean_visibility_rms_mjy": 0.3347495890530708,
+          "whitened_residual_mean_square": 0.962749650949687,
+          "flux_fractional_error": [
+            0.003441689551501259,
+            0.003107699770221073,
+            0.001932188235641119,
+            0.002794393610521695
+          ],
+          "spectral_index_error": [
+            -0.023731736619719945,
+            -0.024391403123581457,
+            -0.026282287122775583,
+            -0.02512522956761809
+          ],
+          "maximum_flux_ratio_fractional_error": 0.0015043239000114283,
+          "pointing_coverage_95_fraction": 0.9869791666666666,
+          "pointing_standardized_error_rms": 0.7786157627728778,
+          "median_pointing_std_arcsec": 1.540119481812321,
+          "relative_pointing_coverage_95_fraction": 0.9557291666666666,
+          "relative_median_pointing_std_arcsec": 0.9014462204836773,
+          "common_pointing_coverage_95_fraction": 1,
+          "common_median_pointing_std_arcsec": 1.2461621183963254,
+          "flux_coverage_95_per_source": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "flux_std_jy": [
+            0.02051612922812177,
+            0.014357244908322993,
+            0.010249386985887027,
+            0.006154799414258438
+          ],
+          "beam_log_width_std": 0.0011775416571491294,
+          "beam_antenna_log_width_std": [
+            0.0002723331461575114,
+            0.00026438171219797616,
+            0.0002638075482208235,
+            0.00027361063810668823,
+            0.000266997511005345,
+            0.00026923132325476756,
+            0.00027788821640564775,
+            0.0002626256042037744
+          ],
+          "beam_antenna_width_coverage_95_fraction": 1,
+          "flux_ratio_coverage_95_offaxis": [
+            true,
+            true,
+            true
+          ],
+          "flux_ratio_std": [
+            2.3435200678966215e-18,
+            0.0006770396097767697,
+            0.0006918912700080979,
+            0.0004001861528831298
+          ],
+          "train_whitened_residual_mean_square": 0.9309469553789684,
+          "train_clean_visibility_rms_mjy": 0.3320505530898866,
+          "test_whitened_residual_mean_square": 1.058157737661842,
+          "test_clean_visibility_rms_mjy": 0.34271918543160107
+        }
+      ]
+    }
+  ]
+}

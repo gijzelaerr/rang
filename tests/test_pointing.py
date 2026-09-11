@@ -182,6 +182,12 @@ def test_joint_smooth_gains_flux_and_relative_pointing(
     assert fit["fit_pointing"] == fit_pointing
     assert fit["uncertainty"]["offset_std_arcmin"].shape == truth.shape
     assert np.isfinite(fit["uncertainty"]["offset_std_arcmin"]).all()
+    np.testing.assert_array_equal(fit["uncertainty"]["common_offset_std_arcmin"], 0)
+    np.testing.assert_allclose(
+        fit["uncertainty"]["relative_offset_std_arcmin"],
+        fit["uncertainty"]["offset_std_arcmin"],
+        atol=1e-14,
+    )
     assert fit["uncertainty"]["flux_std_jy"][0] == 0
     if not fit_pointing:
         assert fit["retained_pointing_modes"] == 0
