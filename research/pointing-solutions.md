@@ -14,11 +14,11 @@ Pointing self-calibration is established: [Bhatnagar & Cornwell (2017)](https://
 
 For each visibility row, the direct sum is
 
-\[
+```math
 V_{pq}=\sum_j I_j(\nu) E_p(R_t(l_j,m_j)-\delta_p(t),\nu)
 E_q(R_t(l_j,m_j)-\delta_q(t),\nu)
 \exp[-2\pi i\,\nu/c\,(u l_j+v m_j+w(n_j-1))].
-\]
+```
 
 Here uvw is in metres, `n=sqrt(1-l²-m²)`, `R_t` is the supplied sky-to-antenna beam rotation and the baseline convention is p minus q. The current beams are real Gaussian voltage responses with power FWHM `1.02 λ / 13.5 m`. This scalar convention is not a full-polarization Jones implementation. Integrated component flux needs no additional `1/n` factor.
 
@@ -28,11 +28,11 @@ The observation arrays contain one row per baseline/time/frequency sample: `uvw_
 
 Each antenna's two offsets are natural cubic splines through user-specified knots. The coefficients are the offsets at those knots. The solver minimizes
 
-\[
+```math
 \sum_i |V_i^{\mathrm{pred}}-V_i^{\mathrm{obs}}|^2/\sigma_i^2
 +\lambda\sum_{p,d}\int_0^1 |\delta''_{p,d}(u)|^2du
 +\sum_{k,p,d}c_{k,p,d}^2/\sigma_c^2.
-\]
+```
 
 The first term is implemented as stacked real and imaginary residuals; `noise_jy` is sigma per component. Time `u` is normalized by the knot span. The integrated curvature penalty is evaluated exactly for the spline using two-point Gaussian quadrature on each knot interval. It leaves constant and linear drift unconstrained, so a proper zero-centred knot prior regularizes those modes. The default prior scale is 3 arcmin; its strength depends on knot count. Knot count and smoothness must be treated as model choices, not silently tuned to truth.
 

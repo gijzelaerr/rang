@@ -28,18 +28,18 @@ Retain the spherical sky geometry and w-term. Known beam rotation with parallact
 
 In antenna beam coordinates u, model a perturbed voltage Jones beam as
 
-\[
+```math
 E_p(u,t,\nu)=E_{p,0}(u-\delta_p(t),\nu)
 +\sum_k c_{pk}(t)\,\Psi_{pk}(u,\nu).
-\]
+```
 
 Here E_p,0 is a measured/model reference beam, delta_p is a two-component pointing offset, and Psi contains a small number of justified residual beam modes. Coordinate and polarization basis rotations must be applied consistently with the beam convention. For small pointing offsets,
 
-\[
+```math
 \delta E_p\simeq
 -\delta_{p,1}\partial_{u_1}E_{p,0}
 -\delta_{p,2}\partial_{u_2}E_{p,0}.
-\]
+```
 
 Start by fitting only pointing offsets. Introduce residual beam modes in a separate ablation. Exclude constant gain-like modes and modes duplicating the pointing derivatives, or explicitly constrain the resulting degeneracies. A flexible beam expansion can otherwise make instrumental gain and pointing estimates uninterpretable.
 

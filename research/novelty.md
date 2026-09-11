@@ -27,20 +27,20 @@ This is a targeted primary-source review, not an exhaustive novelty clearance. R
 
 Use real-stacked, noise-whitened visibilities. Around a fitted reference, write
 
-\[
+```math
 \delta y = A\delta x + B\delta\theta + Uz + n,
 \qquad \|z\|_2\leq 1.
-\]
+```
 
 `A` maps science perturbations, `B` maps physical calibration perturbations, and `U` contains scaled plausible unmodelled beam/sky perturbations. Its scales must come from independent knowledge or explicit stress assumptions, not the desired answer. The joint unit ball describes an ellipsoid, not independent unit bounds on every nuisance parameter.
 
 For a chosen calibration subspace `E` and regularization `λ`, let `K(E,λ)` be the local derivative of the **complete reported science estimator** with respect to visibilities. Include calibration refitting, final flux estimation and every data-dependent step being claimed. Let `D` normalize science outputs using independently chosen tolerances. Consider
 
-\[
+```math
 \|D(KA-I)\|_2\leq\epsilon_s,
 \qquad
 \|DKU\|_2\leq\epsilon_b.
-\]
+```
 
 The first limits science response distortion; the second limits model-error contamination. Science input units must be chosen explicitly so a unit perturbation ball has a specified meaning. For scalar reported flux `kᵀy`, the second expression before output normalization is `||Uᵀk||₂`: the exact worst-case linear contamination over the ellipsoid, by Cauchy–Schwarz. This is standard mathematics, not a new theorem.
 

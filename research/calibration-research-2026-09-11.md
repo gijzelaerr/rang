@@ -23,20 +23,20 @@ Two issues should be kept separate:
 
 For a far-field sky, a convenient full-polarization model is
 
-\[
+```math
 V_{pq}(t,\nu)=\int_{\Omega}
 J_p(\hat s,t,\nu)\,\mathcal B(\hat s,\nu)\,
 J_q^H(\hat s,t,\nu)
 e^{-2\pi i(\nu/c)b_{pq}(t)\cdot(\hat s-\hat s_0)}\,d\Omega
 +N_{pq}.
-\]
+```
 
 Here J excludes the geometric phase explicitly written in the exponential, and the polarization basis transformations belong in the full operator. In tangent-plane coordinates the phase contains
 
-\[
+```math
 ul+vm+w(\sqrt{1-l^2-m^2}-1),\qquad
 d\Omega=dl\,dm/\sqrt{1-l^2-m^2}.
-\]
+```
 
 Earth curvature contributes to array geometry, but the w-term is not exclusively an Earth-curvature effect. The astronomical unknown is generally brightness on a two-dimensional sphere, not a three-dimensional emitting volume. Frequency cubes and near-field imaging introduce different notions of depth. Smirnov's full-sky formalism supplies the starting point. Historically, the RIME originates in Hamaker, Bregman and Sault's work; Smirnov substantially developed and clarified it. [Smirnov 2011](https://arxiv.org/abs/1101.1764)
 
@@ -97,19 +97,19 @@ CMB internal linear combination methods preserve selected spectral responses whi
 
 Start with scalar Stokes-I, phase-only direction-dependent calibration and separately anchored instrumental amplitude. Represent electron-density perturbations in a few thick curved layers. For a straight-ray, weak-refraction approximation,
 
-\[
+```math
 T_p(\hat s,t)=\int_{\mathrm{ray}(p,\hat s)} n_e(r,t)\,d\ell,
 \qquad
 \phi_p(\hat s,t,\nu)=2\pi\nu\tau_p(t)-K T_p(\hat s,t)/\nu.
-\]
+```
 
 K is the plasma phase conversion constant for the chosen TEC units. Differential TEC and delay determine baseline phases. Use station positions and rotating celestial directions in a consistent Earth-centred coordinate system to evaluate rays.
 
 A discrete dynamics model is
 
-\[
+```math
 a_{t+1}=M(v_t)a_t+\epsilon_t,\quad \epsilon_t\sim\mathcal N(0,Q_t),
-\]
+```
 
 where a contains layer coefficients and M transports them along the shells. Begin with fixed layer heights and externally chosen or conservatively estimated velocities. Test inference of heights and velocities only after demonstrating observable vertical or temporal structure. A flexible independent gain field can otherwise mask failures of the physical model.
 
@@ -119,31 +119,31 @@ Retain the exact spherical geometric phase in the reference calculation. For sca
 
 The following derivation is a local Gaussian model, not a global theorem. Stack real and imaginary visibility parts and whiten using their noise covariance. Linearize around a current sky and the predicted physical calibration state:
 
-\[
+```math
 r=A\,\delta x+B\,\delta\theta+\epsilon,\qquad
 \epsilon\sim\mathcal N(0,I).
-\]
+```
 
 A contains uncertain sky-template responses; B contains physical calibration derivatives. Use centred priors with precision matrices Lambda_x and Lambda_theta. The local objective is
 
-\[
+```math
 \tfrac12\|r-A\delta x-B\delta\theta\|^2
 +\tfrac12\delta x^T\Lambda_x\delta x
 +\tfrac12\delta\theta^T\Lambda_\theta\delta\theta.
-\]
+```
 
 Eliminating delta x yields
 
-\[
+```math
 R=I-A(A^TA+\Lambda_x)^{-1}A^T,
 \quad F=B^TRB,\quad F_0=B^TB,
-\]
+```
 
 and the calibration normal equation
 
-\[
+```math
 (F+\Lambda_\theta)\delta\theta=B^TRr.
-\]
+```
 
 Use linear solves, not explicit inverses. For rank-deficient unregularized cases use appropriate pseudoinverses. If relinearizing away from the prior centre, include the prior-gradient terms in the right-hand side.
 
@@ -157,26 +157,26 @@ Remove true gauge freedoms before interpreting F. A common antenna phase is unob
 
 On the subspace where F_0 is positive definite, solve
 
-\[
+```math
 Fv_k=\eta_k F_0v_k.
-\]
+```
 
 For the local model, 0 <= eta_k <= 1. Small eta means that allowing sky uncertainty removes much of the apparent information for that calibration combination. This ratio alone is insufficient: a mode can have eta near one and still have almost no absolute information. Also compare its information to the physical prior, for example through v_k^T F v_k / (v_k^T Lambda_theta v_k) for a proper prior.
 
 Choose retained columns E from these candidate modes. For fixed E, A, B and priors, define the calibration-induced subtraction response
 
-\[
+```math
 L_E=BE(E^TB^TRBE+\Lambda_E)^{-1}E^TB^TR,
 \qquad \Lambda_E=E^T\Lambda_\theta E.
-\]
+```
 
 A small added visibility signal s then contributes (I-L_E)s to the residual after the calibration-induced model update in this local model. This describes model subtraction; calibrated images and inverse-gain-corrected data have additional response operators.
 
 Let Q_s have orthonormal columns spanning whitened visibility responses of designated science perturbations. Propose selecting E and its regularization subject to
 
-\[
+```math
 \|L_E Q_s\|_2\leq\varepsilon.
-\]
+```
 
 This bounds the worst relative visibility distortion for perturbations within that specified subspace. It is stronger than checking that the current fitted correction has a small projection onto Q_s: the constraint concerns how the estimator responds to new signal.
 
@@ -190,9 +190,9 @@ The local guarantee does not cover changes in the selected basis, fitted hyperpa
 
 Take a unit sky response a and a unit calibration response b with correlation c=a^T b. With a completely uncertain sky coefficient,
 
-\[
+```math
 R=I-aa^T,\qquad F=1-c^2,\qquad F_0=1.
-\]
+```
 
 When c=0, sky uncertainty costs no calibration information. When c approaches one, the unregularized joint calibration variance scales as 1/(1-c^2). At c=1, the sky coefficient and gain perturbation cannot be separated from these data.
 

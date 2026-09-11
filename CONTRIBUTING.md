@@ -20,6 +20,10 @@ git diff --check
 
 ## Scientific reporting
 
+Use fenced `math` blocks for display equations and dollar-delimited LaTeX for
+inline mathematics, following [GitHub's math formatting](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions).
+Keep code identifiers in code spans rather than math delimiters.
+
 The optional JAX tests are skipped when JAX is absent. Install the `pointing`
 extra as above for full verification. JAX is the explicitly requested
 automatic-differentiation reference path alongside the Rust core.

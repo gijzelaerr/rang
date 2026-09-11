@@ -4,6 +4,8 @@ Updated 2026-09-11.
 
 ## Latest checkpoint
 
+- Converted all 18 display equations across four research documents to GitHub-supported fenced math blocks; equations unchanged. Documented the formatting convention in CONTRIBUTING.md.
+
 - User/professor focus: pointing-error solutions; explicitly requested component-list conversion, DFT prediction, JAX automatic differentiation and smoothly time-varying per-antenna offsets. Implemented optional `rangtoy.pointing` with natural cubic spline trajectories, integrated-curvature regularization and SciPy least squares using JAX Jacobians.
 - Public PyPI explicitly required by user; isolated `.venv` installed JAX/JAXlib 0.11.1, NumPy 2.5.3, SciPy 1.18.1, pytest 9.1.1 and Ruff 0.16.7. Do not use the Spotify registry. Rules saved in AGENTS.md.
 - Rust `--pointing-reference` exports deterministic prediction/analytic-derivative fixtures; JAX comparisons, finite differences, spline controls and noiseless recovery passed (7 new tests).
