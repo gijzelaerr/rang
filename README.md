@@ -8,6 +8,19 @@ Reproducible experiments in direction-dependent calibration: recovering faint em
 
 ## Current research lead: a pointing–sky–gain ambiguity
 
+**Practical solver convention:** following feedback from Oleg, use
+`solve_pointing(..., zero_mean_pointing=True)` to solve pointing relative to
+the array mean. The unweighted antenna mean is exactly zero in both axes at
+every spline time. This removes the shared trajectory from the fit; it does
+not establish that the telescope's physical mean pointing is zero. The
+unconstrained option remains available for controlled identifiability tests.
+With a fixed or restricted sky/gain model, imposing this convention can still
+leave model mismatch when the true mean is nonzero; it is not a universal
+visibility-preserving transformation for realistic beams.
+
+[Relative-pointing recovery tests](research/relative-pointing.md) now compare
+correct and biased sky models, with and without a physical shared offset.
+
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and
 antenna gains for identical Gaussian beams—including rotating elliptical beams.

@@ -1,6 +1,7 @@
 //! A deliberately small scalar RIME experiment, not an operational calibrator.
 
 mod linalg;
+pub mod projector;
 use linalg::{Matrix, dot, eigen, mv, solve, zeros};
 use std::f64::consts::PI;
 

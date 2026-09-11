@@ -122,6 +122,36 @@ def test_invalid_knots(knots):
         spline_design([0, 1], knots)
 
 
+@pytest.mark.parametrize("minimum_information", [None, 0.0])
+def test_zero_mean_pointing_recovery(reference, minimum_information):
+    _, components, obs = reference
+    times = np.linspace(0, 21600, 24)
+    knots = np.linspace(0, 21600, 4)
+    design, _ = spline_design(times, knots)
+    coefficients = np.random.default_rng(71).normal(0, 0.3, (4, 8, 2))
+    coefficients -= coefficients.mean(axis=1, keepdims=True)
+    truth = np.einsum("tk,kad->tad", design, coefficients)
+    data = predict(components, obs, jnp.asarray(truth))
+    fit = solve_pointing(
+        components,
+        obs,
+        data,
+        times,
+        knots,
+        8,
+        noise_jy=1e-5,
+        smoothness=0.01,
+        zero_mean_pointing=True,
+        minimum_mode_information=minimum_information,
+    )
+    assert fit["success"], fit["message"]
+    assert fit["zero_mean_pointing"]
+    assert fit["parameter_count"] == 4 * 7 * 2
+    np.testing.assert_allclose(fit["knot_offsets_arcmin"].mean(axis=1), 0, atol=1e-15)
+    np.testing.assert_allclose(fit["offsets_arcmin"].mean(axis=1), 0, atol=1e-15)
+    assert np.sqrt(np.mean((fit["offsets_arcmin"] - truth) ** 2)) < 1e-3
+
+
 def test_joint_flux_recovers_pointing_with_wrong_sky(reference):
     _, components, obs = reference
     times = np.linspace(0, 21600, 24)

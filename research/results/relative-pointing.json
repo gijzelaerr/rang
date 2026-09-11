@@ -1,0 +1,321 @@
+{
+  "fixture_sha256": "2b962dfbe8105fc2e0eb833e0bc0c4d122132fd4e7b54c7fdc168243a127e61b",
+  "beam": {
+    "model": "MKAT-AA-L-JIM-2020",
+    "polarization": "H",
+    "katbeam_version": "0.1",
+    "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+    "source": "https://github.com/ska-sa/katbeam",
+    "description": "simplified holography-informed co-polar voltage beam"
+  },
+  "noise_per_real_component_jy": 0.001,
+  "limitations": "Known unit gains and exact beam; in-sample residuals, not held-out validation. Common offset is physical, not absorbed into the input sky.",
+  "results": [
+    {
+      "seed": 7,
+      "case": "known_sky",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 5,
+      "relative_rmse_arcsec": 0.8863292195046706,
+      "maximum_mean_arcsec": 1.3530843112619095e-15,
+      "clean_visibility_rms_mjy": 0.15367869040116502,
+      "whitened_residual_mean_square": 0.9788714959196209,
+      "flux_fractional_error": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "seed": 7,
+      "case": "wrong_fixed_sky",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 7,
+      "relative_rmse_arcsec": 5.674139823092959,
+      "maximum_mean_arcsec": 1.7694179454963432e-15,
+      "clean_visibility_rms_mjy": 13.855721169400823,
+      "whitened_residual_mean_square": 96.7064929281198,
+      "flux_fractional_error": [
+        0.0,
+        0.020000000000000018,
+        -0.020000000000000018,
+        0.020000000000000018
+      ]
+    },
+    {
+      "seed": 7,
+      "case": "joint_flux",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 5,
+      "relative_rmse_arcsec": 0.8849914188785795,
+      "maximum_mean_arcsec": 1.457167719820518e-15,
+      "clean_visibility_rms_mjy": 0.15550583225987932,
+      "whitened_residual_mean_square": 0.9785874302791946,
+      "flux_fractional_error": [
+        -1.3624284120772323e-05,
+        3.239468149107694e-05,
+        -1.2871856224117018e-05,
+        2.2413756811667795e-05
+      ]
+    },
+    {
+      "seed": 7,
+      "case": "known_sky",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 7,
+      "relative_rmse_arcsec": 4.251867695489391,
+      "maximum_mean_arcsec": 2.0816681711721685e-15,
+      "clean_visibility_rms_mjy": 9.321849830863973,
+      "whitened_residual_mean_square": 44.46439459564494,
+      "flux_fractional_error": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "seed": 7,
+      "case": "wrong_fixed_sky",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 9,
+      "relative_rmse_arcsec": 4.495836197035383,
+      "maximum_mean_arcsec": 2.706168622523819e-15,
+      "clean_visibility_rms_mjy": 13.458876123881932,
+      "whitened_residual_mean_square": 91.3369941375924,
+      "flux_fractional_error": [
+        0.0,
+        0.020000000000000018,
+        -0.020000000000000018,
+        0.020000000000000018
+      ]
+    },
+    {
+      "seed": 7,
+      "case": "joint_flux",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 7,
+      "relative_rmse_arcsec": 3.5401193708330743,
+      "maximum_mean_arcsec": 2.4980018054066022e-15,
+      "clean_visibility_rms_mjy": 8.326608149816227,
+      "whitened_residual_mean_square": 35.62538877566734,
+      "flux_fractional_error": [
+        -0.00032457435944144297,
+        0.0026647811486477657,
+        -0.00925242602763765,
+        0.009548518388690752
+      ]
+    },
+    {
+      "seed": 11,
+      "case": "known_sky",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 5,
+      "relative_rmse_arcsec": 0.6300733012480572,
+      "maximum_mean_arcsec": 2.0816681711721685e-15,
+      "clean_visibility_rms_mjy": 0.11913014194590127,
+      "whitened_residual_mean_square": 0.9995345963275073,
+      "flux_fractional_error": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "seed": 11,
+      "case": "wrong_fixed_sky",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 8,
+      "relative_rmse_arcsec": 6.010392022928979,
+      "maximum_mean_arcsec": 1.457167719820518e-15,
+      "clean_visibility_rms_mjy": 13.853205690621737,
+      "whitened_residual_mean_square": 96.97026322258597,
+      "flux_fractional_error": [
+        0.0,
+        0.020000000000000018,
+        -0.020000000000000018,
+        0.020000000000000018
+      ]
+    },
+    {
+      "seed": 11,
+      "case": "joint_flux",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 5,
+      "relative_rmse_arcsec": 0.6294733945022671,
+      "maximum_mean_arcsec": 2.0816681711721685e-15,
+      "clean_visibility_rms_mjy": 0.12017847440903019,
+      "whitened_residual_mean_square": 0.9994097413342758,
+      "flux_fractional_error": [
+        1.1857289016647954e-05,
+        -1.0189110881686503e-06,
+        1.7714741803009915e-05,
+        3.346635111434182e-05
+      ]
+    },
+    {
+      "seed": 11,
+      "case": "known_sky",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 8,
+      "relative_rmse_arcsec": 4.297923979764546,
+      "maximum_mean_arcsec": 2.4980018054066022e-15,
+      "clean_visibility_rms_mjy": 9.320191618478757,
+      "whitened_residual_mean_square": 44.33259696199084,
+      "flux_fractional_error": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "seed": 11,
+      "case": "wrong_fixed_sky",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 10,
+      "relative_rmse_arcsec": 5.0505709003919925,
+      "maximum_mean_arcsec": 2.914335439641036e-15,
+      "clean_visibility_rms_mjy": 13.458736971299937,
+      "whitened_residual_mean_square": 91.4927839626624,
+      "flux_fractional_error": [
+        0.0,
+        0.020000000000000018,
+        -0.020000000000000018,
+        0.020000000000000018
+      ]
+    },
+    {
+      "seed": 11,
+      "case": "joint_flux",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 8,
+      "relative_rmse_arcsec": 3.4791596335455104,
+      "maximum_mean_arcsec": 2.4980018054066022e-15,
+      "clean_visibility_rms_mjy": 8.327039649461154,
+      "whitened_residual_mean_square": 35.58129627350072,
+      "flux_fractional_error": [
+        -0.00029672378887379836,
+        0.002631701888975879,
+        -0.009205877167154708,
+        0.009556814355149656
+      ]
+    },
+    {
+      "seed": 19,
+      "case": "known_sky",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 5,
+      "relative_rmse_arcsec": 0.817874518948226,
+      "maximum_mean_arcsec": 1.6653345369377348e-15,
+      "clean_visibility_rms_mjy": 0.15516653199070796,
+      "whitened_residual_mean_square": 0.9752901749013481,
+      "flux_fractional_error": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "seed": 19,
+      "case": "wrong_fixed_sky",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 8,
+      "relative_rmse_arcsec": 6.221640054377868,
+      "maximum_mean_arcsec": 2.0816681711721685e-15,
+      "clean_visibility_rms_mjy": 13.851532579905392,
+      "whitened_residual_mean_square": 96.9074719127478,
+      "flux_fractional_error": [
+        0.0,
+        0.020000000000000018,
+        -0.020000000000000018,
+        0.020000000000000018
+      ]
+    },
+    {
+      "seed": 19,
+      "case": "joint_flux",
+      "common_offset_per_axis_arcmin": 0.0,
+      "success": true,
+      "nfev": 5,
+      "relative_rmse_arcsec": 0.8194552653289388,
+      "maximum_mean_arcsec": 2.914335439641036e-15,
+      "clean_visibility_rms_mjy": 0.1558721765924449,
+      "whitened_residual_mean_square": 0.9751793888177144,
+      "flux_fractional_error": [
+        -3.407183296166849e-06,
+        -1.735149788695267e-05,
+        -2.4517633647969106e-05,
+        2.953865400967537e-05
+      ]
+    },
+    {
+      "seed": 19,
+      "case": "known_sky",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 8,
+      "relative_rmse_arcsec": 4.652989554115424,
+      "maximum_mean_arcsec": 1.6653345369377348e-15,
+      "clean_visibility_rms_mjy": 9.316012336985592,
+      "whitened_residual_mean_square": 44.47122008472538,
+      "flux_fractional_error": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "seed": 19,
+      "case": "wrong_fixed_sky",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 10,
+      "relative_rmse_arcsec": 5.16009868398225,
+      "maximum_mean_arcsec": 2.4980018054066022e-15,
+      "clean_visibility_rms_mjy": 13.455917052507623,
+      "whitened_residual_mean_square": 91.6215785610822,
+      "flux_fractional_error": [
+        0.0,
+        0.020000000000000018,
+        -0.020000000000000018,
+        0.020000000000000018
+      ]
+    },
+    {
+      "seed": 19,
+      "case": "joint_flux",
+      "common_offset_per_axis_arcmin": 0.5,
+      "success": true,
+      "nfev": 8,
+      "relative_rmse_arcsec": 3.9800512072038137,
+      "maximum_mean_arcsec": 1.6653345369377348e-15,
+      "clean_visibility_rms_mjy": 8.320805584779666,
+      "whitened_residual_mean_square": 35.66470031487043,
+      "flux_fractional_error": [
+        -0.0003192288751043826,
+        0.0026045096963907,
+        -0.009263672854959881,
+        0.009555837239957121
+      ]
+    }
+  ]
+}

@@ -9,7 +9,9 @@ from scipy.optimize import least_squares
 from .pointing import predict, real_stack, resolve_predictor
 
 
-def nuisance_information_budget(pointing, nuisance, prior_factor):
+def nuisance_information_budget(
+    pointing, nuisance, prior_factor, *, reference_scale=None
+):
     """Local information split for whitened data and a Gaussian nuisance prior.
 
     prior_factor maps nuisance perturbations to whitened external residuals.
@@ -40,7 +42,10 @@ def nuisance_information_budget(pointing, nuisance, prior_factor):
     _, singular, vh = np.linalg.svd(
         np.vstack((data_residual, external_residual)), full_matrices=False
     )
-    raw_scale = np.linalg.norm(b, ord=2)
+    raw_scale = np.linalg.norm(b, ord=2) if reference_scale is None else reference_scale
+    if not np.isfinite(raw_scale) or raw_scale < 0:
+        raise ValueError("reference scale must be finite and nonnegative")
+    data_singular = np.linalg.svd(data_only, compute_uv=False)
     rank = int(np.sum(singular > raw_scale * 1e-10))
     fraction = None
     covariance = None
@@ -50,6 +55,8 @@ def nuisance_information_budget(pointing, nuisance, prior_factor):
         covariance = ((vh.T / singular**2) @ vh).tolist()
     return {
         "data_only_information": f_data.tolist(),
+        "data_only_rank": int(np.sum(data_singular > raw_scale * 1e-10)),
+        "data_only_singular_values": data_singular.tolist(),
         "conditioned_data_information": f_conditioned.tolist(),
         "external_information": f_external.tolist(),
         "total_information": f_total.tolist(),

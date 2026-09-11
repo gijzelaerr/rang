@@ -14,6 +14,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.interpolate import CubicSpline
+from scipy.linalg import null_space
 from scipy.optimize import OptimizeResult, least_squares
 
 C = 299_792_458.0
@@ -201,6 +202,7 @@ def solve_pointing(
     minimum_mode_information=None,
     beam_axis_ratio=1.0,
     predictor=None,
+    zero_mean_pointing=False,
     max_nfev=100,
 ):
     """Fit smooth offsets, optionally jointly fitting component flux densities.
@@ -218,6 +220,9 @@ def solve_pointing(
     penalized point estimate: sky/beam mismatch can bias the inferred motion.
     An optional predictor(components, observation, offsets_arcmin) can replace
     the analytic beam; it must support JAX differentiation through sky/offsets.
+    zero_mean_pointing constrains the unweighted antenna mean to zero at every
+    time, using an orthonormal contrast basis at each spline knot. This solves
+    relative pointing only; it does not measure the array's absolute offset.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before creating input arrays")
@@ -257,7 +262,14 @@ def solve_pointing(
     if not np.isfinite(sigma).all() or np.any(sigma <= 0):
         raise ValueError("noise_jy must be finite and positive")
     design_jax, penalty_jax = jnp.asarray(design), jnp.asarray(penalty)
-    shape = (len(knots_s), antenna_count, 2)
+    if not isinstance(zero_mean_pointing, (bool, np.bool_)):
+        raise TypeError("zero_mean_pointing must be boolean")
+    antenna_basis = jnp.asarray(
+        null_space(np.ones((1, antenna_count)))
+        if zero_mean_pointing
+        else np.eye(antenna_count)
+    )
+    shape = (len(knots_s), antenna_basis.shape[1], 2)
     pointing_size = int(np.prod(shape))
     flux_sigma = np.broadcast_to(
         np.asarray(0.0 if flux_prior_jy is None else flux_prior_jy, float),
@@ -287,8 +299,13 @@ def solve_pointing(
         )
         return components._replace(flux_jy=flux, spectral_index=alpha)
 
+    def unpack_pointing(flat):
+        return jnp.einsum(
+            "ab,kbd->kad", antenna_basis, flat[:pointing_size].reshape(shape)
+        )
+
     def residual(flat):
-        coefficients = flat[:pointing_size].reshape(shape)
+        coefficients = unpack_pointing(flat)
         offsets = jnp.einsum("tk,kad->tad", design_jax, coefficients)
         model = prediction(sky(flat), obs, offsets)
         curvature = jnp.einsum("rk,kad->rad", penalty_jax, coefficients)
@@ -356,7 +373,7 @@ def solve_pointing(
             optimality=0.0,
         )
     full_solution = transform @ result.x
-    coefficients = full_solution[:pointing_size].reshape(shape)
+    coefficients = np.asarray(unpack_pointing(jnp.asarray(full_solution)))
     singular = np.linalg.svd(result.jac[: 2 * n], compute_uv=False)
     cutoff = (
         (singular[0] if singular.size else 0)
@@ -366,6 +383,7 @@ def solve_pointing(
     rank = int(np.sum(singular > cutoff))
     return {
         "flux_jy": np.asarray(sky(jnp.asarray(full_solution)).flux_jy),
+        "zero_mean_pointing": bool(zero_mean_pointing),
         "beam_metadata": getattr(
             prediction,
             "metadata",

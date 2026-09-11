@@ -1,0 +1,46 @@
+"""Independent SVD checks of the Rust QR projection and its FFI boundary."""
+
+import numpy as np
+import pytest
+from rangtoy.projector import project_out
+
+
+@pytest.mark.parametrize(
+    "rows,columns,rank", [(30, 8, 8), (30, 8, 5), (10, 12, 10), (10, 0, 0)]
+)
+def test_projector_matches_svd(rows, columns, rank):
+    rng = np.random.default_rng(19)
+    a = rng.normal(size=(rows, rank)) @ rng.normal(size=(rank, columns))
+    z = rng.normal(size=(rows, 4))
+    actual, found = project_out(a, z)
+    expected = z - a @ np.linalg.lstsq(a, z, rcond=1e-12)[0]
+    assert found == rank
+    assert actual.shape == (rows - rank, 4)
+    np.testing.assert_allclose(actual.T @ actual, expected.T @ expected, atol=1e-11)
+
+
+def test_projector_noncontiguous_inputs_and_invalid_arguments():
+    a = np.arange(80.0).reshape(10, 8)[:, ::2]
+    z = np.eye(10)[:, ::3]
+    p, _ = project_out(a, z)
+    expected = z - a @ np.linalg.lstsq(a, z, rcond=1e-12)[0]
+    np.testing.assert_allclose(p.T @ p, expected.T @ expected, atol=1e-12)
+    with pytest.raises(ValueError, match="real"):
+        project_out(a.astype(complex), z)
+    with pytest.raises(ValueError, match="dimensions"):
+        project_out(a, z[:-1])
+    with pytest.raises(ValueError, match="finite"):
+        project_out(a, z, relative_tolerance=np.nan)
+
+
+def test_projector_drops_small_rank_and_preserves_gauge_null():
+    a = np.diag([1.0, 0.1, 1e-15])
+    p, rank = project_out(a, np.eye(3), relative_tolerance=1e-12)
+    assert rank == 2
+    np.testing.assert_allclose(p.T @ p, np.diag([0.0, 0.0, 1.0]), atol=1e-14)
+    rng = np.random.default_rng(71)
+    a = rng.normal(size=(64, 12))
+    z = a @ rng.normal(size=(12, 2))
+    p, rank = project_out(a, z)
+    assert rank == 12
+    assert np.linalg.norm(p) < 1e-12
