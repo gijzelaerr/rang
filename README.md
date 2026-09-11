@@ -44,6 +44,13 @@ ratios; richer beam controls correct the tested low-dimensional errors.
 the shared-offset failure under the restricted matched model, without claiming
 general absolute-pointing identifiability.
 
+[Structured information-audit benchmarks](research/frequency-blocking.md)
+now preserve the dense result while reducing computation; this is a kernel
+benchmark, not yet an end-to-end calibration advantage.
+[A public MeerKAT Measurement Set inspection](research/measurement-set-inspection.md)
+adds a real-data ingestion path and records the antenna/coordinate metadata
+issues that must be resolved before a trustworthy pointing comparison.
+
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and
 antenna gains for identical Gaussian beams—including rotating elliptical beams.

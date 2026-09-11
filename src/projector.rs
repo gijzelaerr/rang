@@ -4,6 +4,25 @@
 //! coordinates. No normal equations are formed. Returned rows are rotated
 //! residual coordinates, not residuals in the original visibility order.
 
+fn dot(a: &[f64], b: &[f64]) -> f64 {
+    // Independent accumulators allow vectorization without fast-math flags.
+    // This changes summation order, not the Householder/rank convention.
+    let mut sums = [0.0; 4];
+    let mut ac = a.chunks_exact(4);
+    let mut bc = b.chunks_exact(4);
+    for (x, y) in ac.by_ref().zip(bc.by_ref()) {
+        for i in 0..4 {
+            sums[i] += x[i] * y[i];
+        }
+    }
+    sums.iter().sum::<f64>()
+        + ac.remainder()
+            .iter()
+            .zip(bc.remainder())
+            .map(|(x, y)| x * y)
+            .sum::<f64>()
+}
+
 pub fn project_out(
     nuisance: &[f64],
     targets: &[f64],
@@ -26,8 +45,19 @@ pub fn project_out(
     {
         return Err("finite matrices and tolerance in (0,1) required");
     }
-    let mut a = nuisance.to_vec();
-    let mut z = targets.to_vec();
+    // The FFI remains row-major, but Householder work is column-oriented.
+    // Contiguous internal columns avoid a full-row stride for each dot/update.
+    let to_columns = |input: &[f64], columns: usize| {
+        let mut output = vec![0.0; input.len()];
+        for r in 0..rows {
+            for c in 0..columns {
+                output[c * rows + r] = input[r * columns + c];
+            }
+        }
+        output
+    };
+    let mut a = to_columns(nuisance, nuisance_cols);
+    let mut z = to_columns(targets, target_cols);
     // A common rescaling preserves the column space and keeps squared norms
     // safe without calling hypot for every element of every pivot candidate.
     let normalization = a.iter().map(|x| x.abs()).fold(0.0_f64, f64::max);
@@ -37,10 +67,8 @@ pub fn project_out(
         }
     }
     let column_norm = |matrix: &[f64], start: usize, column: usize| {
-        (start..rows)
-            .map(|r| matrix[r * nuisance_cols + column].powi(2))
-            .sum::<f64>()
-            .sqrt()
+        let column = &matrix[column * rows + start..(column + 1) * rows];
+        dot(column, column).sqrt()
     };
     let scale = (0..nuisance_cols)
         .map(|c| column_norm(&a, 0, c))
@@ -58,11 +86,11 @@ pub fn project_out(
             break;
         }
         for r in 0..rows {
-            a.swap(r * nuisance_cols + step, r * nuisance_cols + pivot);
+            a.swap(step * rows + r, pivot * rows + r);
         }
-        let mut v: Vec<f64> = (step..rows).map(|r| a[r * nuisance_cols + step]).collect();
+        let mut v = a[step * rows + step..(step + 1) * rows].to_vec();
         v[0] += norm.copysign(v[0]);
-        let vnorm = v.iter().map(|x| x * x).sum::<f64>().sqrt();
+        let vnorm = dot(&v, &v).sqrt();
         if !vnorm.is_finite() || vnorm == 0.0 {
             return Err("reflector overflow");
         }
@@ -70,32 +98,31 @@ pub fn project_out(
             *x /= vnorm;
         }
         for c in step..nuisance_cols {
-            let dot: f64 = v
-                .iter()
-                .enumerate()
-                .map(|(i, &x)| x * a[(step + i) * nuisance_cols + c])
-                .sum();
-            for (i, &x) in v.iter().enumerate() {
-                a[(step + i) * nuisance_cols + c] -= 2.0 * x * dot;
+            let column = &mut a[c * rows + step..(c + 1) * rows];
+            let product = dot(&v, column);
+            for (&x, y) in v.iter().zip(column.iter_mut()) {
+                *y -= 2.0 * x * product;
             }
         }
         for c in 0..target_cols {
-            let dot: f64 = v
-                .iter()
-                .enumerate()
-                .map(|(i, &x)| x * z[(step + i) * target_cols + c])
-                .sum();
-            for (i, &x) in v.iter().enumerate() {
-                z[(step + i) * target_cols + c] -= 2.0 * x * dot;
+            let column = &mut z[c * rows + step..(c + 1) * rows];
+            let product = dot(&v, column);
+            for (&x, y) in v.iter().zip(column.iter_mut()) {
+                *y -= 2.0 * x * product;
             }
         }
         rank += 1;
     }
-    z[..rank * target_cols].fill(0.0);
     if !z.iter().all(|x| x.is_finite()) {
         return Err("target projection overflow");
     }
-    Ok((z, rank))
+    let mut output = vec![0.0; z.len()];
+    for r in rank..rows {
+        for c in 0..target_cols {
+            output[r * target_cols + c] = z[c * rows + r];
+        }
+    }
+    Ok((output, rank))
 }
 
 /// Project row-major targets off nuisance columns. Returns 0 on success,
@@ -158,6 +185,16 @@ pub unsafe extern "C" fn rang_project_out(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn dot_covers_vector_chunks_and_remainders() {
+        for length in 0..20 {
+            let a: Vec<f64> = (0..length).map(|i| i as f64 - 7.0).collect();
+            let b: Vec<f64> = (0..length).map(|i| 2.0 * i as f64 + 1.0).collect();
+            let reference: f64 = a.iter().zip(&b).map(|(x, y)| x * y).sum();
+            assert_eq!(dot(&a, &b), reference);
+        }
+    }
 
     #[test]
     fn rank_deficient_projection_preserves_residual_gram() {

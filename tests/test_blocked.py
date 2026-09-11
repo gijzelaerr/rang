@@ -29,7 +29,8 @@ def fixture():
     return component_list(s[:, 0], s[:, 1], s[:, 2], s[:, 3]), obs
 
 
-def test_blocked_matches_dense_and_numpy(fixture):
+@pytest.mark.parametrize("frequency_blocking", [False, True])
+def test_blocked_matches_dense_and_numpy(fixture, frequency_blocking):
     pytest.importorskip("katbeam")
     sky, obs = fixture
     table, metadata = load_katbeam()
@@ -48,7 +49,13 @@ def test_blocked_matches_dense_and_numpy(fixture):
     )
     for backend in ("rust", "numpy"):
         design = prepare_blocked_design(
-            sky, obs, 8, noise_jy=0.001, predictor=predictor, backend=backend
+            sky,
+            obs,
+            8,
+            noise_jy=0.001,
+            predictor=predictor,
+            backend=backend,
+            frequency_blocking=frequency_blocking,
         )
         block = audit_blocked_design(design, log_flux_prior_covariance=covariance)
         assert block["compressed_rows"] == 432
@@ -66,9 +73,19 @@ def test_blocked_matches_dense_and_numpy(fixture):
             )
 
 
-def test_blocked_preserves_exact_null_and_flux_anchor_counts(fixture):
+@pytest.mark.parametrize("frequency_blocking", [False, True])
+def test_blocked_preserves_exact_null_and_flux_anchor_counts(
+    fixture, frequency_blocking
+):
     sky, obs = fixture
-    design = prepare_blocked_design(sky, obs, 8, noise_jy=0.001, beam_axis_ratio=1.1)
+    design = prepare_blocked_design(
+        sky,
+        obs,
+        8,
+        noise_jy=0.001,
+        beam_axis_ratio=1.1,
+        frequency_blocking=frequency_blocking,
+    )
     assert audit_blocked_design(design)["observable_common_modes"] == 0
     for fixed, rank in [([0], 0), ([0, 1], 1), ([0, 1, 2], 2)]:
         assert (
@@ -79,7 +96,14 @@ def test_blocked_preserves_exact_null_and_flux_anchor_counts(fixture):
         )
     # Aggressive thinning also removes information with a non-Gaussian beam.
     sparse = Observation(*(x[::5] for x in obs))
-    design = prepare_blocked_design(sky, sparse, 8, noise_jy=0.001, beam_axis_ratio=1.1)
+    design = prepare_blocked_design(
+        sky,
+        sparse,
+        8,
+        noise_jy=0.001,
+        beam_axis_ratio=1.1,
+        frequency_blocking=frequency_blocking,
+    )
     assert audit_blocked_design(design)["observable_common_modes"] == 0
 
 

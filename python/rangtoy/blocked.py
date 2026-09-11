@@ -14,7 +14,7 @@ from scipy.linalg import null_space
 
 from .observability import nuisance_information_budget
 from .pointing import Observation, real_stack, resolve_predictor
-from .projector import project_out
+from .projector import project_grouped, project_out
 
 
 def prepare_blocked_design(
@@ -29,6 +29,7 @@ def prepare_blocked_design(
     gain_model="per_time_channel",
     differential_pointing=True,
     backend="rust",
+    frequency_blocking=False,
 ):
     """Compress a local linearization while retaining common motion and sky.
 
@@ -49,6 +50,8 @@ def prepare_blocked_design(
         )
     if backend not in ("rust", "numpy"):
         raise ValueError("backend must be rust or numpy")
+    if frequency_blocking and gain_model != "per_time_channel":
+        raise ValueError("frequency blocking requires per_time_channel gains")
     obs = Observation(*(jnp.asarray(x) for x in observation))
     rows = len(obs.frequency_hz)
     if (
@@ -126,7 +129,7 @@ def prepare_blocked_design(
             p, q = np.asarray(block.antenna1), np.asarray(block.antenna2)
             groups = (
                 [np.ones(len(p), dtype=bool)]
-                if gain_model == "per_time"
+                if gain_model == "per_time" or frequency_blocking
                 else [np.asarray(block.frequency_hz) == f for f in frequency]
             )
             for group in groups:
@@ -140,11 +143,18 @@ def prepare_blocked_design(
                         nuisance.append(
                             np.stack((value.real, value.imag), axis=1).ravel()
                         )
+        differential = np.zeros((len(point), 0))
         if differential_pointing:
             differential = (point[:, :-1] - point[:, -1:]).reshape(len(point), -1)
-            nuisance.extend(differential.T)
+            if not frequency_blocking:
+                nuisance.extend(differential.T)
         a = np.column_stack(nuisance) if nuisance else np.zeros((len(point), 0))
-        if backend == "rust":
+        if frequency_blocking:
+            _, labels = np.unique(np.asarray(block.frequency_hz), return_inverse=True)
+            projected, rank = project_grouped(
+                a, differential, target, np.repeat(labels, 2), backend=backend
+            )
+        elif backend == "rust":
             projected, rank = project_out(a, target)
         else:
             coefficients, _, rank, _ = np.linalg.lstsq(a, target, rcond=1e-12)
@@ -173,6 +183,7 @@ def prepare_blocked_design(
         "compressed_rows": total_rows,
         "backend": backend,
         "gain_model": gain_model,
+        "frequency_blocking": bool(frequency_blocking),
         "differential_pointing": differential_pointing,
         "beam_metadata": getattr(
             prediction,

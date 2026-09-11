@@ -53,10 +53,16 @@ def main():
             log_flux_prior_covariance=covariance,
         )
 
-    def blocked(backend):
+    def blocked(backend, frequency_blocking=False):
         return audit_blocked_design(
             prepare_blocked_design(
-                sky, obs, 8, noise_jy=0.001, predictor=predictor, backend=backend
+                sky,
+                obs,
+                8,
+                noise_jy=0.001,
+                predictor=predictor,
+                backend=backend,
+                frequency_blocking=frequency_blocking,
             ),
             log_flux_prior_covariance=covariance,
         )
@@ -67,6 +73,8 @@ def main():
         ("dense", dense),
         ("blocked_rust", lambda: blocked("rust")),
         ("blocked_numpy", lambda: blocked("numpy")),
+        ("frequency_blocked_rust", lambda: blocked("rust", True)),
+        ("frequency_blocked_numpy", lambda: blocked("numpy", True)),
     ]:
         run()  # Warm up compilation and shared-library loading, recorded runs follow.
         elapsed = []
@@ -99,6 +107,7 @@ def main():
         "matrix_sizes": {
             "dense_nuisance": [5376, 1934],
             "largest_local_nuisance": [224, 78],
+            "frequency_local_gains": [56, 16],
             "compressed_global": [432, 64],
         },
     }

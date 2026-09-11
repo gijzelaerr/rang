@@ -1,0 +1,858 @@
+{
+  "current": {
+    "scope": "Synthetic local Jacobian projection only; no sky, beam, geometry, nonlinear solve or imaging. Not a state-of-the-art calibration benchmark.",
+    "timing_scope": "Input expansion and projection; fixture creation and one warmup excluded. Each method/dimension uses a fresh process.",
+    "memory_scope": "Whole worker peak RSS including interpreter, fixture, warmup and repeated projection; not incremental kernel allocation.",
+    "seed": 71,
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "numpy_version": "2.5.3",
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "thread_count_note": "Actual BLAS thread count is not measured; OpenBLAS settings do not control Apple's Accelerate backend.",
+    "blas_build": {
+      "name": "accelerate",
+      "found": true,
+      "version": "unknown",
+      "detection method": "system",
+      "include directory": "unknown",
+      "lib directory": "unknown",
+      "openblas configuration": "unknown",
+      "pc file directory": "unknown"
+    },
+    "source_sha256": {
+      "src/projector.rs": "f6a689d0006394b73b1391fb3d511f40e6a409d5755538076ecfa18a056caa19",
+      "python/rangtoy/projector.py": "d143f2909a9658d1340c387c7202a09c36273d743b35d1d4473ecdf3daee00f7",
+      "examples/projector_scaling.py": "361f0ca24619af1670e1fab3971f6fa73973c964764e721748fc9e6974d45a39"
+    },
+    "results": [
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.0006918330000189599,
+          0.0006268340002861805,
+          0.0005783750020782463,
+          0.000571750002563931,
+          0.0005666249999194406
+        ],
+        "median_seconds": 0.0005783750020782463,
+        "process_peak_rss_bytes": 38699008,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588233,
+            -6.312654091209397
+          ],
+          [
+            -6.312654091209397,
+            134.96253864344638
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          0.0009255829972971696,
+          0.0007746670016786084,
+          0.0008498339993820991,
+          0.0007160420027503278,
+          0.0007756250015518162
+        ],
+        "median_seconds": 0.0007756250015518162,
+        "process_peak_rss_bytes": 39141376,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588228,
+            -6.312654091209385
+          ],
+          [
+            -6.312654091209385,
+            134.96253864344638
+          ]
+        ],
+        "relative_gram_error": 2.951658952229254e-16
+      },
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.00047737499698996544,
+          0.00036470800114329904,
+          0.0003300829994259402,
+          0.00030320899895741604,
+          0.00034616700213518925
+        ],
+        "median_seconds": 0.00034616700213518925,
+        "process_peak_rss_bytes": 39911424,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588233,
+            -6.312654091209401
+          ],
+          [
+            -6.312654091209401,
+            134.9625386434464
+          ]
+        ],
+        "relative_gram_error": 1.4526817215548992e-16
+      },
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          0.0003966670010413509,
+          0.00032354100039810874,
+          0.0006409999987226911,
+          0.0003113750026386697,
+          0.00030229100229917094
+        ],
+        "median_seconds": 0.00032354100039810874,
+        "process_peak_rss_bytes": 40026112,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588228,
+            -6.312654091209396
+          ],
+          [
+            -6.312654091209396,
+            134.96253864344638
+          ]
+        ],
+        "relative_gram_error": 2.837620469982122e-16
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.0032857909973245114,
+          0.003351082999870414,
+          0.003331790998345241,
+          0.0032558750026510097,
+          0.003311042000859743
+        ],
+        "median_seconds": 0.003311042000859743,
+        "process_peak_rss_bytes": 42860544,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719035,
+            8.567516764507683
+          ],
+          [
+            8.567516764507683,
+            755.3038532058314
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          0.011125416000140831,
+          0.008991458002128638,
+          0.00811500000054366,
+          0.007263875002536224,
+          0.006713499999023043
+        ],
+        "median_seconds": 0.00811500000054366,
+        "process_peak_rss_bytes": 41664512,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719033,
+            8.567516764507682
+          ],
+          [
+            8.567516764507682,
+            755.3038532058316
+          ]
+        ],
+        "relative_gram_error": 2.317878020324929e-16
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.0014069999997445848,
+          0.0013793329999316484,
+          0.0013742910014116205,
+          0.001352916002360871,
+          0.0013492089965438936
+        ],
+        "median_seconds": 0.0013742910014116205,
+        "process_peak_rss_bytes": 40337408,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719035,
+            8.5675167645077
+          ],
+          [
+            8.5675167645077,
+            755.3038532058316
+          ]
+        ],
+        "relative_gram_error": 2.0832956465897494e-16
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          0.0015285420013242401,
+          0.0014461249993473757,
+          0.0016509999986737967,
+          0.001340375001745997,
+          0.001328709000517847
+        ],
+        "median_seconds": 0.0014461249993473757,
+        "process_peak_rss_bytes": 41222144,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719032,
+            8.567516764507676
+          ],
+          [
+            8.567516764507676,
+            755.3038532058317
+          ]
+        ],
+        "relative_gram_error": 3.738406338865023e-16
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.020025125002575805,
+          0.019711749999260064,
+          0.019440124997345265,
+          0.019972916998085566,
+          0.020229874997312436
+        ],
+        "median_seconds": 0.019972916998085566,
+        "process_peak_rss_bytes": 75841536,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.533136823645,
+            -28.347919698441792
+          ],
+          [
+            -28.347919698441792,
+            3663.5234291678803
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          0.10232283299774281,
+          0.10102274999735528,
+          0.10071912499915925,
+          0.10091712499706773,
+          0.1018255830022099
+        ],
+        "median_seconds": 0.10102274999735528,
+        "process_peak_rss_bytes": 70762496,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.533136823646,
+            -28.347919698441864
+          ],
+          [
+            -28.347919698441864,
+            3663.5234291678794
+          ]
+        ],
+        "relative_gram_error": 3.1783024831668875e-16
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.007593250000354601,
+          0.007450959001289448,
+          0.007612707999214763,
+          0.007466916998964734,
+          0.007782458000292536
+        ],
+        "median_seconds": 0.007593250000354601,
+        "process_peak_rss_bytes": 50053120,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.533136823647,
+            -28.34791969844186
+          ],
+          [
+            -28.34791969844186,
+            3663.52342916788
+          ]
+        ],
+        "relative_gram_error": 4.490181301160126e-16
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          0.01603116600017529,
+          0.013959625001007225,
+          0.013138041998900007,
+          0.012362500001472654,
+          0.012325540999881923
+        ],
+        "median_seconds": 0.013138041998900007,
+        "process_peak_rss_bytes": 49561600,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.5331368236457,
+            -28.347919698441665
+          ],
+          [
+            -28.347919698441665,
+            3663.5234291678803
+          ]
+        ],
+        "relative_gram_error": 1.7941647591733406e-16
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.1511970419996942,
+          0.15020891700260108,
+          0.1538179159979336,
+          0.15248870899813483,
+          0.15414529199915705
+        ],
+        "median_seconds": 0.15248870899813483,
+        "process_peak_rss_bytes": 327352320,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.196105901956,
+            -73.44093694716192
+          ],
+          [
+            -73.44093694716192,
+            15475.56815258747
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          1.9141352910010028,
+          1.9074742090015206,
+          1.921391166997637,
+          1.9204077499998675,
+          1.921991541999887
+        ],
+        "median_seconds": 1.9204077499998675,
+        "process_peak_rss_bytes": 320569344,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.19610590196,
+            -73.44093694716234
+          ],
+          [
+            -73.44093694716234,
+            15475.568152587462
+          ]
+        ],
+        "relative_gram_error": 3.7434122667905727e-16
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.06205854200015892,
+          0.06187445799878333,
+          0.06186287499804166,
+          0.06245154199859826,
+          0.06279700000231969
+        ],
+        "median_seconds": 0.06205854200015892,
+        "process_peak_rss_bytes": 140034048,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.19610590196,
+            -73.4409369471621
+          ],
+          [
+            -73.4409369471621,
+            15475.568152587468
+          ]
+        ],
+        "relative_gram_error": 1.8704332039595892e-16
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          0.17377729099825956,
+          0.17102733299907413,
+          0.17126124999776948,
+          0.17144616699806647,
+          0.17084299999987707
+        ],
+        "median_seconds": 0.17126124999776948,
+        "process_peak_rss_bytes": 140492800,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.196105901963,
+            -73.4409369471617
+          ],
+          [
+            -73.4409369471617,
+            15475.568152587464
+          ]
+        ],
+        "relative_gram_error": 4.1761062404332085e-16
+      }
+    ]
+  },
+  "previous_row_major_pilot": {
+    "scope": "Synthetic local Jacobian projection only; no sky, beam, geometry, nonlinear solve or imaging. Not a state-of-the-art calibration benchmark.",
+    "timing_scope": "Input expansion and projection; fixture creation and one warmup excluded. Each method/dimension uses a fresh process.",
+    "memory_scope": "Whole worker peak RSS including interpreter, fixture, warmup and repeated projection; not incremental kernel allocation.",
+    "seed": 71,
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "numpy_version": "2.5.3",
+    "results": [
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.0006136250012787059,
+          0.0005869170017831493,
+          0.0005759580017183907
+        ],
+        "median_seconds": 0.0005869170017831493,
+        "process_peak_rss_bytes": 38223872,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588233,
+            -6.312654091209397
+          ],
+          [
+            -6.312654091209397,
+            134.96253864344638
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          0.001812999998946907,
+          0.0016514579983777367,
+          0.0016321250004693866
+        ],
+        "median_seconds": 0.0016514579983777367,
+        "process_peak_rss_bytes": 38649856,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588228,
+            -6.312654091209396
+          ],
+          [
+            -6.312654091209396,
+            134.9625386434464
+          ]
+        ],
+        "relative_gram_error": 3.172401294469292e-16
+      },
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.00033329099824186414,
+          0.00030862499988870695,
+          0.0003056249988730997
+        ],
+        "median_seconds": 0.00030862499988870695,
+        "process_peak_rss_bytes": 39337984,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588233,
+            -6.312654091209401
+          ],
+          [
+            -6.312654091209401,
+            134.9625386434464
+          ]
+        ],
+        "relative_gram_error": 1.4526817215548992e-16
+      },
+      {
+        "antennas": 8,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          0.0003882909986714367,
+          0.00032483399991178885,
+          0.00032729200029280037
+        ],
+        "median_seconds": 0.00032729200029280037,
+        "process_peak_rss_bytes": 39796736,
+        "rank": 74,
+        "target_gram": [
+          [
+            147.82895722588233,
+            -6.312654091209402
+          ],
+          [
+            -6.312654091209402,
+            134.9625386434464
+          ]
+        ],
+        "relative_gram_error": 1.467484789326986e-16
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.003299832998891361,
+          0.0032942500001809094,
+          0.0032924580009421334
+        ],
+        "median_seconds": 0.0032942500001809094,
+        "process_peak_rss_bytes": 42778624,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719035,
+            8.567516764507683
+          ],
+          [
+            8.567516764507683,
+            755.3038532058314
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          0.021874583999306196,
+          0.020326958001533058,
+          0.020113250000576954
+        ],
+        "median_seconds": 0.020326958001533058,
+        "process_peak_rss_bytes": 41254912,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719031,
+            8.567516764507685
+          ],
+          [
+            8.567516764507685,
+            755.3038532058316
+          ]
+        ],
+        "relative_gram_error": 3.7373537114081813e-16
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.0014149579983495641,
+          0.0013854999997420236,
+          0.001343125000857981
+        ],
+        "median_seconds": 0.0013854999997420236,
+        "process_peak_rss_bytes": 40222720,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719035,
+            8.5675167645077
+          ],
+          [
+            8.5675167645077,
+            755.3038532058316
+          ]
+        ],
+        "relative_gram_error": 2.0832956465897494e-16
+      },
+      {
+        "antennas": 16,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          0.003501999999571126,
+          0.0034248750016558915,
+          0.0033907500001078006
+        ],
+        "median_seconds": 0.0034248750016558915,
+        "process_peak_rss_bytes": 40402944,
+        "rank": 154,
+        "target_gram": [
+          [
+            795.1921269719033,
+            8.567516764507669
+          ],
+          [
+            8.567516764507669,
+            755.3038532058317
+          ]
+        ],
+        "relative_gram_error": 3.282932076778545e-16
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.01930158399773063,
+          0.019792541999777313,
+          0.019369749999896158
+        ],
+        "median_seconds": 0.019369749999896158,
+        "process_peak_rss_bytes": 74104832,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.533136823645,
+            -28.347919698441792
+          ],
+          [
+            -28.347919698441792,
+            3663.5234291678803
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          0.4429955419982434,
+          0.44312608299878775,
+          0.44049050000103307
+        ],
+        "median_seconds": 0.4429955419982434,
+        "process_peak_rss_bytes": 70631424,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.533136823646,
+            -28.347919698441896
+          ],
+          [
+            -28.347919698441896,
+            3663.52342916788
+          ]
+        ],
+        "relative_gram_error": 2.796580755799484e-16
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.007676541998080211,
+          0.007728542001132155,
+          0.0077421250025508925
+        ],
+        "median_seconds": 0.007728542001132155,
+        "process_peak_rss_bytes": 49856512,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.533136823647,
+            -28.34791969844186
+          ],
+          [
+            -28.34791969844186,
+            3663.52342916788
+          ]
+        ],
+        "relative_gram_error": 4.490181301160126e-16
+      },
+      {
+        "antennas": 32,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          0.056943040999613004,
+          0.05727066700274008,
+          0.05566429199825507
+        ],
+        "median_seconds": 0.056943040999613004,
+        "process_peak_rss_bytes": 48545792,
+        "rank": 314,
+        "target_gram": [
+          [
+            3645.5331368236452,
+            -28.347919698441718
+          ],
+          [
+            -28.347919698441718,
+            3663.5234291678803
+          ]
+        ],
+        "relative_gram_error": 9.032237952272435e-17
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "full_numpy",
+        "seconds": [
+          0.14881474999856437,
+          0.14885933299956378,
+          0.14956120799979544
+        ],
+        "median_seconds": 0.14885933299956378,
+        "process_peak_rss_bytes": 327811072,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.196105901956,
+            -73.44093694716192
+          ],
+          [
+            -73.44093694716192,
+            15475.56815258747
+          ]
+        ],
+        "relative_gram_error": 0
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "full_rust",
+        "seconds": [
+          17.97961191700233,
+          18.14519929100061,
+          18.04399837500023
+        ],
+        "median_seconds": 18.04399837500023,
+        "process_peak_rss_bytes": 320618496,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.196105901963,
+            -73.44093694716217
+          ],
+          [
+            -73.44093694716217,
+            15475.568152587468
+          ]
+        ],
+        "relative_gram_error": 3.445816694149414e-16
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "grouped_numpy",
+        "seconds": [
+          0.061646583999390714,
+          0.06226608300130465,
+          0.06247204100145609
+        ],
+        "median_seconds": 0.06226608300130465,
+        "process_peak_rss_bytes": 139968512,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.19610590196,
+            -73.4409369471621
+          ],
+          [
+            -73.4409369471621,
+            15475.568152587468
+          ]
+        ],
+        "relative_gram_error": 1.8704332039595892e-16
+      },
+      {
+        "antennas": 64,
+        "channels": 4,
+        "method": "grouped_rust",
+        "seconds": [
+          1.3594401250011288,
+          1.361219082999014,
+          1.3508336249979038
+        ],
+        "median_seconds": 1.3594401250011288,
+        "process_peak_rss_bytes": 133906432,
+        "rank": 634,
+        "target_gram": [
+          [
+            15340.196105901963,
+            -73.4409369471624
+          ],
+          [
+            -73.4409369471624,
+            15475.568152587468
+          ]
+        ],
+        "relative_gram_error": 3.4560706564476915e-16
+      }
+    ],
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "thread_count_note": "Actual BLAS thread count is not measured; OpenBLAS settings do not control Apple's Accelerate backend.",
+    "blas_build": {
+      "name": "accelerate",
+      "found": true,
+      "version": "unknown",
+      "detection method": "system",
+      "include directory": "unknown",
+      "lib directory": "unknown",
+      "openblas configuration": "unknown",
+      "pc file directory": "unknown"
+    },
+    "rust_source_ref": "fdf5883:src/projector.rs"
+  }
+}

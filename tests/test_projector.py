@@ -2,7 +2,7 @@
 
 import numpy as np
 import pytest
-from rangtoy.projector import project_out
+from rangtoy.projector import project_grouped, project_out
 
 
 @pytest.mark.parametrize(
@@ -44,3 +44,62 @@ def test_projector_drops_small_rank_and_preserves_gauge_null():
     p, rank = project_out(a, z)
     assert rank == 12
     assert np.linalg.norm(p) < 1e-12
+
+
+@pytest.mark.parametrize("scale", [1e-150, 1.0, 1e150])
+def test_projector_common_rescaling_preserves_information(scale):
+    rng = np.random.default_rng(23)
+    a, target = rng.normal(size=(37, 9)), rng.normal(size=(37, 3))
+    expected = target - a @ np.linalg.lstsq(a, target, rcond=1e-12)[0]
+    actual, rank = project_out(a * scale, target)
+    assert rank == 9
+    np.testing.assert_allclose(actual.T @ actual, expected.T @ expected, atol=1e-12)
+
+
+@pytest.mark.parametrize("backend", ["rust", "numpy"])
+def test_grouped_matches_full_nuisance_projection(backend):
+    rng = np.random.default_rng(31)
+    groups = np.repeat([0, 1, 2], 20)
+    gains, shared, target = (rng.normal(size=(60, n)) for n in (5, 7, 3))
+    expanded = np.column_stack(
+        [gains * (groups == g)[:, None] for g in range(3)] + [shared]
+    )
+    expected = target - expanded @ np.linalg.lstsq(expanded, target, rcond=1e-12)[0]
+    actual, rank = project_grouped(gains, shared, target, groups, backend=backend)
+    assert rank == 22
+    np.testing.assert_allclose(actual.T @ actual, expected.T @ expected, atol=1e-11)
+    empty, rank = project_grouped(
+        np.eye(6),
+        np.ones((6, 1)),
+        np.ones((6, 2)),
+        np.zeros(6, dtype=int),
+        backend=backend,
+    )
+    assert rank == 6
+    assert empty.shape == (0, 2)
+
+
+@pytest.mark.parametrize("backend", ["rust", "numpy"])
+def test_grouped_does_not_promote_eliminated_shared_columns(backend):
+    rng = np.random.default_rng(1)
+    groups = np.repeat([0, 1, 2], 20)
+    gains = rng.normal(size=(60, 5))
+    shared = gains[:, :2]
+    target = rng.normal(size=(60, 3))
+    expanded = np.column_stack([gains * (groups == g)[:, None] for g in range(3)])
+    expected = target - expanded @ np.linalg.lstsq(expanded, target, rcond=1e-12)[0]
+    actual, rank = project_grouped(gains, shared, target, groups, backend=backend)
+    assert rank == 15
+    np.testing.assert_allclose(actual.T @ actual, expected.T @ expected, atol=1e-11)
+
+
+@pytest.mark.parametrize("backend", ["rust", "numpy"])
+def test_grouped_without_shared_columns(backend):
+    rng = np.random.default_rng(29)
+    gains, target = rng.normal(size=(25, 3)), rng.normal(size=(25, 2))
+    expected = target - gains @ np.linalg.lstsq(gains, target, rcond=1e-12)[0]
+    actual, rank = project_grouped(
+        gains, np.empty((25, 0)), target, np.zeros(25, int), backend=backend
+    )
+    assert rank == 3
+    np.testing.assert_allclose(actual.T @ actual, expected.T @ expected, atol=1e-12)

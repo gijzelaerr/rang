@@ -1,0 +1,125 @@
+{
+  "repeats": 5,
+  "warmup_runs_per_method": 1,
+  "timing_scope": "Jacobian preparation, nuisance elimination and one prior audit; per-process warmup excluded",
+  "results": [
+    {
+      "method": "dense",
+      "seconds": [
+        1.5402867919983692,
+        1.5204940830008127,
+        1.5247774580020632,
+        1.5174318339995807,
+        1.5134368340004585
+      ],
+      "median_seconds": 1.5204940830008127,
+      "max_information_difference": 0.0,
+      "data_sigma_arcsec": [
+        7.958086833544156,
+        7.997778005327141
+      ],
+      "constrained_sigma_arcsec": [
+        5.395017367680861,
+        5.70611120052957
+      ]
+    },
+    {
+      "method": "blocked_rust",
+      "seconds": [
+        0.17980645900024683,
+        0.17765624999810825,
+        0.18208662499819184,
+        0.17624799999975949,
+        0.17369783300091513
+      ],
+      "median_seconds": 0.17765624999810825,
+      "max_information_difference": 2.575006874394603e-11,
+      "data_sigma_arcsec": [
+        7.958086833542534,
+        7.997778005327324
+      ],
+      "constrained_sigma_arcsec": [
+        5.3950173676805395,
+        5.706111200529793
+      ]
+    },
+    {
+      "method": "blocked_numpy",
+      "seconds": [
+        0.15879870899880189,
+        0.1589256250008475,
+        0.17303520800123806,
+        0.16115720800007693,
+        0.16295691699997406
+      ],
+      "median_seconds": 0.16115720800007693,
+      "max_information_difference": 2.546585164964199e-11,
+      "data_sigma_arcsec": [
+        7.958086833542557,
+        7.997778005327304
+      ],
+      "constrained_sigma_arcsec": [
+        5.395017367680548,
+        5.706111200529787
+      ]
+    },
+    {
+      "method": "frequency_blocked_rust",
+      "seconds": [
+        0.15696883300188347,
+        0.15196341699993354,
+        0.1621129999984987,
+        0.15317816699825926,
+        0.15332679100174573
+      ],
+      "median_seconds": 0.15332679100174573,
+      "max_information_difference": 2.5721647034515627e-11,
+      "data_sigma_arcsec": [
+        7.9580868335425325,
+        7.997778005327319
+      ],
+      "constrained_sigma_arcsec": [
+        5.395017367680542,
+        5.706111200529792
+      ]
+    },
+    {
+      "method": "frequency_blocked_numpy",
+      "seconds": [
+        0.1514560000032361,
+        0.14946162500200444,
+        0.14904666700022062,
+        0.15221795799880056,
+        0.1525086250003369
+      ],
+      "median_seconds": 0.1514560000032361,
+      "max_information_difference": 2.5693225325085223e-11,
+      "data_sigma_arcsec": [
+        7.9580868335425405,
+        7.9977780053273175
+      ],
+      "constrained_sigma_arcsec": [
+        5.395017367680541,
+        5.706111200529789
+      ]
+    }
+  ],
+  "matrix_sizes": {
+    "dense_nuisance": [
+      5376,
+      1934
+    ],
+    "largest_local_nuisance": [
+      224,
+      78
+    ],
+    "frequency_local_gains": [
+      56,
+      16
+    ],
+    "compressed_global": [
+      432,
+      64
+    ]
+  }
+}
