@@ -20,6 +20,11 @@ visibility-preserving transformation for realistic beams.
 
 [Relative-pointing recovery tests](research/relative-pointing.md) now compare
 correct and biased sky models, with and without a physical shared offset.
+Held-out time samples now show an approximately elevenfold reduction in clean
+visibility prediction error versus gain/flux-only fitting in the matched toy.
+The nonzero shared-offset control still fails the noise-level residual check.
+[Public pointing-history inspection](research/pointing-history.md) records why
+the historical measurements are not yet used as within-track drift models.
 
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and

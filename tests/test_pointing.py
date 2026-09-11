@@ -116,13 +116,16 @@ def test_smooth_pointing_recovery(reference):
     assert np.sqrt(np.mean((fit["offsets_arcmin"] - truth) ** 2)) < 1e-3
 
 
-def test_joint_smooth_gains_flux_and_relative_pointing(reference):
+@pytest.mark.parametrize("fit_pointing", [True, False])
+def test_joint_smooth_gains_flux_and_relative_pointing(reference, fit_pointing):
     _, components, obs = reference
     times, knots = np.linspace(0, 21600, 24), [0, 21600]
     design, _ = spline_design(times, knots)
     rng = np.random.default_rng(91)
     coefficients = rng.normal(0, 0.2, (2, 8, 2))
     coefficients -= coefficients.mean(axis=1, keepdims=True)
+    if not fit_pointing:
+        coefficients *= 0
     truth = np.einsum("tk,kad->tad", design, coefficients)
     logamp = design @ rng.normal(0, 0.02, (2, 8))
     phase = design @ rng.normal(0, 0.03, (2, 8))
@@ -148,10 +151,15 @@ def test_joint_smooth_gains_flux_and_relative_pointing(reference):
         zero_mean_pointing=True,
         gain_prior_sigma=(0.1, 0.1),
         flux_prior_jy=np.array([0, 0.1, 0.1, 0.1]),
+        fit_pointing=fit_pointing,
         max_nfev=100,
     )
     assert fit["success"], fit["message"]
     assert fit["gain_model"] == "smooth_achromatic"
+    assert fit["fit_pointing"] == fit_pointing
+    if not fit_pointing:
+        assert fit["retained_pointing_modes"] == 0
+        np.testing.assert_array_equal(fit["offsets_arcmin"], 0)
     np.testing.assert_allclose(fit["offsets_arcmin"], truth, atol=1e-3)
     np.testing.assert_allclose(fit["gains"], gains, atol=1e-5)
     np.testing.assert_allclose(fit["flux_jy"], components.flux_jy, atol=1e-5)

@@ -22,11 +22,20 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 11, 19])
     parser.add_argument(
+        "--held-out",
+        action="store_true",
+        help="Hold out every fourth time and add a gain/sky-only baseline",
+    )
+    parser.add_argument(
         "--joint-gains",
         action="store_true",
         help="Inject and fit smooth achromatic gains",
     )
     args = parser.parse_args()
+    if args.held_out and not args.joint_gains:
+        parser.error(
+            "--held-out requires --joint-gains for the gain/sky-only comparison"
+        )
     jax.config.update("jax_enable_x64", True)
     raw = subprocess.check_output([str(build()), "--pointing-full-reference"])
     fixture = json.loads(raw)
@@ -43,6 +52,12 @@ def main():
     times, knots = np.linspace(0, 21600, 24), np.linspace(0, 21600, 4)
     design, _ = spline_design(times, knots)
     sigma = 0.001
+    test = (
+        np.asarray(obs.time_index) % 4 == 2
+        if args.held_out
+        else np.zeros(len(r), dtype=bool)
+    )
+    train_obs = Observation(*(a[~test] for a in obs))
     results = []
     for seed in args.seeds:
         rng = np.random.default_rng(seed)
@@ -65,7 +80,10 @@ def main():
             clean = np.asarray(predictor(sky, obs, jnp.asarray(truth)))
             clean = clean * baseline_gain
             data = clean + noise
-            for case in ("known_sky", "wrong_fixed_sky", "joint_flux"):
+            cases = ["known_sky", "wrong_fixed_sky", "joint_flux"]
+            if args.held_out:
+                cases.append("gain_sky_only")
+            for case in cases:
                 supplied = (
                     sky
                     if case == "known_sky"
@@ -75,8 +93,8 @@ def main():
                 )
                 fit = solve_pointing(
                     supplied,
-                    obs,
-                    data,
+                    train_obs,
+                    data[~test],
                     times,
                     knots,
                     8,
@@ -84,9 +102,10 @@ def main():
                     smoothness=0.01,
                     predictor=predictor,
                     zero_mean_pointing=True,
+                    fit_pointing=case != "gain_sky_only",
                     gain_prior_sigma=(0.1, 0.1) if args.joint_gains else None,
                     flux_prior_jy=np.asarray(supplied.flux_jy) * 0.05
-                    if case == "joint_flux"
+                    if case in ("joint_flux", "gain_sky_only")
                     else None,
                 )
                 recovered_sky = supplied._replace(flux_jy=jnp.asarray(fit["flux_jy"]))
@@ -122,13 +141,26 @@ def main():
                     ).tolist(),
                 }
                 results.append(result)
+                if args.held_out:
+                    for label, mask in (("train", ~test), ("test", test)):
+                        result[label + "_whitened_residual_mean_square"] = float(
+                            np.mean(np.abs(model[mask] - data[mask]) ** 2)
+                            / (2 * sigma**2)
+                        )
+                        result[label + "_clean_visibility_rms_mjy"] = float(
+                            1000
+                            * np.sqrt(np.mean(np.abs(model[mask] - clean[mask]) ** 2))
+                        )
                 print(json.dumps(result), flush=True)
     payload = {
         "fixture_sha256": sha256(raw).hexdigest(),
         "beam": metadata,
         "noise_per_real_component_jy": sigma,
         "joint_gains": args.joint_gains,
-        "limitations": "Exact beam; in-sample residuals, not held-out validation. Gains are known unity unless joint_gains is enabled, then smooth achromatic with 0.1 log-amplitude/radian knot priors. Joint flux absolute scale is prior-dependent. Common offset is physical, not absorbed into the input sky.",
+        "held_out": args.held_out,
+        "train_rows": int((~test).sum()),
+        "test_rows": int(test.sum()),
+        "limitations": "Exact beam and matched spline family. When held_out is true, times with index modulo 4 equal to 2 are withheld at all baselines/frequencies (interpolation, not extrapolation); hyperparameters fixed beforehand. Otherwise residuals are in-sample. Gains are known unity unless joint_gains is enabled, then smooth achromatic with 0.1 log-amplitude/radian knot priors. Joint flux absolute scale is prior-dependent. Common offset is physical, not absorbed into the input sky. Historical pointing records are not injected into this synthetic campaign.",
         "results": results,
     }
     output = ROOT / (
@@ -136,6 +168,8 @@ def main():
         if args.joint_gains
         else "outputs/relative-pointing"
     )
+    if args.held_out:
+        output = output.with_name(output.name + "-heldout")
     output.mkdir(parents=True, exist_ok=True)
     (output / "results.json").write_text(json.dumps(payload, indent=2) + "\n")
 

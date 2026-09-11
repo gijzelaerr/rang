@@ -204,6 +204,7 @@ def solve_pointing(
     predictor=None,
     zero_mean_pointing=False,
     gain_prior_sigma=None,
+    fit_pointing=True,
     max_nfev=100,
 ):
     """Fit smooth offsets, optionally jointly fitting component flux densities.
@@ -229,6 +230,7 @@ def solve_pointing(
     fixes the phase reference. Proper knot priors regularize gain/flux scale
     ambiguity; absolute flux scale is consequently prior-dependent. Gains are
     exp(log-amplitude + i phase), with no additional gain curvature penalty.
+    fit_pointing=False holds all offsets at zero for a gain/sky-only baseline.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before creating input arrays")
@@ -360,7 +362,11 @@ def solve_pointing(
 
     residual_jit = jax.jit(residual)
     jacobian = jax.jit(jax.jacfwd(residual))
-    transform = np.eye(total_size)
+    if not isinstance(fit_pointing, (bool, np.bool_)):
+        raise TypeError("fit_pointing must be boolean")
+    if not fit_pointing and minimum_mode_information is not None:
+        raise ValueError("mode selection requires fit_pointing=True")
+    transform = np.eye(total_size)[:, 0 if fit_pointing else pointing_size :]
     mode_information = None
     if minimum_mode_information is not None:
         if not np.isfinite(minimum_mode_information) or minimum_mode_information < 0:
@@ -424,6 +430,7 @@ def solve_pointing(
     return {
         "flux_jy": np.asarray(sky(jnp.asarray(full_solution)).flux_jy),
         "zero_mean_pointing": bool(zero_mean_pointing),
+        "fit_pointing": bool(fit_pointing),
         "gains": np.asarray(gains(jnp.asarray(full_solution))),
         "gain_prior_sigma": None
         if gain_scale is None

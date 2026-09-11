@@ -86,3 +86,40 @@ Held-out prediction, gain-only comparison, beam-error robustness and free
 channel-dependent gains remain outstanding. These results establish the
 joint nonlinear implementation under matched assumptions, not deployment
 readiness or a new calibration algorithm.
+
+## Held-out times and gain/sky-only control
+
+[Per-seed archived results](results/joint-gain-pointing-heldout.json).
+
+```sh
+OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/relative_pointing.py --joint-gains --held-out
+```
+
+This withholds all baselines and frequencies at six complete time samples
+(time index modulo four equals two): 2016 training and 672 test complex rows.
+All spline knots and prior strengths are fixed before scoring. Test times are
+inside the training time span; this is interpolation, not extrapolation.
+`fit_pointing=False` supplies the gain/sky-only baseline with identical gain
+and flux models and priors. It holds pointing at zero exactly.
+
+Across three seeds with zero physical common offset:
+
+| Test metric | Joint pointing/gain/flux | Gain/flux only |
+| --- | --- | --- |
+| Clean complex visibility RMS discrepancy | 0.220–0.247 mJy | 2.566–2.724 mJy |
+| Mean squared whitened real residual | 1.011–1.023 | 4.329–4.773 |
+
+Relative pointing RMSE over all times is 0.748–1.023 arcsec for the joint fit.
+The clean test discrepancy improves by about 11–12 times. This is a matched
+synthetic beam/spline test, not evidence of equivalent real-data performance.
+Flux scale remains prior-dependent even where predictions pass this check.
+
+With the physical (+30,-30) arcsec shared offset, test residual mean squares
+remain 31.4–32.4 for joint fitting versus 35.3–36.3 for gain/flux-only. The
+joint model improves predictions modestly but remains inadequate. The test
+therefore distinguishes predictive improvement from adequate calibration.
+
+[Historical pointing inspection](pointing-history.md) found irregular and
+repeated records that cannot yet justify an empirical within-track drift
+model. The historical arrays were **not** used as these simulated trajectories.
+Beam mismatch, alternative spline complexity and real-data tests remain open.
