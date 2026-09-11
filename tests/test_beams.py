@@ -142,6 +142,39 @@ def test_custom_predictor_derivatives_and_solver(fixture):
         )
 
 
+def test_joint_width_recovery_and_derivative(fixture):
+    pytest.importorskip("katbeam")
+    sky, obs = fixture
+    table, _ = load_katbeam()
+    predictor = make_beam_predictor(table)
+    offsets = jnp.zeros((24, 8, 2))
+    fn = lambda width: predictor.with_log_width(sky, obs, offsets, width)
+    step = 1e-5
+    np.testing.assert_allclose(
+        jax.jacfwd(fn)(0.01),
+        (fn(0.01 + step) - fn(0.01 - step)) / (2 * step),
+        atol=1e-10,
+    )
+    fit = solve_pointing(
+        sky,
+        obs,
+        fn(np.log(1.01)),
+        np.linspace(0, 21600, 24),
+        [0, 21600],
+        8,
+        noise_jy=1e-5,
+        zero_mean_pointing=True,
+        gain_prior_sigma=(0.1, 0.1),
+        beam_log_width_prior=0.03,
+        predictor=predictor,
+        estimate_uncertainty=True,
+    )
+    assert fit["success"]
+    assert fit["beam_width_multiplier"] == pytest.approx(1.01, abs=1e-7)
+    assert fit["uncertainty"]["beam_log_width_std"] > 0
+    np.testing.assert_allclose(fit["offsets_arcmin"], 0, atol=1e-4)
+
+
 def test_chromatic_shape_lifts_the_gaussian_gauge(fixture):
     pytest.importorskip("katbeam")
     sky, _ = fixture

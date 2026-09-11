@@ -206,6 +206,8 @@ def solve_pointing(
     gain_prior_sigma=None,
     gain_per_channel=False,
     fit_pointing=True,
+    estimate_uncertainty=False,
+    beam_log_width_prior=None,
     max_nfev=100,
 ):
     """Fit smooth offsets, optionally jointly fitting component flux densities.
@@ -235,6 +237,12 @@ def solve_pointing(
     gain_per_channel=True fits independent gain splines at observed frequencies;
     returned gains then have shape (time, frequency, antenna), with frequencies
     in gain_frequencies_hz. There is no frequency interpolation or penalty.
+    estimate_uncertainty returns local Gauss–Newton marginal standard deviations
+    including the priors. These are conditional on the beam/sky/trajectory model,
+    not exact posterior intervals or protection against model mismatch.
+    beam_log_width_prior optionally fits one shared log-FWHM multiplier with a
+    zero-centred Gaussian prior, using predictor.with_log_width. This changes
+    both axes equally at every frequency and holds squint fixed.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before creating input arrays")
@@ -249,6 +257,11 @@ def solve_pointing(
     design, penalty = spline_design(times_s, knots_s)
     obs = Observation(*(jnp.asarray(a) for a in observation))
     prediction = resolve_predictor(obs, predictor, beam_axis_ratio=beam_axis_ratio)
+    if beam_log_width_prior is not None:
+        if not np.isfinite(beam_log_width_prior) or beam_log_width_prior <= 0:
+            raise ValueError("beam_log_width_prior must be positive and finite")
+        if not callable(getattr(prediction, "with_log_width", None)):
+            raise ValueError("predictor must support with_log_width")
     data = np.asarray(visibilities)
     n = data.size
     if data.shape != (n,) or n == 0 or not np.isfinite(data).all():
@@ -330,7 +343,15 @@ def solve_pointing(
                 np.full(antenna_count - 1, gain_sigma[1]),
             ]
         )
-    total_size = sky_end + (int(np.prod(gain_shape)) if gain_scale is not None else 0)
+    gain_end = sky_end + (int(np.prod(gain_shape)) if gain_scale is not None else 0)
+    total_size = gain_end + int(beam_log_width_prior is not None)
+
+    def log_width(flat):
+        return (
+            flat[gain_end] * beam_log_width_prior
+            if beam_log_width_prior is not None
+            else jnp.asarray(0.0)
+        )
 
     def sky(flat):
         flux = components.flux_jy.at[free].add(
@@ -345,7 +366,9 @@ def solve_pointing(
         if gain_scale is None:
             return jnp.ones((len(times_s), 1, antenna_count), dtype=complex)
         values = jnp.einsum(
-            "tk,kfa->tfa", design_jax, flat[sky_end:].reshape(gain_shape) * gain_scale
+            "tk,kfa->tfa",
+            design_jax,
+            flat[sky_end:gain_end].reshape(gain_shape) * gain_scale,
         )
         phase = jnp.concatenate(
             (jnp.zeros((len(times_s), channel_count, 1)), values[:, :, antenna_count:]),
@@ -361,7 +384,11 @@ def solve_pointing(
     def residual(flat):
         coefficients = unpack_pointing(flat)
         offsets = jnp.einsum("tk,kad->tad", design_jax, coefficients)
-        model = prediction(sky(flat), obs, offsets)
+        model = (
+            prediction(sky(flat), obs, offsets)
+            if beam_log_width_prior is None
+            else prediction.with_log_width(sky(flat), obs, offsets, log_width(flat))
+        )
         gain = gains(flat)
         model = (
             model
@@ -445,7 +472,48 @@ def solve_pointing(
         * np.finfo(float).eps
     )
     rank = int(np.sum(singular > cutoff))
+    uncertainty = None
+    if estimate_uncertainty:
+        from .uncertainty import propagated_standard_deviation
+
+        def outputs(flat):
+            offsets = jnp.einsum("tk,kad->tad", design_jax, unpack_pointing(flat))
+            flux = sky(flat).flux_jy
+            return jnp.concatenate(
+                (offsets.reshape(-1), flux, jnp.atleast_1d(log_width(flat)))
+            )
+
+        output_jac = (
+            np.asarray(jax.jacfwd(outputs)(jnp.asarray(full_solution))) @ transform
+        )
+        std = propagated_standard_deviation(result.jac, output_jac)
+        offset_size = len(times_s) * antenna_count * 2
+        uncertainty = {
+            "method": "local_gauss_newton_with_priors",
+            "offset_std_arcmin": std[:offset_size].reshape(
+                len(times_s), antenna_count, 2
+            ),
+            "flux_std_jy": std[offset_size:-1],
+            "beam_log_width_std": float(std[-1]),
+            "noise_rescaled_from_residuals": False,
+        }
+        fitted_flux = np.asarray(sky(jnp.asarray(full_solution)).flux_jy)
+        if fitted_flux.size and fitted_flux[0] != 0:
+            ratio_jac = (
+                np.asarray(
+                    jax.jacfwd(lambda flat: sky(flat).flux_jy / sky(flat).flux_jy[0])(
+                        jnp.asarray(full_solution)
+                    )
+                )
+                @ transform
+            )
+            uncertainty["flux_ratio_to_first_std"] = propagated_standard_deviation(
+                result.jac, ratio_jac
+            )
     return {
+        "uncertainty": uncertainty,
+        "beam_width_multiplier": float(jnp.exp(log_width(jnp.asarray(full_solution)))),
+        "beam_log_width_prior": beam_log_width_prior,
         "flux_jy": np.asarray(sky(jnp.asarray(full_solution)).flux_jy),
         "zero_mean_pointing": bool(zero_mean_pointing),
         "fit_pointing": bool(fit_pointing),

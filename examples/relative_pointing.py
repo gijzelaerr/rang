@@ -23,6 +23,26 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 11, 19])
     parser.add_argument(
+        "--beam-log-width-prior",
+        type=float,
+        default=None,
+        help="Jointly fit shared beam width with this log-width prior sigma",
+    )
+    parser.add_argument(
+        "--holdout-mode", choices=["interleaved", "contiguous"], default="interleaved"
+    )
+    parser.add_argument(
+        "--coverage",
+        action="store_true",
+        help="Report conditional local interval coverage for joint-flux zero-common case only",
+    )
+    parser.add_argument(
+        "--truth-seed",
+        type=int,
+        default=None,
+        help="Keep pointing and gain truth fixed while varying noise seeds",
+    )
+    parser.add_argument(
         "--missing-source-jy",
         type=float,
         default=0.0,
@@ -104,10 +124,14 @@ def main():
         if args.held_out
         else np.zeros(len(r), dtype=bool)
     )
+    if args.held_out and args.holdout_mode == "contiguous":
+        test = (np.asarray(obs.time_index) >= 9) & (np.asarray(obs.time_index) <= 14)
     train_obs = Observation(*(a[~test] for a in obs))
     results = []
     for seed in args.seeds:
-        rng = np.random.default_rng(seed)
+        rng = np.random.default_rng(
+            seed if args.truth_seed is None else args.truth_seed
+        )
         coefficients = rng.normal(0, 0.3, (4, 8, 2))
         coefficients -= coefficients.mean(axis=1, keepdims=True)
         relative = np.einsum("tk,kad->tad", design, coefficients)
@@ -115,7 +139,10 @@ def main():
             2 * np.pi * times[:, None, None] / 5400 + np.arange(16).reshape(1, 8, 2)
         )
         relative += ripple - ripple.mean(axis=1, keepdims=True)
-        noise = sigma * (rng.normal(size=len(r)) + 1j * rng.normal(size=len(r)))
+        noise_rng = rng if args.truth_seed is None else np.random.default_rng(seed)
+        noise = sigma * (
+            noise_rng.normal(size=len(r)) + 1j * noise_rng.normal(size=len(r))
+        )
         gains = np.ones((24, 8), dtype=complex)
         if args.joint_gains:
             logamp = design @ rng.normal(0, 0.02, (4, 8))
@@ -126,7 +153,7 @@ def main():
             gains[obs.time_index, obs.antenna1]
             * gains[obs.time_index, obs.antenna2].conj()
         )
-        for common_arcmin in (0.0, 0.5):
+        for common_arcmin in (0.0,) if args.coverage else (0.0, 0.5):
             truth = relative + np.array([common_arcmin, -common_arcmin])[None, None, :]
             clean = np.asarray(true_predictor(true_sky, obs, jnp.asarray(truth)))
             clean = clean * baseline_gain
@@ -134,6 +161,8 @@ def main():
             cases = ["known_sky", "wrong_fixed_sky", "joint_flux"]
             if args.held_out:
                 cases.append("gain_sky_only")
+            if args.coverage:
+                cases = ["joint_flux"]
             for case in cases:
                 supplied = (
                     sky
@@ -157,6 +186,8 @@ def main():
                     fit_pointing=case != "gain_sky_only",
                     gain_prior_sigma=(0.1, 0.1) if args.joint_gains else None,
                     gain_per_channel=args.gain_per_channel,
+                    estimate_uncertainty=args.coverage,
+                    beam_log_width_prior=args.beam_log_width_prior,
                     flux_prior_jy=np.asarray(supplied.flux_jy) * 0.05
                     if case in ("joint_flux", "gain_sky_only")
                     else None,
@@ -164,7 +195,12 @@ def main():
                 solve_seconds = perf_counter() - started
                 recovered_sky = supplied._replace(flux_jy=jnp.asarray(fit["flux_jy"]))
                 model = np.asarray(
-                    predictor(recovered_sky, obs, jnp.asarray(fit["offsets_arcmin"]))
+                    predictor.with_log_width(
+                        recovered_sky,
+                        obs,
+                        jnp.asarray(fit["offsets_arcmin"]),
+                        np.log(fit["beam_width_multiplier"]),
+                    )
                 )
                 recovered_gains = fit["gains"]
                 if args.gain_per_channel:
@@ -189,6 +225,7 @@ def main():
                     "common_offset_per_axis_arcmin": common_arcmin,
                     "success": fit["success"],
                     "nfev": fit["nfev"],
+                    "beam_width_multiplier": fit["beam_width_multiplier"],
                     "solve_seconds_including_compilation": solve_seconds,
                     "relative_rmse_arcsec": float(
                         60 * np.sqrt(np.mean((fit["offsets_arcmin"] - relative) ** 2))
@@ -207,6 +244,32 @@ def main():
                     ).tolist(),
                 }
                 results.append(result)
+                if args.coverage:
+                    uncertainty = fit["uncertainty"]
+                    error = fit["offsets_arcmin"] - relative
+                    std = uncertainty["offset_std_arcmin"]
+                    flux_error = np.asarray(fit["flux_jy"]) - np.asarray(sky.flux_jy)
+                    result["pointing_coverage_95_fraction"] = float(
+                        np.mean(np.abs(error) <= 1.959963984540054 * std)
+                    )
+                    result["pointing_standardized_error_rms"] = float(
+                        np.sqrt(np.mean((error / std) ** 2))
+                    )
+                    result["median_pointing_std_arcsec"] = float(60 * np.median(std))
+                    result["flux_coverage_95_per_source"] = (
+                        np.abs(flux_error)
+                        <= 1.959963984540054 * uncertainty["flux_std_jy"]
+                    ).tolist()
+                    result["flux_std_jy"] = uncertainty["flux_std_jy"].tolist()
+                    result["beam_log_width_std"] = uncertainty["beam_log_width_std"]
+                    ratio = np.asarray(fit["flux_jy"]) / fit["flux_jy"][0]
+                    true_ratio = np.asarray(sky.flux_jy) / sky.flux_jy[0]
+                    ratio_std = uncertainty["flux_ratio_to_first_std"]
+                    result["flux_ratio_coverage_95_offaxis"] = (
+                        np.abs(ratio[1:] - true_ratio[1:])
+                        <= 1.959963984540054 * ratio_std[1:]
+                    ).tolist()
+                    result["flux_ratio_std"] = ratio_std.tolist()
                 if args.held_out:
                     for label, mask in (("train", ~test), ("test", test)):
                         result[label + "_whitened_residual_mean_square"] = float(
@@ -223,14 +286,19 @@ def main():
         "beam": metadata,
         "noise_per_real_component_jy": sigma,
         "joint_gains": args.joint_gains,
+        "truth_seed": args.truth_seed,
+        "coverage": args.coverage,
+        "beam_log_width_prior": args.beam_log_width_prior,
         "gain_per_channel": args.gain_per_channel,
         "true_fractional_beam_width_error": args.beam_width_error,
         "pointing_ripple_arcmin": args.pointing_ripple_arcmin,
         "missing_source_jy": args.missing_source_jy,
         "held_out": args.held_out,
+        "holdout_mode": args.holdout_mode,
+        "test_time_indices": np.unique(np.asarray(obs.time_index)[test]).tolist(),
         "train_rows": int((~test).sum()),
         "test_rows": int(test.sum()),
-        "limitations": "Synthetic beam/spline model, with deliberate width and fast-ripple mismatch when the corresponding settings are nonzero. Held-out times have index modulo 4 equal to 2, at all baselines/frequencies (interpolation, not extrapolation); hyperparameters fixed beforehand. Injected gains are achromatic; fitted gains are independent per frequency when gain_per_channel is true, otherwise achromatic. Gain priors are 0.1 in log-amplitude/radians. Absolute flux scale is prior-dependent. Historical pointing records are not injected. Timings include compilation and are not a controlled performance benchmark.",
+        "limitations": "Synthetic beam/spline model with specified perturbations. Held-out mode withholds whole times listed in test_time_indices (interpolation, not extrapolation); hyperparameters fixed beforehand. Coverage uses correlated coordinates, not independent trials, and local Gauss-Newton intervals including priors. Injected gains are achromatic; fitted gains may be per-channel. Absolute flux scale is prior-dependent. Historical pointing records are not injected. Timings include compilation and are not a controlled performance benchmark.",
         "results": results,
     }
     output = ROOT / (
@@ -240,6 +308,14 @@ def main():
     )
     if args.held_out:
         output = output.with_name(output.name + "-heldout")
+        if args.holdout_mode == "contiguous":
+            output = output.with_name(output.name + "-contiguous")
+    if args.coverage:
+        output = output.with_name(output.name + f"-coverage-truth{args.truth_seed}")
+    if args.beam_log_width_prior is not None:
+        output = output.with_name(
+            output.name + f"-beamprior{args.beam_log_width_prior:g}"
+        )
     if args.gain_per_channel:
         output = output.with_name(output.name + "-channelgains")
     if args.missing_source_jy:

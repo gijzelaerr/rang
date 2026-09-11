@@ -162,6 +162,7 @@ def test_joint_smooth_gains_flux_and_relative_pointing(
         gain_per_channel=per_channel,
         flux_prior_jy=np.array([0, 0.1, 0.1, 0.1]),
         fit_pointing=fit_pointing,
+        estimate_uncertainty=True,
         max_nfev=100,
     )
     assert fit["success"], fit["message"]
@@ -169,9 +170,13 @@ def test_joint_smooth_gains_flux_and_relative_pointing(
         "smooth_per_channel" if per_channel else "smooth_achromatic"
     )
     assert fit["fit_pointing"] == fit_pointing
+    assert fit["uncertainty"]["offset_std_arcmin"].shape == truth.shape
+    assert np.isfinite(fit["uncertainty"]["offset_std_arcmin"]).all()
+    assert fit["uncertainty"]["flux_std_jy"][0] == 0
     if not fit_pointing:
         assert fit["retained_pointing_modes"] == 0
         np.testing.assert_array_equal(fit["offsets_arcmin"], 0)
+        np.testing.assert_array_equal(fit["uncertainty"]["offset_std_arcmin"], 0)
     np.testing.assert_allclose(fit["offsets_arcmin"], truth, atol=1e-3)
     np.testing.assert_allclose(fit["gains"], gains, atol=1e-5)
     np.testing.assert_allclose(fit["flux_jy"], components.flux_jy, atol=1e-5)

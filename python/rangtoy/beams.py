@@ -185,6 +185,13 @@ def make_beam_predictor(table, profile="cosine", metadata=None):
         ):
             raise ValueError("observation frequency lies outside the beam table")
 
+    def with_log_width(components, observation, offsets_arcmin, log_width):
+        adjusted = table._replace(fwhm_rad=table.fwhm_rad * jnp.exp(log_width))
+        return predict_tabulated(
+            components, observation, offsets_arcmin, adjusted, profile
+        )
+
     prediction.validate_observation = validate
+    prediction.with_log_width = with_log_width
     prediction.metadata = dict(metadata or {}, profile=profile)
     return prediction

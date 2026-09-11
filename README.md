@@ -32,6 +32,11 @@ result. A 1% beam-width error biases off-axis flux ratios by 0.53–0.76%; an
 omitted 20 mJy source severely biases pointing. No state-of-the-art quality
 or compute advantage has yet been demonstrated.
 
+[Uncertainty checks and beam-width recovery](research/uncertainty-coverage.md)
+now show why a noise-level fit and valid flux uncertainties must be evaluated
+together: a wrong fixed beam misses all36 off-axis flux-ratio intervals in a
+small repeated-noise pilot; fitting one width parameter recovers34 of36.
+
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and
 antenna gains for identical Gaussian beams—including rotating elliptical beams.
