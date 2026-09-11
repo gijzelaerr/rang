@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" role="img" aria-labelledby="title desc">
+<title id="title">Different pointing trajectories, identical Gaussian-beam visibilities</title>
+<desc id="desc">Two smooth models for toy antenna m000 differ in both pointing coordinates. Across a continuous gauge sweep their maximum visibility difference remains at floating-point roundoff.</desc>
+<rect width="1000" height="620" fill="white"/>
+<g font-family="sans-serif" fill="#172b4d">
+<text x="50" y="32" font-size="22">Different pointing. Identical predicted data.</text>
+<text x="50" y="55" font-size="13">Rotating elliptical Gaussian beam · eight-antenna toy · not two fitted estimates</text>
+<text x="65" y="93" font-size="15">m000: x pointing (arcsec)</text>
+<path d="M 65 295.0 h 390" stroke="#dce3ed"/>
+<text x="57" y="299.0" text-anchor="end" font-size="11">-90</text>
+<path d="M 65 200.0 h 390" stroke="#dce3ed"/>
+<text x="57" y="204.0" text-anchor="end" font-size="11">0</text>
+<path d="M 65 105.0 h 390" stroke="#dce3ed"/>
+<text x="57" y="109.0" text-anchor="end" font-size="11">90</text>
+<text x="65.0" y="315" text-anchor="middle" font-size="11">0 h</text>
+<text x="260.0" y="315" text-anchor="middle" font-size="11">3 h</text>
+<text x="455.0" y="315" text-anchor="middle" font-size="11">6 h</text>
+<polyline points="65.000,209.265 81.957,205.927 98.913,202.949 115.870,200.550 132.826,198.910 149.783,198.149 166.739,198.323 183.696,199.421 200.652,201.361 217.609,203.998 234.565,207.137 251.522,210.546 268.478,213.971 285.435,217.159 302.391,219.872 319.348,221.911 336.304,223.123 353.261,223.419 370.217,222.777 387.174,221.244 404.130,218.934 421.087,216.018 438.043,212.714 455.000,209.265" fill="none" stroke="#247a92" stroke-width="2.5" stroke-dasharray="none"/>
+<polyline points="65.000,181.853 81.957,176.406 98.913,171.236 115.870,166.557 132.826,162.546 149.783,159.347 166.739,157.078 183.696,155.871 200.652,155.927 217.609,157.602 234.565,161.409 251.522,167.802 268.478,176.675 285.435,187.068 302.391,197.575 319.348,207.041 336.304,214.853 353.261,220.827 370.217,225.028 387.174,227.639 404.130,228.908 421.087,229.123 438.043,228.588 455.000,227.622" fill="none" stroke="#b05a24" stroke-width="2.5" stroke-dasharray="7 4"/>
+<text x="550" y="93" font-size="15">m000: y pointing (arcsec)</text>
+<path d="M 550 295.0 h 390" stroke="#dce3ed"/>
+<text x="542" y="299.0" text-anchor="end" font-size="11">-90</text>
+<path d="M 550 200.0 h 390" stroke="#dce3ed"/>
+<text x="542" y="204.0" text-anchor="end" font-size="11">0</text>
+<path d="M 550 105.0 h 390" stroke="#dce3ed"/>
+<text x="542" y="109.0" text-anchor="end" font-size="11">90</text>
+<text x="550.0" y="315" text-anchor="middle" font-size="11">0 h</text>
+<text x="745.0" y="315" text-anchor="middle" font-size="11">3 h</text>
+<text x="940.0" y="315" text-anchor="middle" font-size="11">6 h</text>
+<polyline points="550.000,218.377 566.957,215.054 583.913,212.102 600.870,209.742 617.826,208.149 634.783,207.440 651.739,207.668 668.696,208.816 685.652,210.799 702.609,213.470 719.565,216.631 736.522,220.047 753.478,223.466 770.435,226.633 787.391,229.313 804.348,231.309 821.304,232.471 838.261,232.714 855.217,232.019 872.174,230.439 889.130,228.090 906.087,225.146 923.043,221.827 940.000,218.377" fill="none" stroke="#247a92" stroke-width="2.5" stroke-dasharray="none"/>
+<polyline points="550.000,173.050 566.957,171.709 583.913,171.086 600.870,171.495 617.826,173.239 634.783,176.611 651.739,181.898 668.696,189.378 685.652,199.287 702.609,211.704 719.565,226.287 736.522,241.951 753.478,256.905 770.435,269.401 787.391,278.576 804.348,284.516 821.304,287.739 838.261,288.793 855.217,288.120 872.174,286.070 889.130,282.945 906.087,279.029 923.043,274.607 940.000,269.966" fill="none" stroke="#b05a24" stroke-width="2.5" stroke-dasharray="7 4"/>
+<text x="65" y="342" font-size="13" fill="#247a92">Solid: model A</text>
+<text x="220" y="342" font-size="13" fill="#b05a24">Dashed: gauge-equivalent model B; sky and gains also change</text>
+<text x="65" y="390" font-size="15">Maximum complex visibility difference: log10(Jy)</text>
+<path d="M 65 537.0 h 875" stroke="#dce3ed"/>
+<text x="57" y="541.0" text-anchor="end" font-size="11">-18</text>
+<path d="M 65 469.5 h 875" stroke="#dce3ed"/>
+<text x="57" y="473.5" text-anchor="end" font-size="11">-16</text>
+<path d="M 65 402.0 h 875" stroke="#dce3ed"/>
+<text x="57" y="406.0" text-anchor="end" font-size="11">-14</text>
+<text x="65.0" y="557" text-anchor="middle" font-size="11">-1</text>
+<text x="502.5" y="557" text-anchor="middle" font-size="11">0</text>
+<text x="940.0" y="557" text-anchor="middle" font-size="11">1</text>
+<polyline points="65.000,433.586 108.750,434.217 152.500,433.586 196.250,434.217 240.000,434.144 283.750,435.853 327.500,436.524 371.250,434.199 415.000,434.135 458.750,433.130 502.500,537.000 546.250,434.144 590.000,433.130 633.750,434.217 677.500,433.611 721.250,434.199 765.000,431.344 808.750,433.875 852.500,431.532 896.250,431.431 940.000,436.805" fill="none" stroke="#247a92" stroke-width="2.5" stroke-dasharray="none"/>
+<text x="400" y="579" font-size="12">Gauge amplitude (dimensionless)</text>
+<text x="65" y="607" font-size="11">Zero difference at amplitude 0 is displayed at 10^-18 Jy. Numerical noise is not physical information.</text>
+</g></svg>

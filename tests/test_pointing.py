@@ -477,3 +477,57 @@ def test_flux_anchor_geometry_controls_number_of_common_modes(reference):
         assert result["sky_nuisance_parameters"] == 4 * (4 - len(fixed))
     with pytest.raises(ValueError, match="fixed_flux_sources"):
         sky_locked_information(sky, obs, 8, noise_jy=0.001, fixed_flux_sources=[4])
+
+    lm = np.asarray(sky.lmn[:, :2]).copy()
+    lm[2] = -0.8 * lm[1]
+    collinear_sky = component_list(lm[:, 0], lm[:, 1], sky.flux_jy, sky.spectral_index)
+    collinear = sky_locked_information(
+        collinear_sky,
+        obs,
+        8,
+        noise_jy=0.001,
+        beam_axis_ratio=1.1,
+        gain_model="per_time_channel",
+        differential_pointing=True,
+        common_time_variation=True,
+        fixed_flux_sources=[0, 1, 2],
+    )
+    assert collinear["observable_common_modes"] == 1
+
+
+def test_gauge_composition_and_noisy_likelihood(reference):
+    _, sky, obs = reference
+    rng = np.random.default_rng(29)
+    offsets = rng.normal(0, 0.2, (24, 8, 2))
+    flux = rng.uniform(0.2, 1, (4, 4))
+    gains = np.exp(rng.normal(0, 0.1, (24, 8, 4)) + 1j * rng.normal(0, 0.1, (24, 8, 4)))
+    first = gaussian_gauge(obs, sky, offsets, flux, gains, [0.3, -0.1], 1.1)
+    composed = gaussian_gauge(
+        obs,
+        sky,
+        first["offsets_arcmin"],
+        first["channel_flux_jy"],
+        first["antenna_gains"],
+        [-0.2, 0.4],
+        1.1,
+    )
+    direct = gaussian_gauge(obs, sky, offsets, flux, gains, [0.1, 0.3], 1.1)
+    for key in ("offsets_arcmin", "channel_flux_jy", "antenna_gains"):
+        np.testing.assert_allclose(composed[key], direct[key], atol=1e-14, rtol=1e-14)
+    before = np.asarray(predict_channels(sky, obs, offsets, flux, gains, 1.1))
+    after = np.asarray(
+        predict_channels(
+            sky,
+            obs,
+            direct["offsets_arcmin"],
+            direct["channel_flux_jy"],
+            direct["antenna_gains"],
+            1.1,
+        )
+    )
+    data = before + 0.001 * (
+        rng.normal(size=len(before)) + 1j * rng.normal(size=len(before))
+    )
+    first_chi2 = np.sum(np.abs(before - data) ** 2) / 0.001**2
+    second_chi2 = np.sum(np.abs(after - data) ** 2) / 0.001**2
+    assert abs(first_chi2 - second_chi2) < 1e-8
