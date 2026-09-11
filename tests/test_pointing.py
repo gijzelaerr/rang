@@ -117,7 +117,10 @@ def test_smooth_pointing_recovery(reference):
 
 
 @pytest.mark.parametrize("fit_pointing", [True, False])
-def test_joint_smooth_gains_flux_and_relative_pointing(reference, fit_pointing):
+@pytest.mark.parametrize("per_channel", [True, False])
+def test_joint_smooth_gains_flux_and_relative_pointing(
+    reference, fit_pointing, per_channel
+):
     _, components, obs = reference
     times, knots = np.linspace(0, 21600, 24), [0, 21600]
     design, _ = spline_design(times, knots)
@@ -131,10 +134,16 @@ def test_joint_smooth_gains_flux_and_relative_pointing(reference, fit_pointing):
     phase = design @ rng.normal(0, 0.03, (2, 8))
     phase -= phase[:, :1]
     gains = np.exp(logamp + 1j * phase)
+    if per_channel:
+        freq, fi = np.unique(obs.frequency_hz, return_inverse=True)
+        gains = gains[:, None, :] * np.exp(rng.normal(0, 0.01, (1, len(freq), 8)))
+        row_gains = gains[np.asarray(obs.time_index), fi]
+    else:
+        row_gains = gains[np.asarray(obs.time_index)]
     data = (
         predict(components, obs, jnp.asarray(truth))
-        * gains[obs.time_index, obs.antenna1]
-        * gains[obs.time_index, obs.antenna2].conj()
+        * row_gains[np.arange(len(obs.time_index)), obs.antenna1]
+        * row_gains[np.arange(len(obs.time_index)), obs.antenna2].conj()
     )
     wrong = components._replace(
         flux_jy=components.flux_jy * jnp.array([1, 1.02, 0.98, 1.02])
@@ -150,12 +159,15 @@ def test_joint_smooth_gains_flux_and_relative_pointing(reference, fit_pointing):
         smoothness=0.01,
         zero_mean_pointing=True,
         gain_prior_sigma=(0.1, 0.1),
+        gain_per_channel=per_channel,
         flux_prior_jy=np.array([0, 0.1, 0.1, 0.1]),
         fit_pointing=fit_pointing,
         max_nfev=100,
     )
     assert fit["success"], fit["message"]
-    assert fit["gain_model"] == "smooth_achromatic"
+    assert fit["gain_model"] == (
+        "smooth_per_channel" if per_channel else "smooth_achromatic"
+    )
     assert fit["fit_pointing"] == fit_pointing
     if not fit_pointing:
         assert fit["retained_pointing_modes"] == 0
@@ -163,7 +175,7 @@ def test_joint_smooth_gains_flux_and_relative_pointing(reference, fit_pointing):
     np.testing.assert_allclose(fit["offsets_arcmin"], truth, atol=1e-3)
     np.testing.assert_allclose(fit["gains"], gains, atol=1e-5)
     np.testing.assert_allclose(fit["flux_jy"], components.flux_jy, atol=1e-5)
-    np.testing.assert_allclose(fit["gains"][:, 0].imag, 0, atol=1e-15)
+    np.testing.assert_allclose(fit["gains"][..., 0].imag, 0, atol=1e-15)
 
 
 @pytest.mark.parametrize("sigma", [0.1, [0, 1], [1, np.nan], [1, 2, 3]])

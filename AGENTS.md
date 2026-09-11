@@ -5,6 +5,7 @@
 - Focus on MeerKAT. The current experiment is specified in `research/meerkat-scope.md`.
 - Use simulations and comparisons to test research hypotheses; distinguish proposed methods, implemented methods and measured results.
 - Preserve reproducible experiment settings, seeds, data provenance and relevant negative results.
+- Novelty must target demonstrably higher calibration/imaging quality at comparable cost, or comparable quality with materially lower runtime/resource use than a relevant state-of-the-art method. Toy-baseline wins and software reimplementations alone do not establish novelty. Record matched accuracy/cost comparisons and negative results.
 
 ## Implementation languages
 

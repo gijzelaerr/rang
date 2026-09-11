@@ -26,6 +26,12 @@ The nonzero shared-offset control still fails the noise-level residual check.
 [Public pointing-history inspection](research/pointing-history.md) records why
 the historical measurements are not yet used as within-track drift models.
 
+**Robustness check:** [beam, gain-flexibility, temporal and missing-source
+stress tests](research/robustness-stress.md) now qualify the matched-model
+result. A 1% beam-width error biases off-axis flux ratios by 0.53–0.76%; an
+omitted 20 mJy source severely biases pointing. No state-of-the-art quality
+or compute advantage has yet been demonstrated.
+
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and
 antenna gains for identical Gaussian beams—including rotating elliptical beams.

@@ -4,6 +4,10 @@ Updated 2026-09-11.
 
 ## Latest checkpoint
 
+- User clarified novelty must mean better calibration/imaging quality or comparable quality with less runtime/resources than state of the art. Persisted in AGENTS.md and `development-roadmap.md`. Toy wins alone are insufficient.
+- First passes of gates 1–4: 96 stress fits across width mismatch, independent fitted channel gains, out-of-family ripple and missing source. Report/archive `robustness-stress.md` and `results/robustness-stress.json`. Width +1% leaves 1.09–1.46 arcsec pointing but biases flux ratios 0.53–0.76%, held-out residual 2.38–2.57. Ripple 6 arcsec/90 min yields ~4.32 arcsec errors. Missing 20mJy source yields 12.57–12.88 arcsec errors, residual160–165. All convergence flags true; convergence is not correctness.
+- Added optional `gain_per_channel=True` in JAX solver; independent spline coefficients at each observed frequency, gain cube shape(time,frequency,antenna) and frequency labels returned. Default achromatic shape unchanged. Channel-dependent noiseless recovery controls added. Full checks running. Remaining within gates1–4: heterogeneous beams/squint, smooth spectral gain truth, jumps and extended/spectral sky errors. Gates5–10 not completed; no measured-data drift fit or state-of-the-art advantage claimed.
+
 - Verification for this checkpoint: release build, 11 Rust tests, 63 Python tests, Clippy, Rust formatting, Ruff lint/format and whitespace checks passed. Held-out campaign completed all 24 fits successfully and results archived with fixture/beam provenance.
 
 - Public 892 KB SARAO pointing-history downloaded into ignored outputs; CC BY-NC 4.0 provenance in `pointing-history.md`. Safe NPZ inspection finds 2x64x881 array, 2019–2022 timestamps, missing values, five duplicate timestamps and 53.8% exact adjacent antenna repeats. Coordinate/assembly/freshness conventions unresolved, so no empirical temporal covariance or six-hour interpolation claimed. Inspector script saves local summary/hash. Raw data not committed.
