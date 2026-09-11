@@ -4,6 +4,8 @@
 
 Update: the solver now optionally fits component flux densities jointly with pointing. See [the sky-uncertainty experiment](sky-uncertainty.md) for the API, priors, controls and 20-seed results. Fixed-sky behavior remains the default described below.
 
+Further extensions: `spectral_index_prior` enables index fitting, `beam_axis_ratio` selects an elliptical Gaussian, and `minimum_mode_information` enables experimental information truncation. See [spectral tests](spectral-pointing.md). The separate [shared-mode ambiguity solver](beam-rotation.md) allows free source/channel fluxes; it is not a replacement for the full spline solver.
+
 Infer the two antenna-frame pointing offsets of each dish as continuous functions of time, directly from visibilities predicted from a sky component list. The current implementation is a small JAX reference solver, cross-checked against Rang's Rust predictor and analytic pointing derivatives.
 
 Pointing self-calibration is established: [Bhatnagar & Cornwell (2017)](https://arxiv.org/abs/1709.08681) is a direct algorithmic precedent. [MeerKAT L-band beam measurements](https://arxiv.org/abs/2202.02101) identify pointing as a leading beam-response uncertainty. Neither splines nor automatic differentiation establish novelty. The open research question is reliable pointing recovery with uncertain sky/beam models; see the [contribution assessment](novelty.md).

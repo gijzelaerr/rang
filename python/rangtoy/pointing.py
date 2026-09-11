@@ -13,7 +13,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.interpolate import CubicSpline
-from scipy.optimize import least_squares
+from scipy.optimize import OptimizeResult, least_squares
 
 C = 299_792_458.0
 ARCMIN = np.pi / (180 * 60)
@@ -85,10 +85,13 @@ def image_components(image_jy_per_pixel, l, m, **kwargs):
 
 
 @jax.jit
-def predict(components, observation, offsets_arcmin, dish_diameter_m=13.5):
+def predict(
+    components, observation, offsets_arcmin, dish_diameter_m=13.5, beam_axis_ratio=1.0
+):
     """Scalar DFT with full w phase and differentiable Gaussian voltage beams.
 
-    offsets_arcmin: (time, antenna, 2). Power FWHM is 1.02 lambda / D.
+    offsets_arcmin: (time, antenna, 2). Geometric-mean power FWHM is
+    1.02 lambda / D. beam_axis_ratio is FWHM_y/FWHM_x, keeping beam area fixed.
     Memory is O(visibility rows * components); this reference is for small
     problems. Chunk prediction externally for larger component lists.
     """
@@ -102,7 +105,10 @@ def predict(components, observation, offsets_arcmin, dish_diameter_m=13.5):
 
     def beam(antenna):
         offset = offsets_arcmin[obs.time_index, antenna] * ARCMIN
-        radius2 = (x - offset[:, 0, None]) ** 2 + (y - offset[:, 1, None]) ** 2
+        radius2 = (
+            beam_axis_ratio * (x - offset[:, 0, None]) ** 2
+            + (y - offset[:, 1, None]) ** 2 / beam_axis_ratio
+        )
         return jnp.exp(-2 * jnp.log(2.0) * radius2 / fwhm[:, None] ** 2)
 
     direction = components.lmn - jnp.array([0.0, 0.0, 1.0])
@@ -161,13 +167,17 @@ def solve_pointing(
     smoothness=1.0,
     offset_prior_arcmin=3.0,
     flux_prior_jy=None,
+    spectral_index_prior=None,
+    minimum_mode_information=None,
+    beam_axis_ratio=1.0,
     max_nfev=100,
 ):
     """Fit smooth offsets, optionally jointly fitting component flux densities.
 
     flux_prior_jy is a scalar or per-source Gaussian prior sigma around the
     supplied flux. Zero fixes that source; None holds the entire sky fixed.
-    Spectra, positions and beam shape remain fixed. Additive flux corrections
+    spectral_index_prior similarly enables power-law index corrections.
+    Positions and beam shape remain fixed. Additive flux corrections
     support signed CLEAN components; positivity is not imposed.
 
     Minimize whitened residuals + smoothness * integrated curvature² + a
@@ -178,6 +188,8 @@ def solve_pointing(
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before creating input arrays")
+    if not np.isfinite(beam_axis_ratio) or beam_axis_ratio <= 0:
+        raise ValueError("beam axis ratio must be finite and positive")
     if not isinstance(antenna_count, int) or antenna_count < 2:
         raise ValueError("antenna_count must be an integer >= 2")
     if not np.isfinite(smoothness) or smoothness < 0:
@@ -220,15 +232,31 @@ def solve_pointing(
     if not np.isfinite(flux_sigma).all() or np.any(flux_sigma < 0):
         raise ValueError("flux prior sigmas must be finite and nonnegative")
     free = np.flatnonzero(flux_sigma > 0)
+    alpha_sigma = np.broadcast_to(
+        np.asarray(
+            0.0 if spectral_index_prior is None else spectral_index_prior, float
+        ),
+        np.shape(components.spectral_index),
+    )
+    if not np.isfinite(alpha_sigma).all() or np.any(alpha_sigma < 0):
+        raise ValueError("spectral index prior sigmas must be finite and nonnegative")
+    alpha_free = np.flatnonzero(alpha_sigma > 0)
+    flux_end = pointing_size + len(free)
+    total_size = flux_end + len(alpha_free)
 
     def sky(flat):
-        flux = components.flux_jy.at[free].add(flat[pointing_size:] * flux_sigma[free])
-        return components._replace(flux_jy=flux)
+        flux = components.flux_jy.at[free].add(
+            flat[pointing_size:flux_end] * flux_sigma[free]
+        )
+        alpha = components.spectral_index.at[alpha_free].add(
+            flat[flux_end:] * alpha_sigma[alpha_free]
+        )
+        return components._replace(flux_jy=flux, spectral_index=alpha)
 
     def residual(flat):
         coefficients = flat[:pointing_size].reshape(shape)
         offsets = jnp.einsum("tk,kad->tad", design_jax, coefficients)
-        model = predict(sky(flat), obs, offsets)
+        model = predict(sky(flat), obs, offsets, beam_axis_ratio=beam_axis_ratio)
         curvature = jnp.einsum("rk,kad->rad", penalty_jax, coefficients)
         return jnp.concatenate(
             (
@@ -241,21 +269,73 @@ def solve_pointing(
 
     residual_jit = jax.jit(residual)
     jacobian = jax.jit(jax.jacfwd(residual))
-    result = least_squares(
-        lambda p: np.asarray(residual_jit(p)),
-        np.zeros(pointing_size + len(free)),
-        jac=lambda p: np.asarray(jacobian(p)),
-        max_nfev=max_nfev,
-        ftol=1e-10,
-        xtol=1e-10,
-        gtol=1e-10,
-    )
-    coefficients = result.x[:pointing_size].reshape(shape)
+    transform = np.eye(total_size)
+    mode_information = None
+    if minimum_mode_information is not None:
+        if not np.isfinite(minimum_mode_information) or minimum_mode_information < 0:
+            raise ValueError("minimum mode information must be finite and nonnegative")
+        initial_jac = np.asarray(jacobian(np.zeros(total_size)))
+        p, s = (
+            initial_jac[: 2 * n, :pointing_size],
+            initial_jac[: 2 * n, pointing_size:],
+        )
+        information = p.T @ p
+        if s.shape[1]:
+            cross = p.T @ s
+            information -= cross @ np.linalg.solve(
+                s.T @ s + np.eye(s.shape[1]), cross.T
+            )
+        prior_jac = initial_jac[2 * n :, :pointing_size]
+        prior_precision = prior_jac.T @ prior_jac
+        values, vectors = np.linalg.eigh(prior_precision)
+        whitening = (vectors / np.sqrt(values)) @ vectors.T
+        relative = whitening @ information @ whitening
+        mode_information, rotation = np.linalg.eigh((relative + relative.T) / 2)
+        retained = mode_information >= minimum_mode_information
+        basis = whitening @ rotation[:, retained]
+        transform = np.zeros((total_size, basis.shape[1] + total_size - pointing_size))
+        transform[:pointing_size, : basis.shape[1]] = basis
+        transform[pointing_size:, basis.shape[1] :] = np.eye(total_size - pointing_size)
+
+    # Selection is frozen at zero offsets and the supplied sky, without test
+    # data. It is a prior-dependent truncated-information baseline, not a
+    # claim of nonlinear protection or a novel inference method.
+    if transform.shape[1]:
+        result = least_squares(
+            lambda p: np.asarray(residual_jit(transform @ p)),
+            np.zeros(transform.shape[1]),
+            jac=lambda p: np.asarray(jacobian(transform @ p)) @ transform,
+            max_nfev=max_nfev,
+            ftol=1e-10,
+            xtol=1e-10,
+            gtol=1e-10,
+        )
+    else:
+        residual_zero = np.asarray(residual_jit(np.zeros(total_size)))
+        result = OptimizeResult(
+            x=np.zeros(0),
+            jac=np.zeros((len(residual_zero), 0)),
+            success=True,
+            message="All pointing modes frozen; sky fixed",
+            nfev=1,
+            cost=float(residual_zero @ residual_zero / 2),
+            optimality=0.0,
+        )
+    full_solution = transform @ result.x
+    coefficients = full_solution[:pointing_size].reshape(shape)
     singular = np.linalg.svd(result.jac[: 2 * n], compute_uv=False)
-    cutoff = singular[0] * max(2 * n, result.x.size) * np.finfo(float).eps
+    cutoff = (
+        (singular[0] if singular.size else 0)
+        * max(2 * n, result.x.size)
+        * np.finfo(float).eps
+    )
     rank = int(np.sum(singular > cutoff))
     return {
-        "flux_jy": np.asarray(sky(jnp.asarray(result.x)).flux_jy),
+        "flux_jy": np.asarray(sky(jnp.asarray(full_solution)).flux_jy),
+        "spectral_index": np.asarray(sky(jnp.asarray(full_solution)).spectral_index),
+        "spectral_index_prior": alpha_sigma.copy(),
+        "retained_pointing_modes": transform.shape[1] - total_size + pointing_size,
+        "mode_information": mode_information,
         "flux_prior_jy": flux_sigma.copy(),
         "offsets_arcmin": np.einsum("tk,kad->tad", design, coefficients),
         "knot_offsets_arcmin": coefficients,

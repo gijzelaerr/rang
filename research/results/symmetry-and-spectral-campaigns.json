@@ -1,0 +1,1213 @@
+{
+  "description": "Controlled spectral/model-selection and beam-symmetry experiments. Novelty remains unconfirmed.",
+  "cases": {
+    "spectral_low_noise": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "fractional_flux_error": 0.02,
+      "fractional_flux_prior": 0.05,
+      "fixture_sha256": "49e7154a4988a7e9676f399a3fa70f1fde356177e5394908bc8f5d37367e74d5",
+      "noise_jy_per_component": 0.001,
+      "smoothness": 0.01,
+      "spectral_index_error": 0.1,
+      "spectral_index_prior": 0.2,
+      "minimum_mode_information": 1,
+      "offset_prior_arcmin": 3,
+      "knots_s": [
+        0,
+        4320,
+        8640,
+        12960,
+        17280,
+        21600
+      ],
+      "jax_version": "0.11.1",
+      "truth_flux_jy": [
+        1,
+        0.7,
+        0.5,
+        0.3
+      ],
+      "model_flux_jy": [
+        1,
+        0.714,
+        0.49,
+        0.306
+      ],
+      "summary": {
+        "known_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.4022094187973555,
+            "std": 0.27170013326884374
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0662285036625003,
+            "std": 0.041159998537185494
+          },
+          "flux_rmse_mjy": {
+            "mean": 0,
+            "std": 0
+          },
+          "spectral_rmse": {
+            "mean": 0,
+            "std": 0
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "fixed_wrong_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 22.56003086648743,
+            "std": 0.20591495033088447
+          },
+          "heldout_rms_mjy": {
+            "mean": 6.719969620441087,
+            "std": 0.07713041197581921
+          },
+          "flux_rmse_mjy": {
+            "mean": 10.519822558706345,
+            "std": 1.8225036628030615e-15
+          },
+          "spectral_rmse": {
+            "mean": 0.1,
+            "std": 2.8476619731297836e-17
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "joint_flux_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 68.51063662418133,
+            "std": 0.8100099893674904
+          },
+          "heldout_rms_mjy": {
+            "mean": 2.3944285538034507,
+            "std": 0.09079314288983775
+          },
+          "flux_rmse_mjy": {
+            "mean": 29.295345429366925,
+            "std": 0.23773373717312685
+          },
+          "spectral_rmse": {
+            "mean": 0.1,
+            "std": 2.8476619731297836e-17
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "joint_spectrum_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 4.132011074608905,
+            "std": 1.2145101770370332
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0682792938790233,
+            "std": 0.04152073454025565
+          },
+          "flux_rmse_mjy": {
+            "mean": 1.0574301887760404,
+            "std": 0.5477675176716826
+          },
+          "spectral_rmse": {
+            "mean": 0.0035759136407400457,
+            "std": 0.0018958954010041623
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "selected_pointing_modes": {
+          "pointing_rmse_arcsec": {
+            "mean": 4.132011376177751,
+            "std": 1.2145120292096374
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0682792926650364,
+            "std": 0.04152072991219838
+          },
+          "flux_rmse_mjy": {
+            "mean": 1.0574300085901627,
+            "std": 0.5477676110615401
+          },
+          "spectral_rmse": {
+            "mean": 0.003575912470718932,
+            "std": 0.001895892778312908
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        }
+      },
+      "runs_count": 100,
+      "converged_count": 100,
+      "refused_count": 0
+    },
+    "spectral_high_noise": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "fractional_flux_error": 0.02,
+      "fractional_flux_prior": 0.05,
+      "fixture_sha256": "49e7154a4988a7e9676f399a3fa70f1fde356177e5394908bc8f5d37367e74d5",
+      "noise_jy_per_component": 0.01,
+      "smoothness": 0.01,
+      "spectral_index_error": 0.1,
+      "spectral_index_prior": 0.2,
+      "minimum_mode_information": 1,
+      "offset_prior_arcmin": 3,
+      "knots_s": [
+        0,
+        4320,
+        8640,
+        12960,
+        17280,
+        21600
+      ],
+      "jax_version": "0.11.1",
+      "truth_flux_jy": [
+        1,
+        0.7,
+        0.5,
+        0.3
+      ],
+      "model_flux_jy": [
+        1,
+        0.714,
+        0.49,
+        0.306
+      ],
+      "summary": {
+        "known_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 16.66787737000258,
+            "std": 1.7980402554819088
+          },
+          "heldout_rms_mjy": {
+            "mean": 10.414055990682572,
+            "std": 0.43431610956564104
+          },
+          "flux_rmse_mjy": {
+            "mean": 0,
+            "std": 0
+          },
+          "spectral_rmse": {
+            "mean": 0,
+            "std": 0
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "fixed_wrong_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 25.944516133354746,
+            "std": 1.8915589769781018
+          },
+          "heldout_rms_mjy": {
+            "mean": 12.171701870990294,
+            "std": 0.46639374438310366
+          },
+          "flux_rmse_mjy": {
+            "mean": 10.519822558706345,
+            "std": 1.8225036628030615e-15
+          },
+          "spectral_rmse": {
+            "mean": 0.1,
+            "std": 2.8476619731297836e-17
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "joint_flux_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 64.14018036152063,
+            "std": 3.4644113072247835
+          },
+          "heldout_rms_mjy": {
+            "mean": 10.691485246519347,
+            "std": 0.4761094097498124
+          },
+          "flux_rmse_mjy": {
+            "mean": 27.24882801208206,
+            "std": 1.2168841916161666
+          },
+          "spectral_rmse": {
+            "mean": 0.1,
+            "std": 2.8476619731297836e-17
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "joint_spectrum_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 19.27114694481896,
+            "std": 2.515993778185952
+          },
+          "heldout_rms_mjy": {
+            "mean": 10.424238380544782,
+            "std": 0.43029532159553563
+          },
+          "flux_rmse_mjy": {
+            "mean": 3.2234963768581437,
+            "std": 1.7079586943753648
+          },
+          "spectral_rmse": {
+            "mean": 0.013219643139402892,
+            "std": 0.006198070066061355
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          }
+        },
+        "selected_pointing_modes": {
+          "pointing_rmse_arcsec": {
+            "mean": 18.134631462908693,
+            "std": 1.8744207056405935
+          },
+          "heldout_rms_mjy": {
+            "mean": 10.420949805204051,
+            "std": 0.4434780685066663
+          },
+          "flux_rmse_mjy": {
+            "mean": 2.542920469095122,
+            "std": 0.9519531674546523
+          },
+          "spectral_rmse": {
+            "mean": 0.012041120498140217,
+            "std": 0.005983017663593574
+          },
+          "retained_pointing_modes": {
+            "mean": 56,
+            "std": 0
+          }
+        }
+      },
+      "runs_count": 100,
+      "converged_count": 100,
+      "refused_count": 0
+    },
+    "validation_tuned_modes": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "noise_jy": 0.01,
+      "smoothness_grid": [
+        0.0001,
+        0.001,
+        0.01,
+        0.1,
+        1
+      ],
+      "mode_threshold": 1,
+      "training_rows": 269,
+      "validation_rows": 134,
+      "test_rows": 135,
+      "summary": {
+        "full_joint": {
+          "pointing_rmse_arcsec": 18.500922882437443,
+          "test_rms_mjy": 10.401866323383024,
+          "flux_rmse_mjy": 3.1250800470825126,
+          "retained": 96
+        },
+        "selected_joint": {
+          "pointing_rmse_arcsec": 18.497468098158016,
+          "test_rms_mjy": 10.421735461998578,
+          "flux_rmse_mjy": 2.8619900773643963,
+          "retained": 44.8
+        }
+      },
+      "runs_count": 40,
+      "converged_count": 40,
+      "refused_count": 0,
+      "paired_results": [
+        {
+          "seed": 1,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 16.67333136099909,
+          "test_rms_mjy": 10.416670901522483,
+          "flux_rmse_mjy": 3.1019684784983816
+        },
+        {
+          "seed": 1,
+          "method": "selected_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 32,
+          "pointing_rmse_arcsec": 17.040214372031233,
+          "test_rms_mjy": 10.430488367347131,
+          "flux_rmse_mjy": 3.1228688172868617
+        },
+        {
+          "seed": 2,
+          "method": "full_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 14.679808250560205,
+          "test_rms_mjy": 10.295745421876205,
+          "flux_rmse_mjy": 2.159234386992463
+        },
+        {
+          "seed": 2,
+          "method": "selected_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 39,
+          "pointing_rmse_arcsec": 15.017326277568428,
+          "test_rms_mjy": 10.323537718106461,
+          "flux_rmse_mjy": 2.9407412532632446
+        },
+        {
+          "seed": 3,
+          "method": "full_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 16.95702662814537,
+          "test_rms_mjy": 10.465808408305607,
+          "flux_rmse_mjy": 0.42707431989323236
+        },
+        {
+          "seed": 3,
+          "method": "selected_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 39,
+          "pointing_rmse_arcsec": 16.51859627859723,
+          "test_rms_mjy": 10.414179253671042,
+          "flux_rmse_mjy": 0.30542819691309037
+        },
+        {
+          "seed": 4,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 13.012628221857677,
+          "test_rms_mjy": 10.481454471460484,
+          "flux_rmse_mjy": 1.7468955866535705
+        },
+        {
+          "seed": 4,
+          "method": "selected_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 39,
+          "pointing_rmse_arcsec": 13.06329439574532,
+          "test_rms_mjy": 10.52046666045881,
+          "flux_rmse_mjy": 1.4989244852368375
+        },
+        {
+          "seed": 5,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 23.622246139739026,
+          "test_rms_mjy": 10.38226871024591,
+          "flux_rmse_mjy": 6.126406918812765
+        },
+        {
+          "seed": 5,
+          "method": "selected_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 32,
+          "pointing_rmse_arcsec": 23.896145303338802,
+          "test_rms_mjy": 10.392709260509026,
+          "flux_rmse_mjy": 6.253542656244289
+        },
+        {
+          "seed": 6,
+          "method": "full_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 17.72607681143288,
+          "test_rms_mjy": 10.573217515494418,
+          "flux_rmse_mjy": 2.747688499156016
+        },
+        {
+          "seed": 6,
+          "method": "selected_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 56,
+          "pointing_rmse_arcsec": 15.552932585699606,
+          "test_rms_mjy": 10.577711096915921,
+          "flux_rmse_mjy": 2.054201091888189
+        },
+        {
+          "seed": 7,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 20.126845570086903,
+          "test_rms_mjy": 9.250996318789824,
+          "flux_rmse_mjy": 5.439615808811962
+        },
+        {
+          "seed": 7,
+          "method": "selected_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 32,
+          "pointing_rmse_arcsec": 20.150394451796352,
+          "test_rms_mjy": 9.255668359549306,
+          "flux_rmse_mjy": 5.302547702453744
+        },
+        {
+          "seed": 8,
+          "method": "full_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 19.493549215226246,
+          "test_rms_mjy": 10.6923473240042,
+          "flux_rmse_mjy": 3.5997412178704313
+        },
+        {
+          "seed": 8,
+          "method": "selected_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 56,
+          "pointing_rmse_arcsec": 18.651114678335063,
+          "test_rms_mjy": 10.712264659899736,
+          "flux_rmse_mjy": 3.7527170258237454
+        },
+        {
+          "seed": 9,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 19.77960187112568,
+          "test_rms_mjy": 11.132439255757305,
+          "flux_rmse_mjy": 3.4952168551806784
+        },
+        {
+          "seed": 9,
+          "method": "selected_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 32,
+          "pointing_rmse_arcsec": 20.59830087815556,
+          "test_rms_mjy": 11.147588561477773,
+          "flux_rmse_mjy": 3.713717765992664
+        },
+        {
+          "seed": 10,
+          "method": "full_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 22.516409461075167,
+          "test_rms_mjy": 10.833019487755886,
+          "flux_rmse_mjy": 5.300162507358865
+        },
+        {
+          "seed": 10,
+          "method": "selected_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 56,
+          "pointing_rmse_arcsec": 22.272157199405115,
+          "test_rms_mjy": 10.883149323797415,
+          "flux_rmse_mjy": 2.5120210122825966
+        },
+        {
+          "seed": 11,
+          "method": "full_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 16.02170986727712,
+          "test_rms_mjy": 10.053947293295327,
+          "flux_rmse_mjy": 2.12677871222538
+        },
+        {
+          "seed": 11,
+          "method": "selected_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 56,
+          "pointing_rmse_arcsec": 17.492419734277217,
+          "test_rms_mjy": 10.064051729978,
+          "flux_rmse_mjy": 2.238705856869094
+        },
+        {
+          "seed": 12,
+          "method": "full_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 15.914836307607851,
+          "test_rms_mjy": 11.07855337914554,
+          "flux_rmse_mjy": 3.441928452963686
+        },
+        {
+          "seed": 12,
+          "method": "selected_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 56,
+          "pointing_rmse_arcsec": 17.30414719166263,
+          "test_rms_mjy": 11.206154075594089,
+          "flux_rmse_mjy": 3.422178217836946
+        },
+        {
+          "seed": 13,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 18.764753381871312,
+          "test_rms_mjy": 10.149296277067336,
+          "flux_rmse_mjy": 2.0127530775085405
+        },
+        {
+          "seed": 13,
+          "method": "selected_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 32,
+          "pointing_rmse_arcsec": 18.899839058825904,
+          "test_rms_mjy": 10.162998232401595,
+          "flux_rmse_mjy": 1.9435997302854566
+        },
+        {
+          "seed": 14,
+          "method": "full_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 20.267400515393707,
+          "test_rms_mjy": 10.316973781525137,
+          "flux_rmse_mjy": 3.9584067140596857
+        },
+        {
+          "seed": 14,
+          "method": "selected_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 56,
+          "pointing_rmse_arcsec": 18.99373304310774,
+          "test_rms_mjy": 10.367556706921581,
+          "flux_rmse_mjy": 2.3884410243058163
+        },
+        {
+          "seed": 15,
+          "method": "full_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 17.436240228415087,
+          "test_rms_mjy": 10.033262403676034,
+          "flux_rmse_mjy": 1.813550175125079
+        },
+        {
+          "seed": 15,
+          "method": "selected_joint",
+          "smoothness": 0.01,
+          "success": true,
+          "retained": 56,
+          "pointing_rmse_arcsec": 17.865014377128627,
+          "test_rms_mjy": 10.044989914820563,
+          "flux_rmse_mjy": 2.3118708649835447
+        },
+        {
+          "seed": 16,
+          "method": "full_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 19.190436566009147,
+          "test_rms_mjy": 9.878497569617288,
+          "flux_rmse_mjy": 3.3202545140155033
+        },
+        {
+          "seed": 16,
+          "method": "selected_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 32,
+          "pointing_rmse_arcsec": 20.30278740484904,
+          "test_rms_mjy": 9.92232066717046,
+          "flux_rmse_mjy": 3.4325647559868226
+        },
+        {
+          "seed": 17,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 17.30029236763861,
+          "test_rms_mjy": 10.156871576301072,
+          "flux_rmse_mjy": 1.8133316360406522
+        },
+        {
+          "seed": 17,
+          "method": "selected_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 32,
+          "pointing_rmse_arcsec": 17.442373121842028,
+          "test_rms_mjy": 10.15471042738592,
+          "flux_rmse_mjy": 1.7851190521847649
+        },
+        {
+          "seed": 18,
+          "method": "full_joint",
+          "smoothness": 0.001,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 23.761883362299542,
+          "test_rms_mjy": 10.658167228151745,
+          "flux_rmse_mjy": 2.8561249760286986
+        },
+        {
+          "seed": 18,
+          "method": "selected_joint",
+          "smoothness": 0.001,
+          "success": true,
+          "retained": 85,
+          "pointing_rmse_arcsec": 22.88202161325584,
+          "test_rms_mjy": 10.677415644399229,
+          "flux_rmse_mjy": 2.3852914955195494
+        },
+        {
+          "seed": 19,
+          "method": "full_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 17.890672475794226,
+          "test_rms_mjy": 10.880901082045117,
+          "flux_rmse_mjy": 4.925737227295936
+        },
+        {
+          "seed": 19,
+          "method": "selected_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 39,
+          "pointing_rmse_arcsec": 17.122277438680186,
+          "test_rms_mjy": 10.89292314070952,
+          "flux_rmse_mjy": 3.9716563779482756
+        },
+        {
+          "seed": 20,
+          "method": "full_joint",
+          "smoothness": 1,
+          "success": true,
+          "retained": 96,
+          "pointing_rmse_arcsec": 18.882709046194005,
+          "test_rms_mjy": 10.306888061623582,
+          "flux_rmse_mjy": 2.0887308771587256
+        },
+        {
+          "seed": 20,
+          "method": "selected_joint",
+          "smoothness": 0.1,
+          "success": true,
+          "retained": 39,
+          "pointing_rmse_arcsec": 18.884272558858438,
+          "test_rms_mjy": 10.283825438858019,
+          "flux_rmse_mjy": 1.903664163982385
+        }
+      ]
+    },
+    "sky_locked_pilot": {
+      "seeds": [
+        7,
+        11,
+        19
+      ],
+      "fractional_flux_error": 0.02,
+      "fractional_flux_prior": 0.05,
+      "fixture_sha256": "49e7154a4988a7e9676f399a3fa70f1fde356177e5394908bc8f5d37367e74d5",
+      "noise_jy_per_component": 0.001,
+      "smoothness": 0.01,
+      "spectral_index_error": 0.1,
+      "spectral_index_prior": 0.2,
+      "minimum_mode_information": 1,
+      "offset_prior_arcmin": 3,
+      "knots_s": [
+        0,
+        4320,
+        8640,
+        12960,
+        17280,
+        21600
+      ],
+      "jax_version": "0.11.1",
+      "truth_flux_jy": [
+        1,
+        0.7,
+        0.5,
+        0.3
+      ],
+      "model_flux_jy": [
+        1,
+        0.714,
+        0.49,
+        0.306
+      ],
+      "summary": {
+        "known_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 2.138426579280933,
+            "std": 0.22710599480164956
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0354920230419875,
+            "std": 0.07498288719790472
+          },
+          "flux_rmse_mjy": {
+            "mean": 0,
+            "std": 0
+          },
+          "spectral_rmse": {
+            "mean": 0,
+            "std": 0
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          },
+          "common_pointing_rmse_arcsec": {
+            "mean": 0.6225240509631557,
+            "std": 0.03512258821906377
+          },
+          "differential_pointing_rmse_arcsec": {
+            "mean": 2.0446383128630163,
+            "std": 0.2398392220885038
+          },
+          "sky_locked_common_error_fraction": {
+            "mean": 0.12624940551002842,
+            "std": 0.12809516073770377
+          }
+        },
+        "fixed_wrong_sky": {
+          "pointing_rmse_arcsec": {
+            "mean": 22.56092767242288,
+            "std": 0.06469865364214254
+          },
+          "heldout_rms_mjy": {
+            "mean": 6.683567163254083,
+            "std": 0.030143742598074428
+          },
+          "flux_rmse_mjy": {
+            "mean": 10.519822558706343,
+            "std": 0
+          },
+          "spectral_rmse": {
+            "mean": 0.09999999999999998,
+            "std": 0
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          },
+          "common_pointing_rmse_arcsec": {
+            "mean": 17.38802154502459,
+            "std": 0.03641887016691195
+          },
+          "differential_pointing_rmse_arcsec": {
+            "mean": 14.375342835096012,
+            "std": 0.07337184027460278
+          },
+          "sky_locked_common_error_fraction": {
+            "mean": 0.9857629136161127,
+            "std": 0.003840739005625126
+          }
+        },
+        "joint_flux_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 68.95246393783275,
+            "std": 0.19643632271737124
+          },
+          "heldout_rms_mjy": {
+            "mean": 2.316027082990169,
+            "std": 0.08002291171525844
+          },
+          "flux_rmse_mjy": {
+            "mean": 29.453905809769527,
+            "std": 0.09037455000549917
+          },
+          "spectral_rmse": {
+            "mean": 0.09999999999999998,
+            "std": 0
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          },
+          "common_pointing_rmse_arcsec": {
+            "mean": 68.78542018840145,
+            "std": 0.21216430513377613
+          },
+          "differential_pointing_rmse_arcsec": {
+            "mean": 4.790360562249141,
+            "std": 0.2908968318062989
+          },
+          "sky_locked_common_error_fraction": {
+            "mean": 0.9989730186118378,
+            "std": 0.00005654783094035901
+          }
+        },
+        "joint_spectrum_pointing": {
+          "pointing_rmse_arcsec": {
+            "mean": 4.361986842751767,
+            "std": 0.8854957360217012
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0407186815697376,
+            "std": 0.07843482621900894
+          },
+          "flux_rmse_mjy": {
+            "mean": 1.4710217140776225,
+            "std": 0.3155848287343437
+          },
+          "spectral_rmse": {
+            "mean": 0.005067138048127434,
+            "std": 0.0017734054878546894
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          },
+          "common_pointing_rmse_arcsec": {
+            "mean": 3.8143815503863934,
+            "std": 0.9927154283625025
+          },
+          "differential_pointing_rmse_arcsec": {
+            "mean": 2.075514297107039,
+            "std": 0.230463201351555
+          },
+          "sky_locked_common_error_fraction": {
+            "mean": 0.9727283548889863,
+            "std": 0.01195256179426622
+          }
+        },
+        "selected_pointing_modes": {
+          "pointing_rmse_arcsec": {
+            "mean": 4.361995741854498,
+            "std": 0.8855115072235735
+          },
+          "heldout_rms_mjy": {
+            "mean": 1.0407186695842106,
+            "std": 0.07843481663125981
+          },
+          "flux_rmse_mjy": {
+            "mean": 1.4710230231741306,
+            "std": 0.31558748337439685
+          },
+          "spectral_rmse": {
+            "mean": 0.005067149032670263,
+            "std": 0.001773423075120604
+          },
+          "retained_pointing_modes": {
+            "mean": 96,
+            "std": 0
+          },
+          "common_pointing_rmse_arcsec": {
+            "mean": 3.8143908019662316,
+            "std": 0.9927346507629631
+          },
+          "differential_pointing_rmse_arcsec": {
+            "mean": 2.075514368177332,
+            "std": 0.23046300480196721
+          },
+          "sky_locked_common_error_fraction": {
+            "mean": 0.9727284064251248,
+            "std": 0.011952617679758375
+          }
+        }
+      },
+      "runs_count": 15,
+      "converged_count": 15,
+      "refused_count": 0
+    },
+    "sky_locked_recovery": {
+      "truth_shift_arcmin": [
+        0.3,
+        -0.2
+      ],
+      "true_channel_flux_jy": [
+        1.1971693497204055,
+        0.8168964731254619,
+        0.6487564971371752,
+        0.34875345922941076,
+        0.9819537712523022,
+        0.7792033552489697,
+        0.5615937781307969,
+        0.30801014022353673,
+        0.936182478277841,
+        0.7681214719735295,
+        0.4572020493750475,
+        0.2817151866950596,
+        0.9261583479545838,
+        0.6350454005611239,
+        0.47254787657140485,
+        0.2731114823761794
+      ],
+      "noise_jy_per_component": 0.001,
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "summary": [
+        {
+          "actual_axis_ratio": 1,
+          "model_axis_ratio": 1,
+          "fit_beam_axis_ratio": false,
+          "refused": 20,
+          "converged": 0
+        },
+        {
+          "actual_axis_ratio": 1.1,
+          "model_axis_ratio": 1.1,
+          "fit_beam_axis_ratio": false,
+          "refused": 0,
+          "converged": 20,
+          "rmse_arcsec": 1.7870541981937953,
+          "bias_arcsec": [
+            0.09339317314975878,
+            -0.043430192313311675
+          ],
+          "mean_local_sigma_arcsec": [
+            1.988731445862678,
+            1.84912350639576
+          ]
+        },
+        {
+          "actual_axis_ratio": 1.1,
+          "model_axis_ratio": 1.08,
+          "fit_beam_axis_ratio": false,
+          "refused": 0,
+          "converged": 20,
+          "rmse_arcsec": 51.928993715961994,
+          "bias_arcsec": [
+            -54.549835496302435,
+            -49.0697073299326
+          ],
+          "mean_local_sigma_arcsec": [
+            2.376871644627578,
+            2.218874524767651
+          ]
+        },
+        {
+          "actual_axis_ratio": 1.1,
+          "model_axis_ratio": 1,
+          "fit_beam_axis_ratio": true,
+          "refused": 0,
+          "converged": 20,
+          "rmse_arcsec": 1.85885128474055,
+          "bias_arcsec": [
+            0.058075694073119764,
+            -0.07904226656372101
+          ],
+          "mean_local_sigma_arcsec": [
+            2.0769175183274853,
+            1.9483930990258205
+          ]
+        }
+      ],
+      "runs_count": 80,
+      "converged_count": 60,
+      "refused_count": 20
+    },
+    "local_observability": [
+      {
+        "beam_axis_ratio": 1,
+        "noise_jy_per_component": 0.001,
+        "sky_nuisance_parameters": 16,
+        "observable_common_modes": 0,
+        "singular_values_per_arcmin": [
+          2.66387777937048e-13,
+          9.240420126712155e-14
+        ],
+        "known_sky_singular_values_per_arcmin": [
+          405.5165104147459,
+          242.60709805841822
+        ],
+        "retained_derivative_norm_fraction": 5.966781009474976e-16,
+        "local_crlb_arcsec": null,
+        "beam_rotation": true
+      },
+      {
+        "beam_axis_ratio": 1.02,
+        "noise_jy_per_component": 0.001,
+        "sky_nuisance_parameters": 16,
+        "observable_common_modes": 2,
+        "singular_values_per_arcmin": [
+          6.491020558594362,
+          6.072360813299409
+        ],
+        "known_sky_singular_values_per_arcmin": [
+          403.72037214761747,
+          243.54620836269495
+        ],
+        "retained_derivative_norm_fraction": 0.018852026269637744,
+        "local_crlb_arcsec": [
+          9.876215239351017,
+          9.248475373293735
+        ],
+        "beam_rotation": true
+      },
+      {
+        "beam_axis_ratio": 1.1,
+        "noise_jy_per_component": 0.001,
+        "sky_nuisance_parameters": 16,
+        "observable_common_modes": 2,
+        "singular_values_per_arcmin": [
+          31.32763567233493,
+          29.009153981768907
+        ],
+        "known_sky_singular_values_per_arcmin": [
+          397.5948111695736,
+          248.4092997401051
+        ],
+        "retained_derivative_norm_fraction": 0.09107198377018601,
+        "local_crlb_arcsec": [
+          2.0676479302674204,
+          1.9159594755873024
+        ],
+        "beam_rotation": true
+      },
+      {
+        "beam_axis_ratio": 1.2,
+        "noise_jy_per_component": 0.001,
+        "sky_nuisance_parameters": 16,
+        "observable_common_modes": 2,
+        "singular_values_per_arcmin": [
+          60.071192925937865,
+          54.93832068840742
+        ],
+        "known_sky_singular_values_per_arcmin": [
+          392.0345909218514,
+          256.3614235970471
+        ],
+        "retained_derivative_norm_fraction": 0.17378823610226515,
+        "local_crlb_arcsec": [
+          1.0919181879091395,
+          0.9990506239450592
+        ],
+        "beam_rotation": true
+      },
+      {
+        "beam_axis_ratio": 1.1,
+        "noise_jy_per_component": 0.001,
+        "sky_nuisance_parameters": 16,
+        "observable_common_modes": 0,
+        "singular_values_per_arcmin": [
+          5.276375482168381e-13,
+          1.1561411254009292e-13
+        ],
+        "known_sky_singular_values_per_arcmin": [
+          432.4040442710533,
+          220.0442126297088
+        ],
+        "retained_derivative_norm_fraction": 1.113325934636106e-15,
+        "local_crlb_arcsec": null,
+        "beam_rotation": false
+      }
+    ]
+  }
+}

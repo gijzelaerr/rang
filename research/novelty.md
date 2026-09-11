@@ -2,6 +2,14 @@
 
 Last reviewed: 11 September 2026.
 
+## Latest assessment
+
+The general information-truncation candidate did not improve pointing accuracy against an equally tuned joint fit: 18.501 versus 18.497 arcsec across 20 seeds, although it retained fewer parameters. See [the controlled comparison](spectral-pointing.md). This is not an accuracy contribution.
+
+A more specific lead is [symmetry-aware shared pointing calibration](beam-rotation.md): an exact circular-beam/sky ambiguity, a spectral-prior-free observability audit, and a beam-rotation-based reference solver. Jointly fitting beam axial ratio and the shared mode recovers 1.86 arcsec RMS in a controlled 20-noise-realization experiment with arbitrary source/channel amplitudes. Whether the specific criterion and workflow differ substantively from pointing self-calibration and RIME ambiguity analyses is not established. Do not advertise it as the first such result or as a validated general MeerKAT method.
+
+The dual-budget formulation below remains unimplemented. Neither a Jacobian-rank check nor information truncation implements its promised model-error bounds.
+
 ## Assessment
 
 The active application is now [smooth per-antenna pointing solutions](pointing-solutions.md), following the requested component-list / DFT / JAX workflow. The decision-rule hypothesis below remains unimplemented; the new spline solver is an established-method baseline for testing it.

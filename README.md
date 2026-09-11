@@ -6,6 +6,16 @@ Reproducible experiments in direction-dependent calibration: recovering faint em
 
 [Pointing solutions](research/pointing-solutions.md) · [Results](research/first-results.md) · [Research direction](research/novelty.md) · [Experiment guide](examples/README.md)
 
+## Current research lead: beam symmetry and pointing ambiguity
+
+**Circularizing the beam can remove pointing information, not merely approximate its response.** We identified an exact shared-pointing/sky ambiguity for identical circular beams when source spectra are unconstrained. A rotating elliptical beam breaks that ambiguity in the controlled model.
+
+The new spectrum-prior-free reference solver recovers the shared pointing mode at **1.86 arcsec RMS** while jointly fitting beam axial ratio. It declines the degenerate fixed-circle case. A wrong fixed ellipticity instead gives **52 arcsec** error despite small formal uncertainties.
+
+[Derivation, 20-realization tests and limitations →](research/beam-rotation.md)
+
+This is a concrete candidate contribution, **not a verified novelty claim**. Other pointing modes and direction-independent gains are held fixed in this experiment. General information-mode truncation did not improve pointing accuracy over a fairly tuned joint baseline; that [negative result is retained](research/spectral-pointing.md).
+
 ## Smooth pointing-error solutions
 
 The current focus is recovering **smoothly time-varying, per-antenna pointing offsets** from a component-list sky model. A JAX reference path provides direct Fourier prediction, automatic derivatives and cubic-spline pointing fits alongside the Rust baseline.
@@ -57,6 +67,8 @@ python3 -m venv .venv
 The script builds the optimized Rust executable and writes JSON results and PNG/PDF plots. Without plotting dependencies, run `python3 examples/toy.py --no-plot`. See the [experiment guide](examples/README.md) for the Python API and metric definitions.
 
 ## Research direction
+
+The active physical lead is the [symmetry-aware pointing audit](research/beam-rotation.md). The broader decision-rule proposal below remains a separate, unproven extension.
 
 We are investigating **calibration-mode selection with separate signal-distortion and model-error contamination budgets**. A differential response test can miss an additive flux bias; the proposed second budget addresses sensitivity to plausible model errors.
 

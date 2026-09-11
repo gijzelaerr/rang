@@ -10,6 +10,11 @@ jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp
 import numpy as np
 from rangtoy import build
+from rangtoy.observability import (
+    channel_design,
+    sky_locked_information,
+    solve_sky_locked,
+)
 from rangtoy.pointing import (
     Observation,
     component_list,
@@ -164,3 +169,143 @@ def test_invalid_flux_prior(reference, sigma):
             noise_jy=0.001,
             flux_prior_jy=sigma,
         )
+
+
+def test_joint_spectrum_recovery(reference):
+    _, components, obs = reference
+    times = np.linspace(0, 21600, 24)
+    truth = jnp.zeros((24, 8, 2))
+    data = predict(components, obs, truth)
+    wrong = components._replace(
+        flux_jy=components.flux_jy * jnp.array([1, 1.02, 0.98, 1.02]),
+        spectral_index=components.spectral_index + jnp.array([0, 0.1, -0.1, 0.1]),
+    )
+    fit = solve_pointing(
+        wrong,
+        obs,
+        data,
+        times,
+        [0, 7200, 14400, 21600],
+        8,
+        noise_jy=1e-5,
+        smoothness=0.01,
+        flux_prior_jy=[0, 0.035, 0.025, 0.015],
+        spectral_index_prior=[0, 0.2, 0.2, 0.2],
+    )
+    assert fit["success"], fit["message"]
+    np.testing.assert_allclose(
+        fit["spectral_index"], components.spectral_index, atol=1e-4
+    )
+    assert np.sqrt(np.mean(fit["offsets_arcmin"] ** 2)) < 0.001
+
+
+def test_mode_selection_can_freeze_every_pointing_parameter(reference):
+    _, components, obs = reference
+    times = np.linspace(0, 21600, 24)
+    data = predict(components, obs, jnp.zeros((24, 8, 2)))
+    fit = solve_pointing(
+        components,
+        obs,
+        data,
+        times,
+        [0, 21600],
+        8,
+        noise_jy=0.01,
+        minimum_mode_information=1e30,
+    )
+    assert fit["success"]
+    assert fit["retained_pointing_modes"] == fit["parameter_count"] == 0
+    assert fit["data_jacobian_rank"] == 0
+    np.testing.assert_array_equal(fit["offsets_arcmin"], 0)
+
+
+def test_full_information_basis_preserves_the_solution(reference):
+    _, components, obs = reference
+    times = np.linspace(0, 21600, 24)
+    data = predict(components, obs, jnp.ones((24, 8, 2)) * 0.2)
+    kwargs = {
+        "noise_jy": 0.001,
+        "flux_prior_jy": [0, 0.035, 0.025, 0.015],
+        "spectral_index_prior": [0, 0.2, 0.2, 0.2],
+    }
+    full = solve_pointing(components, obs, data, times, [0, 21600], 8, **kwargs)
+    selected = solve_pointing(
+        components,
+        obs,
+        data,
+        times,
+        [0, 21600],
+        8,
+        minimum_mode_information=0,
+        **kwargs,
+    )
+    assert selected["retained_pointing_modes"] == 32
+    np.testing.assert_allclose(
+        selected["offsets_arcmin"], full["offsets_arcmin"], atol=1e-5
+    )
+
+
+def test_circular_sky_locked_gauge_is_exact(reference):
+    _, components, obs = reference
+    frequencies = np.unique(obs.frequency_hz)
+    a = np.array([0.3, -0.2])
+    radians = a * np.pi / (180 * 60)
+    k = 2 * np.log(2) / (1.02 * 299792458.0 / frequencies / 13.5) ** 2
+    lm = np.asarray(components.lmn[:, :2])
+    flux = np.tile(np.asarray(components.flux_jy), (len(frequencies), 1))
+    changed = flux * np.exp(
+        -4 * k[:, None] * (lm @ radians)[None, :] + 2 * k[:, None] * np.sum(radians**2)
+    )
+    before = np.asarray(channel_design(components, obs, 8, jnp.zeros(2))) @ flux.ravel()
+    after = (
+        np.asarray(channel_design(components, obs, 8, jnp.asarray(a))) @ changed.ravel()
+    )
+    np.testing.assert_allclose(after, before, atol=2e-12, rtol=2e-12)
+
+
+def test_rotation_and_asymmetry_are_both_needed(reference):
+    _, components, obs = reference
+    circular = sky_locked_information(components, obs, 8, noise_jy=0.001)
+    elliptical = sky_locked_information(
+        components, obs, 8, noise_jy=0.001, beam_axis_ratio=1.1
+    )
+    fixed = sky_locked_information(
+        components,
+        obs._replace(beam_angle_rad=jnp.zeros_like(obs.beam_angle_rad)),
+        8,
+        noise_jy=0.001,
+        beam_axis_ratio=1.1,
+    )
+    assert circular["observable_common_modes"] == fixed["observable_common_modes"] == 0
+    assert elliptical["observable_common_modes"] == 2
+    assert circular["retained_derivative_norm_fraction"] < 1e-12
+
+
+def test_sky_locked_fit_recovers_without_spectral_priors(reference):
+    _, components, obs = reference
+    a = np.array([0.3, -0.2])
+    flux = np.tile(np.asarray(components.flux_jy), 4) * np.linspace(0.9, 1.1, 16)
+    y = np.asarray(channel_design(components, obs, 8, jnp.asarray(a), 1.1)) @ flux
+    data = y[::2] + 1j * y[1::2]
+    result = solve_sky_locked(
+        components, obs, data, 8, noise_jy=0.001, beam_axis_ratio=1.1
+    )
+    assert result["success"]
+    np.testing.assert_allclose(result["shift_arcmin"], a, atol=1e-7)
+    inferred_shape = solve_sky_locked(
+        components,
+        obs,
+        data,
+        8,
+        noise_jy=0.001,
+        beam_axis_ratio=1.0,
+        fit_beam_axis_ratio=True,
+    )
+    assert inferred_shape["success"]
+    assert inferred_shape["fitted_beam_axis_ratio"] == pytest.approx(1.1, abs=1e-7)
+    np.testing.assert_allclose(inferred_shape["shift_arcmin"], a, atol=1e-7)
+    refused = solve_sky_locked(
+        components, obs, data, 8, noise_jy=0.001, beam_axis_ratio=1
+    )
+    assert not refused["identifiable"]
+    assert refused["shift_arcmin"] is None
