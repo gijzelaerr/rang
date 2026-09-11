@@ -175,6 +175,110 @@ def test_joint_width_recovery_and_derivative(fixture):
     np.testing.assert_allclose(fit["offsets_arcmin"], 0, atol=1e-4)
 
 
+def test_beam_shape_derivatives_and_joint_recovery(fixture):
+    pytest.importorskip("katbeam")
+    sky, obs = fixture
+    table, _ = load_katbeam()
+    predictor = make_beam_predictor(table)
+    offsets = jnp.zeros((24, 8, 2))
+    truth = jnp.array([0.01, -0.005, 0.02])
+    fn = lambda p: predictor.with_shape(sky, obs, offsets, p)
+    jac = jax.jacfwd(fn)(truth)
+    for i in range(3):
+        step = np.eye(3)[i] * 1e-5
+        np.testing.assert_allclose(
+            jac[:, i], (fn(truth + step) - fn(truth - step)) / 2e-5, atol=1e-10
+        )
+    np.testing.assert_allclose(
+        predictor.with_shape(sky, obs, offsets, jnp.array([0.01, 0, 0])),
+        predictor.with_log_width(sky, obs, offsets, 0.01),
+        atol=1e-14,
+    )
+    fit = solve_pointing(
+        sky,
+        obs,
+        fn(truth),
+        np.linspace(0, 21600, 24),
+        [0, 21600],
+        8,
+        noise_jy=1e-5,
+        zero_mean_pointing=True,
+        predictor=predictor,
+        gain_prior_sigma=(0.1, 0.1),
+        beam_shape_prior=[0.03] * 3,
+        estimate_uncertainty=True,
+    )
+    assert fit["success"]
+    np.testing.assert_allclose(fit["beam_shape_parameters"], truth, atol=1e-6)
+    assert np.all(fit["uncertainty"]["beam_shape_std"] > 0)
+
+
+@pytest.mark.parametrize("prior", [[1, 2], [1, -1, 0], [1, np.nan, 0]])
+def test_invalid_shape_prior(fixture, prior):
+    sky, obs = fixture
+    with pytest.raises(ValueError, match="three finite nonnegative"):
+        solve_pointing(
+            sky,
+            obs,
+            jnp.zeros(len(obs.frequency_hz)),
+            np.linspace(0, 21600, 24),
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            beam_shape_prior=prior,
+        )
+
+
+def test_common_and_relative_pointing_decomposition(fixture):
+    pytest.importorskip("katbeam")
+    sky, obs = fixture
+    table, _ = load_katbeam()
+    predictor = make_beam_predictor(table)
+    times = np.linspace(0, 21600, 24)
+    relative = np.random.default_rng(6).normal(0, 0.1, (1, 8, 2))
+    relative -= relative.mean(axis=1, keepdims=True)
+    relative = np.broadcast_to(relative, (24, 8, 2))
+    common = np.column_stack((np.linspace(0.3, 0.6, 24), np.linspace(-0.2, -0.1, 24)))
+    total = relative + common[:, None, :]
+    data = predictor(sky, obs, jnp.asarray(total))
+    fit = solve_pointing(
+        sky,
+        obs,
+        data,
+        times,
+        [0, 21600],
+        8,
+        noise_jy=1e-5,
+        zero_mean_pointing=True,
+        common_pointing_prior_arcmin=3,
+        gain_prior_sigma=(0.1, 0.1),
+        predictor=predictor,
+        estimate_uncertainty=True,
+    )
+    assert fit["success"]
+    np.testing.assert_allclose(
+        fit["relative_offsets_arcmin"].mean(axis=1), 0, atol=1e-15
+    )
+    np.testing.assert_allclose(
+        fit["offsets_arcmin"],
+        fit["relative_offsets_arcmin"] + fit["common_offsets_arcmin"][:, None, :],
+        atol=1e-15,
+    )
+    np.testing.assert_allclose(fit["common_offsets_arcmin"], common, atol=1e-4)
+    np.testing.assert_allclose(fit["relative_offsets_arcmin"], relative, atol=1e-4)
+    with pytest.raises(ValueError, match="requires zero-mean"):
+        solve_pointing(
+            sky,
+            obs,
+            data,
+            times,
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            common_pointing_prior_arcmin=1,
+        )
+
+
 def test_chromatic_shape_lifts_the_gaussian_gauge(fixture):
     pytest.importorskip("katbeam")
     sky, _ = fixture

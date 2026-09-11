@@ -37,6 +37,13 @@ now show why a noise-level fit and valid flux uncertainties must be evaluated
 together: a wrong fixed beam misses all36 off-axis flux-ratio intervals in a
 small repeated-noise pilot; fitting one width parameter recovers34 of36.
 
+[Independent beam-model selection](research/beam-model-selection.md) now
+demonstrates that improved visibility prediction can coexist with worse flux
+ratios; richer beam controls correct the tested low-dimensional errors.
+[Explicit common/relative pointing](research/common-pointing-priors.md) removes
+the shared-offset failure under the restricted matched model, without claiming
+general absolute-pointing identifiability.
+
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and
 antenna gains for identical Gaussian beams—including rotating elliptical beams.

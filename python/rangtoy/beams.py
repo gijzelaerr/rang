@@ -191,7 +191,21 @@ def make_beam_predictor(table, profile="cosine", metadata=None):
             components, observation, offsets_arcmin, adjusted, profile
         )
 
+    def with_shape(components, observation, offsets_arcmin, parameters):
+        # Parameters: log geometric width at 1.3 GHz, log-width slope per
+        # 0.4 GHz, log(y/x FWHM) correction. Squint is unchanged.
+        frequency_coordinate = (table.frequency_hz - 1.3e9) / 0.4e9
+        width = parameters[0] + parameters[1] * frequency_coordinate
+        axes = parameters[2] * jnp.array([-0.5, 0.5])
+        adjusted = table._replace(
+            fwhm_rad=table.fwhm_rad * jnp.exp(width[:, None] + axes)
+        )
+        return predict_tabulated(
+            components, observation, offsets_arcmin, adjusted, profile
+        )
+
     prediction.validate_observation = validate
     prediction.with_log_width = with_log_width
+    prediction.with_shape = with_shape
     prediction.metadata = dict(metadata or {}, profile=profile)
     return prediction

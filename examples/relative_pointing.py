@@ -23,6 +23,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 11, 19])
     parser.add_argument(
+        "--common-prior-arcmin",
+        type=float,
+        default=None,
+        help="Fit shared pointing with a zero-centred knot prior (gain-only baseline still fixes all pointing)",
+    )
+    parser.add_argument(
         "--beam-log-width-prior",
         type=float,
         default=None,
@@ -188,6 +194,9 @@ def main():
                     gain_per_channel=args.gain_per_channel,
                     estimate_uncertainty=args.coverage,
                     beam_log_width_prior=args.beam_log_width_prior,
+                    common_pointing_prior_arcmin=args.common_prior_arcmin
+                    if case != "gain_sky_only"
+                    else None,
                     flux_prior_jy=np.asarray(supplied.flux_jy) * 0.05
                     if case in ("joint_flux", "gain_sky_only")
                     else None,
@@ -228,7 +237,22 @@ def main():
                     "beam_width_multiplier": fit["beam_width_multiplier"],
                     "solve_seconds_including_compilation": solve_seconds,
                     "relative_rmse_arcsec": float(
-                        60 * np.sqrt(np.mean((fit["offsets_arcmin"] - relative) ** 2))
+                        60
+                        * np.sqrt(
+                            np.mean((fit["relative_offsets_arcmin"] - relative) ** 2)
+                        )
+                    ),
+                    "common_pointing_rmse_arcsec": float(
+                        60
+                        * np.sqrt(
+                            np.mean(
+                                (
+                                    fit["common_offsets_arcmin"]
+                                    - np.array([common_arcmin, -common_arcmin])
+                                )
+                                ** 2
+                            )
+                        )
                     ),
                     "maximum_mean_arcsec": float(
                         60 * np.max(np.abs(fit["offsets_arcmin"].mean(axis=1)))
@@ -289,6 +313,7 @@ def main():
         "truth_seed": args.truth_seed,
         "coverage": args.coverage,
         "beam_log_width_prior": args.beam_log_width_prior,
+        "common_pointing_prior_arcmin": args.common_prior_arcmin,
         "gain_per_channel": args.gain_per_channel,
         "true_fractional_beam_width_error": args.beam_width_error,
         "pointing_ripple_arcmin": args.pointing_ripple_arcmin,
@@ -312,6 +337,10 @@ def main():
             output = output.with_name(output.name + "-contiguous")
     if args.coverage:
         output = output.with_name(output.name + f"-coverage-truth{args.truth_seed}")
+    if args.common_prior_arcmin is not None:
+        output = output.with_name(
+            output.name + f"-commonprior{args.common_prior_arcmin:g}"
+        )
     if args.beam_log_width_prior is not None:
         output = output.with_name(
             output.name + f"-beamprior{args.beam_log_width_prior:g}"
