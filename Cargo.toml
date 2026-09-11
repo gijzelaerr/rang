@@ -1,0 +1,13 @@
+[package]
+name = "rang-toy"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+name = "rang_toy"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rang-toy"
+path = "src/main.rs"

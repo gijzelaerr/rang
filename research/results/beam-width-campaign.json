@@ -1,0 +1,535 @@
+{
+  "description": "Twenty paired seeds; scatter is sample standard deviation, not posterior uncertainty.",
+  "campaigns": {
+    "matched": {
+      "created_utc": "2026-09-11T07:06:20.423261+00:00",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "configuration": {
+        "schema_version": 1,
+        "seed": 1,
+        "noise_jy": 0.01,
+        "pointing_sigma_arcmin": 0.6,
+        "beam_width_error": 0,
+        "budget": 0.01,
+        "true_flux_jy": 0.02,
+        "antenna_count": 8,
+        "visibility_count": 2688,
+        "training_time_samples": 18,
+        "test_time_samples": 6,
+        "max_abs_w": 2266.1772896460793,
+        "true_pointing_arcmin": [
+          0.0897398523048,
+          -0.02732082515939,
+          -0.9713174560134,
+          0.5972407067485,
+          1.494607812219,
+          0.1413157344726,
+          -1.043105385852,
+          -0.6801353652781,
+          -1.324367757132,
+          -0.662599105134,
+          0.5717445468612,
+          0.05467148791059,
+          0.4771571170069,
+          1.333005286758,
+          0.5609679022726,
+          -1.657102313493
+        ],
+        "execution_seconds": 0.9975787909988867,
+        "binary_sha256": "c8b2a14065362bbadf096dcf1524c48a45cfffe7d67cd4d22e88ce43766d8f01"
+      },
+      "summary": {
+        "fixed_beam": {
+          "flux_jy": {
+            "mean": 0.019049905882810608,
+            "std": 0.0049948037673234295
+          },
+          "heldout_rms_jy": {
+            "mean": 0.011928805359323747,
+            "std": 0.0010055543621576414
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.58684675120468,
+            "std": 0.12300292733081095
+          },
+          "template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "off_template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "off_template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "pointing_only": {
+          "flux_jy": {
+            "mean": 0.012129165830730477,
+            "std": 0.000328270869062415
+          },
+          "heldout_rms_jy": {
+            "mean": 0.01095047266767095,
+            "std": 0.00028407317475008845
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.3004747991010222,
+            "std": 0.010988497619667848
+          },
+          "template_transfer": {
+            "mean": 0.7459544047304735,
+            "std": 0.006322279748230585
+          },
+          "off_template_transfer": {
+            "mean": 0.9963032611925468,
+            "std": 0.00010705414811355492
+          },
+          "template_distortion": {
+            "mean": 0.5874963202283812,
+            "std": 0.003510930907146365
+          },
+          "off_template_distortion": {
+            "mean": 0.07449525242946024,
+            "std": 0.0009551127223913953
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "joint_sky": {
+          "flux_jy": {
+            "mean": 0.02003016445709499,
+            "std": 0.0006154374479633593
+          },
+          "heldout_rms_jy": {
+            "mean": 0.009974741835396185,
+            "std": 0.00020104041370970057
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.061710427809733084,
+            "std": 0.013773543245815777
+          },
+          "template_transfer": {
+            "mean": 0.9999910371493452,
+            "std": 0.00010826825202027082
+          },
+          "off_template_transfer": {
+            "mean": 0.9964795003193121,
+            "std": 0.00011389707417888726
+          },
+          "template_distortion": {
+            "mean": 0.001094148054733933,
+            "std": 0.0001645024106778374
+          },
+          "off_template_distortion": {
+            "mean": 0.0755405338708681,
+            "std": 0.0010379524375307026
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "joint_beam": {
+          "flux_jy": {
+            "mean": 0.020081264173381692,
+            "std": 0.0007462996308927698
+          },
+          "heldout_rms_jy": {
+            "mean": 0.009975683287745056,
+            "std": 0.00020165444860359083
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.061864341471550725,
+            "std": 0.013539200139554146
+          },
+          "template_transfer": {
+            "mean": 0.9999149373765627,
+            "std": 0.0002228640377129481
+          },
+          "off_template_transfer": {
+            "mean": 0.9964290069944632,
+            "std": 0.00011717169533284175
+          },
+          "template_distortion": {
+            "mean": 0.0011292286770470262,
+            "std": 0.00017200528352908598
+          },
+          "off_template_distortion": {
+            "mean": 0.07672463490051895,
+            "std": 0.0010595575987233305
+          },
+          "fitted_beam_width_error": {
+            "mean": -0.00006896907782476536,
+            "std": 0.0005435262175273793
+          }
+        },
+        "protected_modes": {
+          "flux_jy": {
+            "mean": 0.02003016445553984,
+            "std": 0.0006154374563529704
+          },
+          "heldout_rms_jy": {
+            "mean": 0.009974741835311201,
+            "std": 0.0002010404137062452
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.061710427912466774,
+            "std": 0.013773543151539303
+          },
+          "template_transfer": {
+            "mean": 0.999991037312075,
+            "std": 0.00010826748376839721
+          },
+          "off_template_transfer": {
+            "mean": 0.9964795002864512,
+            "std": 0.00011389732181295363
+          },
+          "template_distortion": {
+            "mean": 0.0010941489272188237,
+            "std": 0.00016450252450456946
+          },
+          "off_template_distortion": {
+            "mean": 0.07554053524080521,
+            "std": 0.0010379489746369158
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "known_pointing": {
+          "flux_jy": {
+            "mean": 0.02002234006390997,
+            "std": 0.0004485933850806484
+          },
+          "heldout_rms_jy": {
+            "mean": 0.009950095639644923,
+            "std": 0.0001986026645925568
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0,
+            "std": 0
+          },
+          "template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "off_template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "off_template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        }
+      }
+    },
+    "width_mismatch": {
+      "created_utc": "2026-09-11T07:06:22.405202+00:00",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "configuration": {
+        "schema_version": 1,
+        "seed": 1,
+        "noise_jy": 0.01,
+        "pointing_sigma_arcmin": 0.6,
+        "beam_width_error": 0.02,
+        "budget": 0.01,
+        "true_flux_jy": 0.02,
+        "antenna_count": 8,
+        "visibility_count": 2688,
+        "training_time_samples": 18,
+        "test_time_samples": 6,
+        "max_abs_w": 2266.1772896460793,
+        "true_pointing_arcmin": [
+          0.0897398523048,
+          -0.02732082515939,
+          -0.9713174560134,
+          0.5972407067485,
+          1.494607812219,
+          0.1413157344726,
+          -1.043105385852,
+          -0.6801353652781,
+          -1.324367757132,
+          -0.662599105134,
+          0.5717445468612,
+          0.05467148791059,
+          0.4771571170069,
+          1.333005286758,
+          0.5609679022726,
+          -1.657102313493
+        ],
+        "execution_seconds": 1.2073448340015602,
+        "binary_sha256": "c8b2a14065362bbadf096dcf1524c48a45cfffe7d67cd4d22e88ce43766d8f01"
+      },
+      "summary": {
+        "fixed_beam": {
+          "flux_jy": {
+            "mean": 0.032216827952697896,
+            "std": 0.004868783842933535
+          },
+          "heldout_rms_jy": {
+            "mean": 0.013112683432618252,
+            "std": 0.000898215515831791
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.58684675120468,
+            "std": 0.12300292733081095
+          },
+          "template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "off_template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "off_template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "pointing_only": {
+          "flux_jy": {
+            "mean": 0.020947751887103384,
+            "std": 0.0003203362329980046
+          },
+          "heldout_rms_jy": {
+            "mean": 0.013349329393257591,
+            "std": 0.0002800298536721953
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.441191419273299,
+            "std": 0.012094726313954734
+          },
+          "template_transfer": {
+            "mean": 0.7546494864884296,
+            "std": 0.0063371149420375535
+          },
+          "off_template_transfer": {
+            "mean": 0.9964845797349126,
+            "std": 0.00009408241792526004
+          },
+          "template_distortion": {
+            "mean": 0.572137162027031,
+            "std": 0.004025222735737791
+          },
+          "off_template_distortion": {
+            "mean": 0.07047764815249949,
+            "std": 0.0008588264577207203
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "joint_sky": {
+          "flux_jy": {
+            "mean": 0.03426923634181981,
+            "std": 0.0006029057905335272
+          },
+          "heldout_rms_jy": {
+            "mean": 0.01170626997351421,
+            "std": 0.0002037846363091079
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.13429298234832232,
+            "std": 0.015602157045519602
+          },
+          "template_transfer": {
+            "mean": 0.9974793032744753,
+            "std": 0.00012024434090895914
+          },
+          "off_template_transfer": {
+            "mean": 0.9965928970216892,
+            "std": 0.00010626036816333263
+          },
+          "template_distortion": {
+            "mean": 0.004946530078532407,
+            "std": 0.00023052824965119173
+          },
+          "off_template_distortion": {
+            "mean": 0.07292339994626626,
+            "std": 0.0009447174415479224
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "joint_beam": {
+          "flux_jy": {
+            "mean": 0.020123577113466545,
+            "std": 0.0007342144180499029
+          },
+          "heldout_rms_jy": {
+            "mean": 0.00997579619902776,
+            "std": 0.0002015849986812463
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.06309804956965748,
+            "std": 0.013803376744671325
+          },
+          "template_transfer": {
+            "mean": 0.9998991240965422,
+            "std": 0.00021888640260125141
+          },
+          "off_template_transfer": {
+            "mean": 0.9964626606447212,
+            "std": 0.00011390054080898579
+          },
+          "template_distortion": {
+            "mean": 0.0011133098428975279,
+            "std": 0.00017198823489127438
+          },
+          "off_template_distortion": {
+            "mean": 0.07653666512861895,
+            "std": 0.001048375155068071
+          },
+          "fitted_beam_width_error": {
+            "mean": 0.019865563610752136,
+            "std": 0.0005645111946891474
+          }
+        },
+        "protected_modes": {
+          "flux_jy": {
+            "mean": 0.03426923634993782,
+            "std": 0.0006029058012514475
+          },
+          "heldout_rms_jy": {
+            "mean": 0.01170626997320915,
+            "std": 0.00020378463649385533
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0.13429298265627285,
+            "std": 0.015602157387139885
+          },
+          "template_transfer": {
+            "mean": 0.9974793057428523,
+            "std": 0.00012024737173359288
+          },
+          "off_template_transfer": {
+            "mean": 0.9965928972703939,
+            "std": 0.00010626056684064284
+          },
+          "template_distortion": {
+            "mean": 0.0049465251554259475,
+            "std": 0.0002305327501389592
+          },
+          "off_template_distortion": {
+            "mean": 0.07292339864009938,
+            "std": 0.0009447186748324677
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        },
+        "known_pointing": {
+          "flux_jy": {
+            "mean": 0.03319932073881608,
+            "std": 0.0005232161067617098
+          },
+          "heldout_rms_jy": {
+            "mean": 0.011552388847876656,
+            "std": 0.00018331942970036452
+          },
+          "pointing_rmse_arcmin": {
+            "mean": 0,
+            "std": 0
+          },
+          "template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "off_template_transfer": {
+            "mean": 1,
+            "std": 0
+          },
+          "template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "off_template_distortion": {
+            "mean": 0,
+            "std": 0
+          },
+          "fitted_beam_width_error": {
+            "mean": 0,
+            "std": 0
+          }
+        }
+      }
+    }
+  }
+}
