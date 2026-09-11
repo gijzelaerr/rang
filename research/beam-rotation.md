@@ -1,5 +1,13 @@
 # Beam symmetry determines which pointing modes can be measured
 
+**Interpretation update:** the positive results below restrict the other common
+temporal pointing modes. Freeing those modes restores a Gaussian pointing/sky
+ambiguity even with ellipticity and rotation. A finite transformation also
+preserves the visibilities with free antenna gains at nonzero pointing. See
+[the new derivation and controls](gaussian-gauge.md). The measurements below
+remain conditional results; do not read them as general absolute-pointing
+identifiability guarantees.
+
 ## Research lead
 
 **A circular beam can make a coherent pointing trajectory indistinguishable from a different sky. Known beam asymmetry and rotation can break that ambiguity.** The candidate contribution is a symmetry-aware pointing workflow: separate these shared modes, audit their information without spectral priors, and decline unsupported estimates rather than interpreting regularization as a measurement.

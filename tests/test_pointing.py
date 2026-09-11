@@ -10,6 +10,7 @@ jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp
 import numpy as np
 from rangtoy import build
+from rangtoy.gauge import gaussian_gauge, predict_channels
 from rangtoy.observability import (
     channel_design,
     sky_locked_information,
@@ -372,3 +373,107 @@ def test_full_coverage_retains_modes_with_gains_and_differential_pointing(refere
     assert elliptical["gain_nuisance_parameters"] == 1536
     assert max(elliptical["local_crlb_arcsec"]) < 1.2
     assert circular["observable_common_modes"] == sparse["observable_common_modes"] == 0
+
+
+@pytest.mark.parametrize("ratio", [1.0, 1.1, 1.5])
+def test_finite_gaussian_gauge_with_nonzero_pointing_and_complex_gains(
+    reference, ratio
+):
+    _, sky, obs = reference
+    rng = np.random.default_rng(71)
+    offsets = rng.normal(0, 0.3, (24, 8, 2))
+    flux = rng.uniform(0.2, 1, (4, 4))
+    gains = np.exp(rng.normal(0, 0.1, (24, 8, 4)) + 1j * rng.normal(0, 0.2, (24, 8, 4)))
+    changed = gaussian_gauge(obs, sky, offsets, flux, gains, [0.7, -0.4], ratio)
+    before = predict_channels(sky, obs, offsets, flux, gains, ratio)
+    after = predict_channels(
+        sky,
+        obs,
+        changed["offsets_arcmin"],
+        changed["channel_flux_jy"],
+        changed["antenna_gains"],
+        ratio,
+    )
+    np.testing.assert_allclose(after, before, rtol=2e-12, atol=2e-12)
+    inverse = gaussian_gauge(
+        obs,
+        sky,
+        changed["offsets_arcmin"],
+        changed["channel_flux_jy"],
+        changed["antenna_gains"],
+        [-0.7, 0.4],
+        ratio,
+    )
+    np.testing.assert_allclose(inverse["offsets_arcmin"], offsets, atol=1e-14)
+    np.testing.assert_allclose(inverse["channel_flux_jy"], flux, atol=1e-14)
+    np.testing.assert_allclose(inverse["antenna_gains"], gains, atol=1e-14)
+
+
+def test_general_common_motion_restores_gaussian_ambiguity(reference):
+    _, sky, obs = reference
+    # Full coverage is not necessary for the exact Gaussian null space.
+    fixed = sky_locked_information(sky, obs, 8, noise_jy=0.001, beam_axis_ratio=1.1)
+    free = sky_locked_information(
+        sky, obs, 8, noise_jy=0.001, beam_axis_ratio=1.1, common_time_variation=True
+    )
+    assert fixed["observable_common_modes"] == 2
+    assert free["observable_common_modes"] == 0
+    assert free["common_time_nuisance_parameters"] == 46
+
+
+def test_nonquadratic_rotating_beam_breaks_local_gauge(reference):
+    _, sky, _ = reference
+    fixture = json.loads(
+        subprocess.check_output([str(build()), "--pointing-full-reference"])
+    )
+    rows = np.asarray(fixture["rows"])
+    obs = Observation(
+        jnp.asarray(rows[:, :3]),
+        jnp.asarray(rows[:, 3]),
+        *(jnp.asarray(rows[:, i], dtype=int) for i in (4, 5, 6)),
+        jnp.asarray(rows[:, 7]),
+    )
+    kwargs = {
+        "noise_jy": 0.001,
+        "gain_model": "per_time_channel",
+        "differential_pointing": True,
+        "common_time_variation": True,
+        "beam_quartic": 0.1,
+    }
+    elliptical = sky_locked_information(sky, obs, 8, beam_axis_ratio=1.1, **kwargs)
+    circular = sky_locked_information(sky, obs, 8, **kwargs)
+    assert elliptical["observable_common_modes"] == 2
+    assert min(elliptical["local_crlb_arcsec"]) > 50
+    assert circular["observable_common_modes"] == 0
+    with pytest.raises(ValueError, match="beam_quartic"):
+        sky_locked_information(sky, obs, 8, noise_jy=0.001, beam_quartic=-1)
+
+
+def test_flux_anchor_geometry_controls_number_of_common_modes(reference):
+    _, sky, _ = reference
+    fixture = json.loads(
+        subprocess.check_output([str(build()), "--pointing-full-reference"])
+    )
+    rows = np.asarray(fixture["rows"])
+    obs = Observation(
+        jnp.asarray(rows[:, :3]),
+        jnp.asarray(rows[:, 3]),
+        *(jnp.asarray(rows[:, i], dtype=int) for i in (4, 5, 6)),
+        jnp.asarray(rows[:, 7]),
+    )
+    for fixed, expected in [([], 0), ([0], 0), ([0, 1], 1), ([0, 1, 2], 2)]:
+        result = sky_locked_information(
+            sky,
+            obs,
+            8,
+            noise_jy=0.001,
+            beam_axis_ratio=1.1,
+            gain_model="per_time_channel",
+            differential_pointing=True,
+            common_time_variation=True,
+            fixed_flux_sources=fixed,
+        )
+        assert result["observable_common_modes"] == expected
+        assert result["sky_nuisance_parameters"] == 4 * (4 - len(fixed))
+    with pytest.raises(ValueError, match="fixed_flux_sources"):
+        sky_locked_information(sky, obs, 8, noise_jy=0.001, fixed_flux_sources=[4])

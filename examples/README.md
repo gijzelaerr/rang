@@ -113,6 +113,11 @@ The strict-budget run at seed 7 returns about 27.78 mJy with protected modes, ve
 
 ## Verification
 
+The latest Gaussian ambiguity and synthetic non-Gaussian controls are reproduced
+with `OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/gaussian_gauge.py`.
+See [the updated interpretation](../research/gaussian-gauge.md): allowing the
+remaining common temporal modes changes the earlier identifiability conclusion.
+
 For the frequency-dependent gain and differential-pointing identifiability
 audit, run `OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/gain_observability.py`.
 This compares complete eight-antenna baseline coverage with the thinned

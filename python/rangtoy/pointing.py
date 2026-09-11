@@ -86,12 +86,20 @@ def image_components(image_jy_per_pixel, l, m, **kwargs):
 
 @jax.jit
 def predict(
-    components, observation, offsets_arcmin, dish_diameter_m=13.5, beam_axis_ratio=1.0
+    components,
+    observation,
+    offsets_arcmin,
+    dish_diameter_m=13.5,
+    beam_axis_ratio=1.0,
+    beam_quartic=0.0,
 ):
     """Scalar DFT with full w phase and differentiable Gaussian voltage beams.
 
     offsets_arcmin: (time, antenna, 2). Geometric-mean power FWHM is
     1.02 lambda / D. beam_axis_ratio is FWHM_y/FWHM_x, keeping beam area fixed.
+    Optional beam_quartic adds -beam_quartic * z**2 to log voltage, where
+    z is the Gaussian exponent magnitude. For nonzero values the quoted
+    FWHM is only the Gaussian-core scale, not the actual beam FWHM.
     Memory is O(visibility rows * components); this reference is for small
     problems. Chunk prediction externally for larger component lists.
     """
@@ -109,7 +117,8 @@ def predict(
             beam_axis_ratio * (x - offset[:, 0, None]) ** 2
             + (y - offset[:, 1, None]) ** 2 / beam_axis_ratio
         )
-        return jnp.exp(-2 * jnp.log(2.0) * radius2 / fwhm[:, None] ** 2)
+        z = 2 * jnp.log(2.0) * radius2 / fwhm[:, None] ** 2
+        return jnp.exp(-z - beam_quartic * z**2)
 
     direction = components.lmn - jnp.array([0.0, 0.0, 1.0])
     phase = -2 * jnp.pi * (obs.uvw_m @ direction.T) * obs.frequency_hz[:, None] / C

@@ -4,6 +4,17 @@ Last reviewed: 11 September 2026.
 
 ## Latest assessment
 
+The latest discriminating result **narrows the beam-rotation lead**: a smooth
+Gaussian pointing/sky/gain symmetry survives ellipticity when general common
+trajectories are allowed. Finite models separated by about 35 arcsec predict
+identical visibilities to ~10⁻¹⁵ Jy. Non-Gaussian elliptical structure lifts
+the local null space weakly; ideal external flux anchors give the expected
+0 → 1 → 2 mode progression. See [the derivation](gaussian-gauge.md).
+This is a tested specialization of established RIME ambiguity principles,
+not verified first-in-literature novelty. A promising next contribution would
+quantify usable information from measured non-Gaussian beams and external
+anchors, rather than attribute restricted-model precision to the data alone.
+
 The general information-truncation candidate did not improve pointing accuracy against an equally tuned joint fit: 18.501 versus 18.497 arcsec across 20 seeds, although it retained fewer parameters. See [the controlled comparison](spectral-pointing.md). This is not an accuracy contribution.
 
 A more specific lead is [symmetry-aware shared pointing calibration](beam-rotation.md): an exact circular-beam/sky ambiguity, a spectral-prior-free observability audit, and a beam-rotation-based reference solver. Jointly fitting beam axial ratio and the shared mode recovers 1.86 arcsec RMS in a controlled 20-noise-realization experiment with arbitrary source/channel amplitudes. Whether the specific criterion and workflow differ substantively from pointing self-calibration and RIME ambiguity analyses is not established. Do not advertise it as the first such result or as a validated general MeerKAT method.

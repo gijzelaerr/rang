@@ -3,6 +3,7 @@
 import jax
 import jax.numpy as jnp
 import numpy as np
+from scipy.linalg import null_space
 from scipy.optimize import least_squares
 
 from .pointing import predict, real_stack
@@ -151,11 +152,16 @@ def sky_locked_information(
     beam_axis_ratio=1.0,
     gain_model="fixed",
     differential_pointing=False,
+    common_time_variation=False,
+    beam_quartic=0.0,
+    fixed_flux_sources=(),
 ):
     """Project common pointing derivatives off free source/channel fluxes.
 
     Linearize at zero pointing. Each source has an independent amplitude at
-    each observed frequency, with no sky prior. This is a local Fisher audit,
+    each observed frequency, with no sky prior unless its index is in
+    fixed_flux_sources (then its channel fluxes are known exactly).
+    This is a local Fisher audit,
     not a fit or an uncertainty interval for a nonlinear trajectory estimate.
     Optional complex antenna gains are unconstrained nuisances, constant over
     the observation (constant) or independent at each time (per_time). Both
@@ -164,7 +170,8 @@ def sky_locked_information(
     least-squares projection handles the redundant gain/sky gauge columns.
     differential_pointing frees zero-mean antenna offsets independently at
     each time, without a smoothness prior. Other common temporal modes remain
-    fixed: this audit does not marginalize every possible common trajectory.
+    fixed unless common_time_variation is True. That option frees the
+    Euclidean-orthogonal complement of the two sky-locked trajectories.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before constructing inputs")
@@ -172,6 +179,15 @@ def sky_locked_information(
         raise ValueError("noise must be finite and positive")
     if not np.isfinite(beam_axis_ratio) or beam_axis_ratio <= 0:
         raise ValueError("beam axis ratio must be finite and positive")
+    if not np.isfinite(beam_quartic) or beam_quartic < 0:
+        raise ValueError("beam_quartic must be finite and nonnegative")
+    fixed_flux_sources = np.asarray(fixed_flux_sources)
+    if fixed_flux_sources.size and (
+        not np.issubdtype(fixed_flux_sources.dtype, np.integer)
+        or np.any(fixed_flux_sources < 0)
+        or np.any(fixed_flux_sources >= len(components.flux_jy))
+    ):
+        raise ValueError("fixed_flux_sources must contain valid source indices")
     if gain_model not in ("fixed", "constant", "per_time", "per_time_channel"):
         raise ValueError(
             "gain_model must be fixed, constant, per_time or per_time_channel"
@@ -200,6 +216,7 @@ def sky_locked_information(
                     observation,
                     common_offsets(a),
                     beam_axis_ratio=beam_axis_ratio,
+                    beam_quartic=beam_quartic,
                 )
             )
             / noise_jy
@@ -212,6 +229,7 @@ def sky_locked_information(
         jax.jacfwd(forward, argnums=1)(jnp.zeros(2), components.flux_jy)
     )
     frequency = np.asarray(observation.frequency_hz)
+    source = source[:, ~np.isin(np.arange(source.shape[1]), fixed_flux_sources)]
     nuisance = np.concatenate(
         [source * np.repeat(frequency == f, 2)[:, None] for f in np.unique(frequency)],
         axis=1,
@@ -225,6 +243,7 @@ def sky_locked_information(
                     observation,
                     common_offsets(jnp.zeros(2)),
                     beam_axis_ratio=beam_axis_ratio,
+                    beam_quartic=beam_quartic,
                 )
             )
             / noise_jy
@@ -269,6 +288,7 @@ def sky_locked_information(
                         observation,
                         offsets,
                         beam_axis_ratio=beam_axis_ratio,
+                        beam_quartic=beam_quartic,
                     )
                 )
                 / noise_jy
@@ -277,6 +297,33 @@ def sky_locked_information(
         derivative = np.asarray(
             jax.jacfwd(differential_model)(jnp.zeros((ntime, antenna_count - 1, 2)))
         ).reshape(len(pointing), -1)
+        nuisance = np.column_stack((nuisance, derivative))
+    differential_count = nuisance.shape[1] - sky_count - gain_count
+    if common_time_variation:
+        target = np.asarray(jax.jacfwd(common_offsets)(jnp.zeros(2)))[:, 0].reshape(
+            -1, 2
+        )
+        complement = jnp.asarray(null_space(target.T))
+
+        def common_model(values):
+            shifts = (complement @ values).reshape(ntime, 2)
+            offsets = jnp.broadcast_to(shifts[:, None, :], (ntime, antenna_count, 2))
+            return (
+                real_stack(
+                    predict(
+                        components,
+                        observation,
+                        offsets,
+                        beam_axis_ratio=beam_axis_ratio,
+                        beam_quartic=beam_quartic,
+                    )
+                )
+                / noise_jy
+            )
+
+        derivative = np.asarray(
+            jax.jacfwd(common_model)(jnp.zeros(complement.shape[1]))
+        )
         nuisance = np.column_stack((nuisance, derivative))
     residual = pointing - nuisance @ np.linalg.lstsq(nuisance, pointing, rcond=None)[0]
     singular = np.linalg.svd(residual, compute_uv=False)
@@ -288,11 +335,17 @@ def sky_locked_information(
         crlb = (60 * np.sqrt(np.diag(np.linalg.inv(residual.T @ residual)))).tolist()
     return {
         "beam_axis_ratio": beam_axis_ratio,
+        "beam_quartic": beam_quartic,
         "noise_jy_per_component": noise_jy,
         "sky_nuisance_parameters": sky_count,
+        "fixed_flux_sources": fixed_flux_sources.astype(int).tolist(),
         "gain_model": gain_model,
         "gain_nuisance_parameters": gain_count,
-        "differential_pointing_parameters": nuisance.shape[1] - sky_count - gain_count,
+        "differential_pointing_parameters": differential_count,
+        "common_time_nuisance_parameters": nuisance.shape[1]
+        - sky_count
+        - gain_count
+        - differential_count,
         "observable_common_modes": rank,
         "singular_values_per_arcmin": singular.tolist(),
         "known_sky_singular_values_per_arcmin": raw_singular.tolist(),

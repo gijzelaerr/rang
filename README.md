@@ -6,21 +6,29 @@ Reproducible experiments in direction-dependent calibration: recovering faint em
 
 [Pointing solutions](research/pointing-solutions.md) · [Results](research/first-results.md) · [Research direction](research/novelty.md) · [Experiment guide](examples/README.md)
 
-## Current research lead: beam symmetry and pointing ambiguity
+## Current research lead: a pointing–sky–gain ambiguity
 
-**Circularizing the beam can remove pointing information, not merely approximate its response.** We identified an exact shared-pointing/sky ambiguity for identical circular beams when source spectra are unconstrained. A rotating elliptical beam breaks that ambiguity in the controlled model.
+**A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
+We derived and tested an exact transformation of pointing, sky fluxes and
+antenna gains for identical Gaussian beams—including rotating elliptical beams.
+The two predictions agree to about 10⁻¹⁵ Jy in the finite test.
 
-The new spectrum-prior-free reference solver recovers the shared pointing mode at **1.86 arcsec RMS** while jointly fitting beam axial ratio. It declines the degenerate fixed-circle case. A wrong fixed ellipticity instead gives **52 arcsec** error despite small formal uncertainties.
+This revises our earlier interpretation: ellipticity restores information in
+a restricted two-mode trajectory model, but not when the remaining shared
+trajectory is free. Controlled non-Gaussian beam structure lifts the local
+ambiguity only weakly. A central flux calibrator alone does not remove it;
+additional non-collinear off-axis flux anchors do in the idealized audit.
 
-[Derivation, 20-realization tests and limitations →](research/beam-rotation.md)
+[Exact transformation, controls and research implications →](research/gaussian-gauge.md)
 
-This is a concrete candidate contribution, **not a verified novelty claim**. Other pointing modes and direction-independent gains are held fixed in this experiment. General information-mode truncation did not improve pointing accuracy over a fairly tuned joint baseline; that [negative result is retained](research/spectral-pointing.md).
+This is a concrete research result, **not a verified novelty claim or real-data
+calibration demonstration**. The finite Gaussian ambiguity is tested exactly;
+non-Gaussian and external-anchor results are local information audits.
 
-A separate local audit now allows independent antenna/time/channel gains and
-zero-mean per-antenna pointing errors. Both shared modes survive with complete
-eight-antenna baseline coverage, but disappear in the thinned fixture. This is
-an identifiability check, not yet joint nonlinear recovery; the distinction
-and numerical results are in the linked research note.
+The earlier [restricted-mode recovery and baseline-coverage results](research/beam-rotation.md)
+remain documented with their assumptions. General information-mode truncation
+did not improve pointing accuracy over a fairly tuned joint baseline; that
+[negative result is retained](research/spectral-pointing.md).
 
 ## Smooth pointing-error solutions
 
