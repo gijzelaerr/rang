@@ -205,6 +205,7 @@ def solve_pointing(
     zero_mean_pointing=False,
     gain_prior_sigma=None,
     gain_per_channel=False,
+    gain_frequency_degree=None,
     fit_pointing=True,
     estimate_uncertainty=False,
     beam_log_width_prior=None,
@@ -239,6 +240,10 @@ def solve_pointing(
     gain_per_channel=True fits independent gain splines at observed frequencies;
     returned gains then have shape (time, frequency, antenna), with frequencies
     in gain_frequencies_hz. There is no frequency interpolation or penalty.
+    Alternatively gain_frequency_degree fits Chebyshev-polynomial log gains
+    over the observed frequency interval. Independent coefficient priors use
+    gain_prior_sigma; this is not the same prior as independent channel gains.
+    Polynomial fits also return a (time, frequency, antenna) gain cube.
     estimate_uncertainty returns local Gauss–Newton marginal standard deviations
     including the priors. These are conditional on the beam/sky/trajectory model,
     not exact posterior intervals or protection against model mismatch.
@@ -358,11 +363,35 @@ def solve_pointing(
     gain_frequencies, frequency_index = np.unique(
         np.asarray(obs.frequency_hz), return_inverse=True
     )
-    channel_count = len(gain_frequencies) if gain_per_channel else 1
+    if gain_frequency_degree is not None:
+        if isinstance(gain_frequency_degree, (bool, np.bool_)) or not isinstance(
+            gain_frequency_degree, (int, np.integer)
+        ):
+            raise TypeError("gain_frequency_degree must be an integer")
+        if not 0 <= gain_frequency_degree < len(gain_frequencies):
+            raise ValueError("gain_frequency_degree must be below the channel count")
+        if gain_per_channel or gain_prior_sigma is None:
+            raise ValueError(
+                "polynomial gains require a gain prior and exclude gain_per_channel"
+            )
+    frequency_dependent_gains = gain_per_channel or gain_frequency_degree is not None
+    channel_count = len(gain_frequencies) if frequency_dependent_gains else 1
     gain_indices = jnp.asarray(
-        frequency_index if gain_per_channel else np.zeros(n, dtype=int)
+        frequency_index if frequency_dependent_gains else np.zeros(n, dtype=int)
     )
-    gain_shape = (len(knots_s), channel_count, 2 * antenna_count - 1)
+    frequency_basis = np.eye(channel_count)
+    if gain_frequency_degree is not None:
+        span = np.ptp(gain_frequencies)
+        coordinate = (
+            2 * (gain_frequencies - gain_frequencies[0]) / span - 1
+            if span > 0
+            else np.zeros(channel_count)
+        )
+        frequency_basis = np.polynomial.chebyshev.chebvander(
+            coordinate, gain_frequency_degree
+        )
+    frequency_basis_jax = jnp.asarray(frequency_basis)
+    gain_shape = (len(knots_s), frequency_basis.shape[1], 2 * antenna_count - 1)
     gain_scale = None
     if gain_prior_sigma is not None:
         gain_sigma = np.asarray(gain_prior_sigma, float)
@@ -416,8 +445,9 @@ def solve_pointing(
         if gain_scale is None:
             return jnp.ones((len(times_s), 1, antenna_count), dtype=complex)
         values = jnp.einsum(
-            "tk,kfa->tfa",
+            "tk,fq,kqa->tfa",
             design_jax,
+            frequency_basis_jax,
             flat[sky_end:gain_end].reshape(gain_shape) * gain_scale,
         )
         phase = jnp.concatenate(
@@ -579,15 +609,23 @@ def solve_pointing(
         "zero_mean_pointing": bool(zero_mean_pointing),
         "fit_pointing": bool(fit_pointing),
         "gains": np.asarray(gains(jnp.asarray(full_solution)))
-        if gain_per_channel
+        if frequency_dependent_gains
         else np.asarray(gains(jnp.asarray(full_solution)))[:, 0],
-        "gain_frequencies_hz": gain_frequencies if gain_per_channel else None,
+        "gain_frequencies_hz": gain_frequencies if frequency_dependent_gains else None,
+        "gain_frequency_degree": gain_frequency_degree,
+        "gain_frequency_basis": frequency_basis.copy(),
         "gain_prior_sigma": None
         if gain_scale is None
         else np.asarray(gain_prior_sigma).copy(),
         "gain_model": "fixed"
         if gain_scale is None
-        else ("smooth_per_channel" if gain_per_channel else "smooth_achromatic"),
+        else (
+            "smooth_polynomial"
+            if gain_frequency_degree is not None
+            else "smooth_per_channel"
+            if gain_per_channel
+            else "smooth_achromatic"
+        ),
         "beam_metadata": getattr(
             prediction,
             "metadata",

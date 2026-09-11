@@ -117,9 +117,9 @@ def test_smooth_pointing_recovery(reference):
 
 
 @pytest.mark.parametrize("fit_pointing", [True, False])
-@pytest.mark.parametrize("per_channel", [True, False])
+@pytest.mark.parametrize("gain_mode", ["achromatic", "per_channel", "polynomial"])
 def test_joint_smooth_gains_flux_and_relative_pointing(
-    reference, fit_pointing, per_channel
+    reference, fit_pointing, gain_mode
 ):
     _, components, obs = reference
     times, knots = np.linspace(0, 21600, 24), [0, 21600]
@@ -134,9 +134,20 @@ def test_joint_smooth_gains_flux_and_relative_pointing(
     phase = design @ rng.normal(0, 0.03, (2, 8))
     phase -= phase[:, :1]
     gains = np.exp(logamp + 1j * phase)
-    if per_channel:
+    if gain_mode != "achromatic":
         freq, fi = np.unique(obs.frequency_hz, return_inverse=True)
-        gains = gains[:, None, :] * np.exp(rng.normal(0, 0.01, (1, len(freq), 8)))
+        if gain_mode == "polynomial":
+            coordinate = (freq - freq.mean()) / np.ptp(freq)
+            amplitude_slope = design @ rng.normal(0, 0.02, (2, 8))
+            phase_slope = design @ rng.normal(0, 0.02, (2, 8))
+            phase_slope -= phase_slope[:, :1]
+            correction = (
+                coordinate[None, :, None]
+                * (amplitude_slope + 1j * phase_slope)[:, None, :]
+            )
+        else:
+            correction = rng.normal(0, 0.01, (1, len(freq), 8))
+        gains = gains[:, None, :] * np.exp(correction)
         row_gains = gains[np.asarray(obs.time_index), fi]
     else:
         row_gains = gains[np.asarray(obs.time_index)]
@@ -159,16 +170,15 @@ def test_joint_smooth_gains_flux_and_relative_pointing(
         smoothness=0.01,
         zero_mean_pointing=True,
         gain_prior_sigma=(0.1, 0.1),
-        gain_per_channel=per_channel,
+        gain_per_channel=gain_mode == "per_channel",
+        gain_frequency_degree=1 if gain_mode == "polynomial" else None,
         flux_prior_jy=np.array([0, 0.1, 0.1, 0.1]),
         fit_pointing=fit_pointing,
         estimate_uncertainty=True,
         max_nfev=100,
     )
     assert fit["success"], fit["message"]
-    assert fit["gain_model"] == (
-        "smooth_per_channel" if per_channel else "smooth_achromatic"
-    )
+    assert fit["gain_model"] == "smooth_" + gain_mode
     assert fit["fit_pointing"] == fit_pointing
     assert fit["uncertainty"]["offset_std_arcmin"].shape == truth.shape
     assert np.isfinite(fit["uncertainty"]["offset_std_arcmin"]).all()
@@ -197,6 +207,63 @@ def test_invalid_gain_prior(reference, sigma):
             8,
             noise_jy=0.001,
             gain_prior_sigma=sigma,
+        )
+
+
+@pytest.mark.parametrize("degree", [-1, 4, 1.5, True])
+def test_invalid_gain_frequency_degree(reference, degree):
+    _, components, obs = reference
+    data = predict(components, obs, jnp.zeros((24, 8, 2)))
+    with pytest.raises((ValueError, TypeError), match="gain_frequency_degree"):
+        solve_pointing(
+            components,
+            obs,
+            data,
+            np.linspace(0, 21600, 24),
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            gain_prior_sigma=(0.1, 0.1),
+            gain_frequency_degree=degree,
+        )
+
+
+def test_degree_zero_matches_achromatic_parameterization(reference):
+    _, components, obs = reference
+    data = predict(components, obs, jnp.zeros((24, 8, 2))) * 1.01
+    kwargs = {
+        "noise_jy": 0.001,
+        "fit_pointing": False,
+        "gain_prior_sigma": (0.1, 0.1),
+    }
+    arguments = (components, obs, data, np.linspace(0, 21600, 24), [0, 21600], 8)
+    ordinary = solve_pointing(*arguments, **kwargs)
+    polynomial = solve_pointing(*arguments, gain_frequency_degree=0, **kwargs)
+    assert ordinary["success"] and polynomial["success"]
+    assert ordinary["parameter_count"] == polynomial["parameter_count"]
+    assert polynomial["gain_model"] == "smooth_polynomial"
+    for channel in range(len(polynomial["gain_frequencies_hz"])):
+        np.testing.assert_allclose(
+            polynomial["gains"][:, channel], ordinary["gains"], atol=1e-12
+        )
+
+
+@pytest.mark.parametrize("prior,per_channel", [(None, False), ((0.1, 0.1), True)])
+def test_polynomial_gains_require_exclusive_gain_prior(reference, prior, per_channel):
+    _, components, obs = reference
+    data = predict(components, obs, jnp.zeros((24, 8, 2)))
+    with pytest.raises(ValueError, match="polynomial gains"):
+        solve_pointing(
+            components,
+            obs,
+            data,
+            np.linspace(0, 21600, 24),
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            gain_prior_sigma=prior,
+            gain_per_channel=per_channel,
+            gain_frequency_degree=1,
         )
 
 

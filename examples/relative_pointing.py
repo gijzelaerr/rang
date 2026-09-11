@@ -1,4 +1,4 @@
-"""Controlled zero-mean pointing recovery with known gains and a katbeam beam."""
+"""Controlled relative/common pointing recovery with a scalar katbeam beam."""
 
 import argparse
 import json
@@ -22,6 +22,12 @@ from rangtoy.pointing import Observation, component_list, solve_pointing, spline
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 11, 19])
+    parser.add_argument(
+        "--gain-frequency-degree",
+        type=int,
+        default=None,
+        help="Fit Chebyshev-polynomial log gains instead of independent channels",
+    )
     parser.add_argument(
         "--common-prior-arcmin",
         type=float,
@@ -55,9 +61,27 @@ def main():
         help="Inject an unmodelled point source at direction cosines (0.003,-0.004)",
     )
     parser.add_argument(
+        "--chromatic-gain-curvature",
+        type=float,
+        default=0.0,
+        help="Scale of quadratic-frequency log-gain truth with .02/.03 knot sigmas",
+    )
+    parser.add_argument(
+        "--chromatic-gain-truth",
+        type=float,
+        default=0.0,
+        help="Scale of smooth spectral gain slopes: 1 gives knot std .02 log-amplitude and .03 rad per .4 GHz",
+    )
+    parser.add_argument(
+        "--spectral-index-prior",
+        type=float,
+        default=None,
+        help="Jointly fit source spectral indices with this prior sigma in joint-flux/gain-only cases",
+    )
+    parser.add_argument(
         "--gain-per-channel",
         action="store_true",
-        help="Fit independent time-smooth gains per frequency to the same injected achromatic gains",
+        help="Fit independent time-smooth gains per frequency",
     )
     parser.add_argument(
         "--beam-width-error",
@@ -79,9 +103,24 @@ def main():
     parser.add_argument(
         "--joint-gains",
         action="store_true",
-        help="Inject and fit smooth achromatic gains",
+        help="Inject and fit smooth gains (achromatic unless specified otherwise)",
     )
     args = parser.parse_args()
+    if not np.isfinite(args.chromatic_gain_truth) or args.chromatic_gain_truth < 0:
+        parser.error("chromatic gain truth scale must be finite and nonnegative")
+    if (
+        not np.isfinite(args.chromatic_gain_curvature)
+        or args.chromatic_gain_curvature < 0
+    ):
+        parser.error("chromatic gain curvature must be finite and nonnegative")
+    if (
+        args.chromatic_gain_truth or args.chromatic_gain_curvature
+    ) and not args.joint_gains:
+        parser.error("chromatic gain truth requires --joint-gains")
+    if args.spectral_index_prior is not None and (
+        not np.isfinite(args.spectral_index_prior) or args.spectral_index_prior <= 0
+    ):
+        parser.error("spectral index prior must be finite and positive")
     if not np.isfinite(args.missing_source_jy) or args.missing_source_jy < 0:
         parser.error("missing source flux must be finite and nonnegative")
     if args.gain_per_channel and not args.joint_gains:
@@ -159,6 +198,26 @@ def main():
             gains[obs.time_index, obs.antenna1]
             * gains[obs.time_index, obs.antenna2].conj()
         )
+        if args.chromatic_gain_truth or args.chromatic_gain_curvature:
+            amplitude_slope = design @ rng.normal(0, 0.02, (4, 8))
+            phase_slope = design @ rng.normal(0, 0.03, (4, 8))
+            phase_slope -= phase_slope[:, :1]
+            coordinate = (np.asarray(obs.frequency_hz) - 1.3e9) / 0.4e9
+            slopes = args.chromatic_gain_truth * (amplitude_slope + 1j * phase_slope)
+            row_log_gains = coordinate[:, None] * slopes[obs.time_index]
+            if args.chromatic_gain_curvature:
+                amplitude_curve = design @ rng.normal(0, 0.02, (4, 8))
+                phase_curve = design @ rng.normal(0, 0.03, (4, 8))
+                phase_curve -= phase_curve[:, :1]
+                curves = args.chromatic_gain_curvature * (
+                    amplitude_curve + 1j * phase_curve
+                )
+                row_log_gains += coordinate[:, None] ** 2 * curves[obs.time_index]
+            row_gains = np.exp(row_log_gains)
+            baseline_gain *= (
+                row_gains[np.arange(len(r)), obs.antenna1]
+                * row_gains[np.arange(len(r)), obs.antenna2].conj()
+            )
         for common_arcmin in (0.0,) if args.coverage else (0.0, 0.5):
             truth = relative + np.array([common_arcmin, -common_arcmin])[None, None, :]
             clean = np.asarray(true_predictor(true_sky, obs, jnp.asarray(truth)))
@@ -192,6 +251,7 @@ def main():
                     fit_pointing=case != "gain_sky_only",
                     gain_prior_sigma=(0.1, 0.1) if args.joint_gains else None,
                     gain_per_channel=args.gain_per_channel,
+                    gain_frequency_degree=args.gain_frequency_degree,
                     estimate_uncertainty=args.coverage,
                     beam_log_width_prior=args.beam_log_width_prior,
                     common_pointing_prior_arcmin=args.common_prior_arcmin
@@ -200,9 +260,15 @@ def main():
                     flux_prior_jy=np.asarray(supplied.flux_jy) * 0.05
                     if case in ("joint_flux", "gain_sky_only")
                     else None,
+                    spectral_index_prior=args.spectral_index_prior
+                    if case in ("joint_flux", "gain_sky_only")
+                    else None,
                 )
                 solve_seconds = perf_counter() - started
-                recovered_sky = supplied._replace(flux_jy=jnp.asarray(fit["flux_jy"]))
+                recovered_sky = supplied._replace(
+                    flux_jy=jnp.asarray(fit["flux_jy"]),
+                    spectral_index=jnp.asarray(fit["spectral_index"]),
+                )
                 model = np.asarray(
                     predictor.with_log_width(
                         recovered_sky,
@@ -212,7 +278,7 @@ def main():
                     )
                 )
                 recovered_gains = fit["gains"]
-                if args.gain_per_channel:
+                if fit["gain_frequencies_hz"] is not None:
                     fi = np.searchsorted(
                         fit["gain_frequencies_hz"], np.asarray(obs.frequency_hz)
                     )
@@ -234,6 +300,7 @@ def main():
                     "common_offset_per_axis_arcmin": common_arcmin,
                     "success": fit["success"],
                     "nfev": fit["nfev"],
+                    "parameter_count": fit["parameter_count"],
                     "beam_width_multiplier": fit["beam_width_multiplier"],
                     "solve_seconds_including_compilation": solve_seconds,
                     "relative_rmse_arcsec": float(
@@ -266,6 +333,18 @@ def main():
                     "flux_fractional_error": (
                         np.asarray(fit["flux_jy"]) / np.asarray(sky.flux_jy) - 1
                     ).tolist(),
+                    "spectral_index_error": (
+                        fit["spectral_index"] - np.asarray(sky.spectral_index)
+                    ).tolist(),
+                    "maximum_flux_ratio_fractional_error": float(
+                        np.max(
+                            np.abs(
+                                (fit["flux_jy"] / fit["flux_jy"][0])
+                                / np.asarray(sky.flux_jy / sky.flux_jy[0])
+                                - 1
+                            )
+                        )
+                    ),
                 }
                 results.append(result)
                 if args.coverage:
@@ -315,6 +394,10 @@ def main():
         "beam_log_width_prior": args.beam_log_width_prior,
         "common_pointing_prior_arcmin": args.common_prior_arcmin,
         "gain_per_channel": args.gain_per_channel,
+        "gain_frequency_degree": args.gain_frequency_degree,
+        "chromatic_gain_truth_scale": args.chromatic_gain_truth,
+        "chromatic_gain_curvature_scale": args.chromatic_gain_curvature,
+        "spectral_index_prior": args.spectral_index_prior,
         "true_fractional_beam_width_error": args.beam_width_error,
         "pointing_ripple_arcmin": args.pointing_ripple_arcmin,
         "missing_source_jy": args.missing_source_jy,
@@ -323,7 +406,7 @@ def main():
         "test_time_indices": np.unique(np.asarray(obs.time_index)[test]).tolist(),
         "train_rows": int((~test).sum()),
         "test_rows": int(test.sum()),
-        "limitations": "Synthetic beam/spline model with specified perturbations. Held-out mode withholds whole times listed in test_time_indices (interpolation, not extrapolation); hyperparameters fixed beforehand. Coverage uses correlated coordinates, not independent trials, and local Gauss-Newton intervals including priors. Injected gains are achromatic; fitted gains may be per-channel. Absolute flux scale is prior-dependent. Historical pointing records are not injected. Timings include compilation and are not a controlled performance benchmark.",
+        "limitations": "Synthetic beam/spline model with specified perturbations. Held-out mode withholds whole times listed in test_time_indices (interpolation, not extrapolation); hyperparameters fixed beforehand. Coverage uses correlated coordinates, not independent trials, and local Gauss-Newton intervals including priors. Injected log gains optionally have linear and quadratic frequency dependence with smooth temporal coefficients; fitted gains may be per-channel or polynomial. Gain slopes and prior scales are assumptions, not empirical measurements. Polynomial coefficient priors differ from independent-channel priors. Absolute flux scale and common spectral slope are prior-dependent. Historical pointing records are not injected. Timings include compilation and are not a controlled performance benchmark.",
         "results": results,
     }
     output = ROOT / (
@@ -347,6 +430,22 @@ def main():
         )
     if args.gain_per_channel:
         output = output.with_name(output.name + "-channelgains")
+    if args.gain_frequency_degree is not None:
+        output = output.with_name(
+            output.name + f"-gainpoly{args.gain_frequency_degree}"
+        )
+    if args.chromatic_gain_truth:
+        output = output.with_name(
+            output.name + f"-chromatic{args.chromatic_gain_truth:g}"
+        )
+    if args.chromatic_gain_curvature:
+        output = output.with_name(
+            output.name + f"-curvature{args.chromatic_gain_curvature:g}"
+        )
+    if args.spectral_index_prior is not None:
+        output = output.with_name(
+            output.name + f"-spectralprior{args.spectral_index_prior:g}"
+        )
     if args.missing_source_jy:
         output = output.with_name(output.name + f"-missing{args.missing_source_jy:g}")
     if args.beam_width_error or args.pointing_ripple_arcmin:

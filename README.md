@@ -51,6 +51,11 @@ benchmark, not yet an end-to-end calibration advantage.
 adds a real-data ingestion path and records the antenna/coordinate metadata
 issues that must be resolved before a trustworthy pointing comparison.
 
+[Chromatic gain controls](research/chromatic-gains.md) now inject genuinely
+frequency-dependent gains. Polynomial log-gain fits retain the tested pointing
+accuracy with fewer parameters when the truth is in-family; a curvature
+counterexample shows why that compression must be validated.
+
 **A smooth pointing change of 35 arcseconds can leave the visibilities unchanged.**
 We derived and tested an exact transformation of pointing, sky fluxes and
 antenna gains for identical Gaussian beams—including rotating elliptical beams.
