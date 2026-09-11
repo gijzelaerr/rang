@@ -1,0 +1,696 @@
+{
+  "experiment": "examples/information_budget.py",
+  "covariance_order": "channel then source (4 channels, 4 sources)",
+  "covariance_definitions": {
+    "independent_1pct": "0.01^2 I_16",
+    "independent_5pct": "0.05^2 I_16",
+    "1pct_plus_common_scale_5pct": "0.01^2 I_16 + 0.05^2 ones(16,16)",
+    "1pct_correlated_channels": "0.01^2 [0.05 I_16 + 0.95 kron(ones(4,4), I_4)]"
+  },
+  "results": [
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        6.6599197414780275e-12,
+        5.860536007940196e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        903.4109474663745,
+        553.8887177924034
+      ],
+      "retained_derivative_norm_fraction": 8.371618845082327e-15,
+      "local_crlb_arcsec": null,
+      "information_budget": {
+        "data_only_information": [
+          [
+            3.475319058013882e-23,
+            -1.977550362152724e-24
+          ],
+          [
+            -1.977550362152724e-24,
+            4.39472226831536e-23
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            0.0452673216242014,
+            -0.04501389588772156
+          ],
+          [
+            -0.04501389588772156,
+            0.09784840969305629
+          ]
+        ],
+        "external_information": [
+          [
+            104.71648076772325,
+            -34.538716762663874
+          ],
+          [
+            -34.538716762663874,
+            90.76951865960523
+          ]
+        ],
+        "total_information": [
+          [
+            104.76174808934745,
+            -34.583730658551595
+          ],
+          [
+            -34.583730658551595,
+            90.86736706929828
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          2.9438340245839044e-25,
+          6.217261213571503e-25
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.010917110616942368,
+            0.004155005535243626
+          ],
+          [
+            0.004155005535243624,
+            0.012586428210728702
+          ]
+        ],
+        "local_sigma_arcsec": [
+          6.269098676922586,
+          6.731355105669536
+        ]
+      },
+      "scenario": "independent_1pct"
+    },
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        6.6599197414780275e-12,
+        5.860536007940196e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        903.4109474663745,
+        553.8887177924034
+      ],
+      "retained_derivative_norm_fraction": 8.371618845082327e-15,
+      "local_crlb_arcsec": null,
+      "information_budget": {
+        "data_only_information": [
+          [
+            3.475319058013882e-23,
+            -1.977550362152724e-24
+          ],
+          [
+            -1.977550362152724e-24,
+            4.39472226831536e-23
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            0.00007254247374183966,
+            -0.00007221246835443198
+          ],
+          [
+            -0.00007221246835443198,
+            0.00015696998065661198
+          ]
+        ],
+        "external_information": [
+          [
+            4.192137022544141,
+            -1.385007828656431
+          ],
+          [
+            -1.385007828656431,
+            3.6383000384580755
+          ]
+        ],
+        "total_information": [
+          [
+            4.192209565017882,
+            -1.3850800411247854
+          ],
+          [
+            -1.3850800411247854,
+            3.638457008438732
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          7.354655265283402e-24,
+          1.5533388367245778e-23
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.27285574408263996,
+            0.10387014175475608
+          ],
+          [
+            0.10387014175475606,
+            0.31438284348566503
+          ]
+        ],
+        "local_sigma_arcsec": [
+          31.341357320599627,
+          33.641911903879574
+        ]
+      },
+      "scenario": "independent_5pct"
+    },
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        6.6599197414780275e-12,
+        5.860536007940196e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        903.4109474663745,
+        553.8887177924034
+      ],
+      "retained_derivative_norm_fraction": 8.371618845082327e-15,
+      "local_crlb_arcsec": null,
+      "information_budget": {
+        "data_only_information": [
+          [
+            3.475319058013882e-23,
+            -1.977550362152724e-24
+          ],
+          [
+            -1.977550362152724e-24,
+            4.39472226831536e-23
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            0.045267321623765865,
+            -0.045013895887596016
+          ],
+          [
+            -0.045013895887596016,
+            0.09784840969345349
+          ]
+        ],
+        "external_information": [
+          [
+            104.71648076772387,
+            -34.538716762664066
+          ],
+          [
+            -34.538716762664066,
+            90.76951865960497
+          ]
+        ],
+        "total_information": [
+          [
+            104.76174808934763,
+            -34.58373065855166
+          ],
+          [
+            -34.58373065855166,
+            90.86736706929842
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          2.9438340245838975e-25,
+          6.21726121357149e-25
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.010917110616942343,
+            0.0041550055352436175
+          ],
+          [
+            0.0041550055352436175,
+            0.012586428210728681
+          ]
+        ],
+        "local_sigma_arcsec": [
+          6.26909867692258,
+          6.73135510566953
+        ]
+      },
+      "scenario": "1pct_plus_common_scale_5pct"
+    },
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        6.6599197414780275e-12,
+        5.860536007940196e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        903.4109474663745,
+        553.8887177924034
+      ],
+      "retained_derivative_norm_fraction": 8.371618845082327e-15,
+      "local_crlb_arcsec": null,
+      "information_budget": {
+        "data_only_information": [
+          [
+            3.475319058013882e-23,
+            -1.977550362152724e-24
+          ],
+          [
+            -1.977550362152724e-24,
+            4.39472226831536e-23
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            1.693788990436406,
+            -1.640329736377935
+          ],
+          [
+            -1.640329736377935,
+            3.572534128060551
+          ]
+        ],
+        "external_information": [
+          [
+            246.8011339194408,
+            -79.35310429439757
+          ],
+          [
+            -79.35310429439757,
+            209.93993990259756
+          ]
+        ],
+        "total_information": [
+          [
+            248.4949229098772,
+            -80.9934340307755
+          ],
+          [
+            -80.9934340307755,
+            213.5124740306581
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          1.245850664456053e-25,
+          2.6298037510746927e-25
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.0045919792102199885,
+            0.0017419130517884471
+          ],
+          [
+            0.0017419130517884467,
+            0.005344341238271294
+          ]
+        ],
+        "local_sigma_arcsec": [
+          4.065848639188621,
+          4.386300087519851
+        ]
+      },
+      "scenario": "1pct_correlated_channels"
+    },
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0.1,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        1.0745966736934334,
+        0.9716322583970894
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        934.0466355170951,
+        574.1711102270771
+      ],
+      "retained_derivative_norm_fraction": 0.0013213419848512081,
+      "local_crlb_arcsec": [
+        57.71502571497839,
+        59.99826411575826
+      ],
+      "information_budget": {
+        "data_only_information": [
+          [
+            1.0901084448801388,
+            -0.09716671698261962
+          ],
+          [
+            -0.09716671698261962,
+            1.0087188117906816
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            1.1451802158793005,
+            -0.1531978767112895
+          ],
+          [
+            -0.1531978767112895,
+            1.1294434565044988
+          ]
+        ],
+        "external_information": [
+          [
+            117.55938695892375,
+            -40.13314237060104
+          ],
+          [
+            -40.13314237060104,
+            103.32412124039178
+          ]
+        ],
+        "total_information": [
+          [
+            118.70456717480306,
+            -40.28634024731233
+          ],
+          [
+            -40.28634024731233,
+            104.45356469689628
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          0.007547255850582965,
+          0.013404267969283436
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.009693053414822666,
+            0.0037384808171752313
+          ],
+          [
+            0.003738480817175231,
+            0.011015514056869331
+          ]
+        ],
+        "local_sigma_arcsec": [
+          5.90719834552401,
+          6.297289147302162
+        ]
+      },
+      "scenario": "independent_1pct"
+    },
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0.1,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        1.0745966736934334,
+        0.9716322583970894
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        934.0466355170951,
+        574.1711102270771
+      ],
+      "retained_derivative_norm_fraction": 0.0013213419848512081,
+      "local_crlb_arcsec": [
+        57.71502571497839,
+        59.99826411575826
+      ],
+      "information_budget": {
+        "data_only_information": [
+          [
+            1.0901084448801388,
+            -0.09716671698261962
+          ],
+          [
+            -0.09716671698261962,
+            1.0087188117906816
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            1.0901967131699757,
+            -0.09725662361645171
+          ],
+          [
+            -0.09725662361645171,
+            1.0089125243267114
+          ]
+        ],
+        "external_information": [
+          [
+            4.706606677193177,
+            -1.6096317100526933
+          ],
+          [
+            -1.6096317100526933,
+            4.142242581288686
+          ]
+        ],
+        "total_information": [
+          [
+            5.796803390363152,
+            -1.706888333669145
+          ],
+          [
+            -1.706888333669145,
+            5.1511551056153975
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          0.1596249667072525,
+          0.25344712531527513
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.1911604228378198,
+            0.06334297626670946
+          ],
+          [
+            0.06334297626670947,
+            0.2151205631532121
+          ]
+        ],
+        "local_sigma_arcsec": [
+          26.233137864467363,
+          27.82865478875261
+        ]
+      },
+      "scenario": "independent_5pct"
+    },
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0.1,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        1.0745966736934334,
+        0.9716322583970894
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        934.0466355170951,
+        574.1711102270771
+      ],
+      "retained_derivative_norm_fraction": 0.0013213419848512081,
+      "local_crlb_arcsec": [
+        57.71502571497839,
+        59.99826411575826
+      ],
+      "information_budget": {
+        "data_only_information": [
+          [
+            1.0901084448801388,
+            -0.09716671698261962
+          ],
+          [
+            -0.09716671698261962,
+            1.0087188117906816
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            1.145180215878934,
+            -0.1531978767118183
+          ],
+          [
+            -0.1531978767118183,
+            1.1294434565046463
+          ]
+        ],
+        "external_information": [
+          [
+            117.5593869589243,
+            -40.13314237060058
+          ],
+          [
+            -40.13314237060058,
+            103.32412124039179
+          ]
+        ],
+        "total_information": [
+          [
+            118.70456717480324,
+            -40.2863402473124
+          ],
+          [
+            -40.2863402473124,
+            104.45356469689644
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          0.007547255850582957,
+          0.013404267969283417
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.00969305341482265,
+            0.003738480817175222
+          ],
+          [
+            0.003738480817175222,
+            0.011015514056869315
+          ]
+        ],
+        "local_sigma_arcsec": [
+          5.907198345524005,
+          6.297289147302157
+        ]
+      },
+      "scenario": "1pct_plus_common_scale_5pct"
+    },
+    {
+      "beam_axis_ratio": 1.1,
+      "beam_quartic": 0.1,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        1.0745966736934334,
+        0.9716322583970894
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        934.0466355170951,
+        574.1711102270771
+      ],
+      "retained_derivative_norm_fraction": 0.0013213419848512081,
+      "local_crlb_arcsec": [
+        57.71502571497839,
+        59.99826411575826
+      ],
+      "information_budget": {
+        "data_only_information": [
+          [
+            1.0901084448801388,
+            -0.09716671698261962
+          ],
+          [
+            -0.09716671698261962,
+            1.0087188117906816
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            3.3163500422272216,
+            -2.3185234023212957
+          ],
+          [
+            -2.3185234023212957,
+            5.779283059074435
+          ]
+        ],
+        "external_information": [
+          [
+            296.1143950525885,
+            -100.24508929945785
+          ],
+          [
+            -100.24508929945785,
+            256.83111143529106
+          ]
+        ],
+        "total_information": [
+          [
+            299.43074509481573,
+            -102.56361270177914
+          ],
+          [
+            -102.56361270177914,
+            262.6103944943655
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          0.002987848787597457,
+          0.005356704892410243
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.00385543525029636,
+            0.0015057567259268055
+          ],
+          [
+            0.0015057567259268052,
+            0.004396002115163134
+          ]
+        ],
+        "local_sigma_arcsec": [
+          3.7255290766637286,
+          3.9781412260737152
+        ]
+      },
+      "scenario": "1pct_correlated_channels"
+    }
+  ]
+}

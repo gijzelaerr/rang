@@ -21,6 +21,12 @@ additional non-collinear off-axis flux anchors do in the idealized audit.
 
 [Exact transformation, controls and research implications →](research/gaussian-gauge.md)
 
+The [information-budget diagnostic](research/information-budget.md) now
+separates visibility-only constraints from uncertain, correlated external
+flux priors. In the Gaussian toy, a 1% flux prior yields 6–7 arcsec local
+uncertainties while the same pointing modes remain unconstrained by the
+visibilities alone. These are local estimates, not nonlinear recovery results.
+
 This is a concrete research result, **not a verified novelty claim or real-data
 calibration demonstration**. The finite Gaussian ambiguity is tested exactly;
 non-Gaussian and external-anchor results are local information audits.

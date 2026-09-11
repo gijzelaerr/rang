@@ -531,3 +531,59 @@ def test_gauge_composition_and_noisy_likelihood(reference):
     first_chi2 = np.sum(np.abs(before - data) ** 2) / 0.001**2
     second_chi2 = np.sum(np.abs(after - data) ** 2) / 0.001**2
     assert abs(first_chi2 - second_chi2) < 1e-8
+
+
+def test_correlated_flux_constraints_do_not_create_data_information(reference):
+    _, sky, _ = reference
+    fixture = json.loads(
+        subprocess.check_output([str(build()), "--pointing-full-reference"])
+    )
+    rows = np.asarray(fixture["rows"])
+    obs = Observation(
+        jnp.asarray(rows[:, :3]),
+        jnp.asarray(rows[:, 3]),
+        *(jnp.asarray(rows[:, i], dtype=int) for i in (4, 5, 6)),
+        jnp.asarray(rows[:, 7]),
+    )
+    kwargs = {
+        "noise_jy": 0.001,
+        "beam_axis_ratio": 1.1,
+        "gain_model": "per_time_channel",
+        "differential_pointing": True,
+        "common_time_variation": True,
+    }
+    covariance = 0.01**2 * np.eye(16)
+    gaussian = sky_locked_information(
+        sky, obs, 8, log_flux_prior_covariance=covariance, **kwargs
+    )
+    scale = sky_locked_information(
+        sky,
+        obs,
+        8,
+        log_flux_prior_covariance=covariance + 0.05**2 * np.ones((16, 16)),
+        **kwargs,
+    )
+    budget = gaussian["information_budget"]
+    assert gaussian["observable_common_modes"] == 0
+    assert budget["constrained_rank"] == 2
+    assert max(budget["data_only_fraction_eigenvalues"]) < 1e-12
+    np.testing.assert_allclose(
+        budget["local_sigma_arcsec"], [6.2691, 6.7314], atol=1e-3
+    )
+    np.testing.assert_allclose(
+        scale["information_budget"]["total_information"],
+        budget["total_information"],
+        atol=1e-9,
+    )
+    shaped = sky_locked_information(
+        sky, obs, 8, log_flux_prior_covariance=covariance, beam_quartic=0.1, **kwargs
+    )
+    assert shaped["observable_common_modes"] == 2
+    assert all(
+        0 < f < 0.02
+        for f in shaped["information_budget"]["data_only_fraction_eigenvalues"]
+    )
+    with pytest.raises(ValueError, match="positive definite"):
+        sky_locked_information(
+            sky, obs, 8, log_flux_prior_covariance=-covariance, **kwargs
+        )

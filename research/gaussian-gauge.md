@@ -144,7 +144,9 @@ A proper prior can select a member of this family and make the posterior
 well behaved. It does not turn the chosen gauge coordinates into independent
 measurements. One useful diagnostic would report the likelihood information
 separately from the prior contribution along the analytic gauge directions.
-That diagnostic is a proposed next extension, not a completed solver feature.
+That local diagnostic is now [implemented and tested](information-budget.md)
+for uncertain, correlated external flux constraints. It is not yet integrated
+into a nonlinear pointing solver or a measured-beam analysis.
 
 ### Controlled beam-shape perturbation
 

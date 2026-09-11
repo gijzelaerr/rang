@@ -113,6 +113,12 @@ The strict-budget run at seed 7 returns about 27.78 mJy with protected modes, ve
 
 ## Verification
 
+To separate visibility information from uncertain external flux constraints,
+run `OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/information_budget.py`.
+The [information-budget note](../research/information-budget.md) defines the
+matrix split and explains why prior-conditioned precision is not a standalone
+pointing measurement.
+
 The latest Gaussian ambiguity and synthetic non-Gaussian controls are reproduced
 with `OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/gaussian_gauge.py`.
 See [the updated interpretation](../research/gaussian-gauge.md): allowing the

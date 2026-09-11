@@ -9,6 +9,56 @@ from scipy.optimize import least_squares
 from .pointing import predict, real_stack
 
 
+def nuisance_information_budget(pointing, nuisance, prior_factor):
+    """Local information split for whitened data and a Gaussian nuisance prior.
+
+    prior_factor maps nuisance perturbations to whitened external residuals.
+    No pointing prior is imposed. Matrices are in the supplied pointing units.
+    The conditioned data term is not the independently identifiable data term.
+    """
+    b, a, l = map(np.asarray, (pointing, nuisance, prior_factor))
+    if (
+        b.ndim != 2
+        or a.ndim != 2
+        or l.ndim != 2
+        or b.shape[0] != a.shape[0]
+        or l.shape[1] != a.shape[1]
+    ):
+        raise ValueError("incompatible two-dimensional design matrices")
+    if not all(np.isfinite(x).all() and not np.iscomplexobj(x) for x in (b, a, l)):
+        raise ValueError("design matrices must be finite and real")
+    data_only = b - a @ np.linalg.lstsq(a, b, rcond=None)[0]
+    augmented = np.vstack((a, l))
+    target = np.vstack((b, np.zeros((len(l), b.shape[1]))))
+    response = np.linalg.lstsq(augmented, target, rcond=None)[0]
+    data_residual = b - a @ response
+    external_residual = l @ response
+    f_data = data_only.T @ data_only
+    f_conditioned = data_residual.T @ data_residual
+    f_external = external_residual.T @ external_residual
+    f_total = f_conditioned + f_external
+    _, singular, vh = np.linalg.svd(
+        np.vstack((data_residual, external_residual)), full_matrices=False
+    )
+    raw_scale = np.linalg.norm(b, ord=2)
+    rank = int(np.sum(singular > raw_scale * 1e-10))
+    fraction = None
+    covariance = None
+    if rank == b.shape[1]:
+        whitening = (vh.T / singular) @ vh
+        fraction = np.linalg.eigvalsh(whitening @ f_data @ whitening).tolist()
+        covariance = ((vh.T / singular**2) @ vh).tolist()
+    return {
+        "data_only_information": f_data.tolist(),
+        "conditioned_data_information": f_conditioned.tolist(),
+        "external_information": f_external.tolist(),
+        "total_information": f_total.tolist(),
+        "data_only_fraction_eigenvalues": fraction,
+        "constrained_rank": rank,
+        "local_covariance": covariance,
+    }
+
+
 def channel_design(
     components, observation, antenna_count, shift_arcmin, beam_axis_ratio=1.0
 ):
@@ -155,6 +205,7 @@ def sky_locked_information(
     common_time_variation=False,
     beam_quartic=0.0,
     fixed_flux_sources=(),
+    log_flux_prior_covariance=None,
 ):
     """Project common pointing derivatives off free source/channel fluxes.
 
@@ -172,6 +223,9 @@ def sky_locked_information(
     each time, without a smoothness prior. Other common temporal modes remain
     fixed unless common_time_variation is True. That option frees the
     Euclidean-orthogonal complement of the two sky-locked trajectories.
+    log_flux_prior_covariance optionally supplies a positive-definite external
+    log-flux covariance, ordered frequency then source. It cannot be combined
+    with exactly fixed sources. Log flux requires positive component fluxes.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before constructing inputs")
@@ -229,6 +283,12 @@ def sky_locked_information(
         jax.jacfwd(forward, argnums=1)(jnp.zeros(2), components.flux_jy)
     )
     frequency = np.asarray(observation.frequency_hz)
+    if log_flux_prior_covariance is not None:
+        if fixed_flux_sources.size or np.any(np.asarray(components.flux_jy) <= 0):
+            raise ValueError(
+                "log-flux priors require positive fluxes and no fixed sources"
+            )
+        source = source * np.asarray(components.flux_jy)[None, :]
     source = source[:, ~np.isin(np.arange(source.shape[1]), fixed_flux_sources)]
     nuisance = np.concatenate(
         [source * np.repeat(frequency == f, 2)[:, None] for f in np.unique(frequency)],
@@ -333,7 +393,7 @@ def sky_locked_information(
     crlb = None
     if rank == 2:
         crlb = (60 * np.sqrt(np.diag(np.linalg.inv(residual.T @ residual)))).tolist()
-    return {
+    result = {
         "beam_axis_ratio": beam_axis_ratio,
         "beam_quartic": beam_quartic,
         "noise_jy_per_component": noise_jy,
@@ -354,3 +414,27 @@ def sky_locked_information(
         ),
         "local_crlb_arcsec": crlb,
     }
+    if log_flux_prior_covariance is not None:
+        covariance = np.asarray(log_flux_prior_covariance)
+        if (
+            covariance.shape != (sky_count, sky_count)
+            or np.iscomplexobj(covariance)
+            or not np.isfinite(covariance).all()
+            or not np.allclose(covariance, covariance.T, rtol=1e-12, atol=1e-15)
+        ):
+            raise ValueError(
+                "log-flux covariance must be finite, symmetric and match all source/channel amplitudes"
+            )
+        try:
+            factor = np.linalg.solve(np.linalg.cholesky(covariance), np.eye(sky_count))
+        except np.linalg.LinAlgError as error:
+            raise ValueError("log-flux covariance must be positive definite") from error
+        prior = np.pad(factor, ((0, 0), (0, nuisance.shape[1] - sky_count)))
+        budget = nuisance_information_budget(pointing, nuisance, prior)
+        budget["local_sigma_arcsec"] = (
+            None
+            if budget["local_covariance"] is None
+            else (60 * np.sqrt(np.diag(budget["local_covariance"]))).tolist()
+        )
+        result["information_budget"] = budget
+    return result
