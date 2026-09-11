@@ -328,3 +328,47 @@ def test_gain_nuisances_cannot_increase_pointing_information(reference):
     assert circular["observable_common_modes"] == 0
     with pytest.raises(ValueError, match="gain_model"):
         sky_locked_information(components, obs, 8, noise_jy=0.001, gain_model="typo")
+
+
+def test_complete_reference_preserves_thinned_fixture(reference):
+    fixture, _, _ = reference
+    full = json.loads(
+        subprocess.check_output([str(build()), "--pointing-full-reference"])
+    )
+    rows = np.asarray(full["rows"])
+    assert rows.shape == (24 * 4 * 28, 8)
+    np.testing.assert_array_equal(rows[::5], fixture["rows"])
+    np.testing.assert_allclose(
+        np.asarray(full["vis_re_im"]).reshape(-1, 2)[::5].ravel(), fixture["vis_re_im"]
+    )
+    for t in range(24):
+        for f in np.unique(rows[:, 3]):
+            selected = rows[(rows[:, 6] == t) & (rows[:, 3] == f)]
+            assert len(set(map(tuple, selected[:, 4:6]))) == 28
+
+
+def test_full_coverage_retains_modes_with_gains_and_differential_pointing(reference):
+    _, sky, thinned = reference
+    full = json.loads(
+        subprocess.check_output([str(build()), "--pointing-full-reference"])
+    )
+    rows = np.asarray(full["rows"])
+    obs = Observation(
+        jnp.asarray(rows[:, :3]),
+        jnp.asarray(rows[:, 3]),
+        *(jnp.asarray(rows[:, i], dtype=int) for i in (4, 5, 6)),
+        jnp.asarray(rows[:, 7]),
+    )
+    kwargs = {
+        "noise_jy": 0.001,
+        "gain_model": "per_time_channel",
+        "differential_pointing": True,
+    }
+    elliptical = sky_locked_information(sky, obs, 8, beam_axis_ratio=1.1, **kwargs)
+    circular = sky_locked_information(sky, obs, 8, **kwargs)
+    sparse = sky_locked_information(sky, thinned, 8, beam_axis_ratio=1.1, **kwargs)
+    assert elliptical["observable_common_modes"] == 2
+    assert elliptical["differential_pointing_parameters"] == 336
+    assert elliptical["gain_nuisance_parameters"] == 1536
+    assert max(elliptical["local_crlb_arcsec"]) < 1.2
+    assert circular["observable_common_modes"] == sparse["observable_common_modes"] == 0

@@ -8,6 +8,10 @@ fn main() {
 }
 
 fn entry() -> Result<(), String> {
+    if std::env::args().skip(1).collect::<Vec<_>>() == ["--pointing-full-reference"] {
+        println!("{}", rang_toy::pointing_full_reference_json());
+        return Ok(());
+    }
     if std::env::args().skip(1).collect::<Vec<_>>() == ["--pointing-reference"] {
         println!("{}", rang_toy::pointing_reference_json());
         return Ok(());

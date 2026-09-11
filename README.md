@@ -16,6 +16,12 @@ The new spectrum-prior-free reference solver recovers the shared pointing mode a
 
 This is a concrete candidate contribution, **not a verified novelty claim**. Other pointing modes and direction-independent gains are held fixed in this experiment. General information-mode truncation did not improve pointing accuracy over a fairly tuned joint baseline; that [negative result is retained](research/spectral-pointing.md).
 
+A separate local audit now allows independent antenna/time/channel gains and
+zero-mean per-antenna pointing errors. Both shared modes survive with complete
+eight-antenna baseline coverage, but disappear in the thinned fixture. This is
+an identifiability check, not yet joint nonlinear recovery; the distinction
+and numerical results are in the linked research note.
+
 ## Smooth pointing-error solutions
 
 The current focus is recovering **smoothly time-varying, per-antenna pointing offsets** from a component-list sky model. A JAX reference path provides direct Fourier prediction, automatic derivatives and cubic-spline pointing fits alongside the Rust baseline.

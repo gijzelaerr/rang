@@ -27,10 +27,9 @@ survive both tested gain models:
 
 Both free-gain models share gains across frequency. These are conditional local
 Fisher bounds, **not nonlinear joint gain/pointing recovery measurements**.
-Other pointing trajectories remain fixed. Frequency-independent gains are a
-substantial constraint; frequency-dependent calibration still needs testing.
-The fixture retains every fifth baseline/time/channel row, so its coverage
-must be revisited before interpreting a more flexible gain audit.
+Other pointing trajectories remain fixed in these first checks. The following
+extension removes the frequency-independent-gain assumption and restores
+complete baseline coverage for the eight-antenna toy.
 Reproduce all seven audit cases with
 `.venv/bin/python examples/observability.py`; output is
 `outputs/observability/results.json`.
@@ -38,6 +37,45 @@ Reproduce all seven audit cases with
 An attempt to retrieve SARAO's public 27 MB L-band beam-metrics archive on
 2026-09-11 returned HTTP 502. No measured metrics were incorporated. The axis
 ratios above remain controlled assumptions, not fitted MeerKAT measurements.
+
+### Frequency-dependent gains and differential pointing
+
+The Rust `--pointing-full-reference` fixture exports all 2,688 complex rows:
+24 times, four channels, and all 28 cross-correlations among the same eight
+approximate antenna positions. It is **not the full 64-antenna MeerKAT array**.
+The historical 538-row fixture is exactly every fifth row of this export.
+
+We free complex gains independently for every antenna/time/channel (1,536
+real columns) and optionally free antenna pointing deviations at every time
+(336 columns). The deviations have exactly zero antenna mean at each time;
+they cannot duplicate the two shared modes by construction. There are no
+gain, differential-pointing or source/channel-flux priors in this audit.
+
+| Coverage and nuisances | Observable shared modes | Local coordinate bounds (arcsec) |
+| --- | ---: | ---: |
+| Thinned, sky only | 2 | 2.068, 1.916 |
+| Thinned, sky + time/channel gains | 2 | 11.217, 10.736 |
+| Thinned, sky + gains + differential pointing | 0 | Undefined |
+| Complete, sky only | 2 | 0.883, 0.859 |
+| Complete, sky + time/channel gains | 2 | 1.060, 1.020 |
+| Complete, sky + gains + differential pointing | 2 | 1.107, 1.066 |
+
+All cases use the same ratio-1.1 rotating ellipse and 1 mJy noise per real
+component. More rows naturally improve precision; the important qualitative
+result is the loss of rank in the thinned joint-nuisance problem. Subsampling
+can change identifiability, not just sensitivity. The complete circular-beam
+control remains rank zero with both nuisance families free (regression tested).
+
+These are still zero-pointing, unit-gain **local** results, not nonlinear joint
+recovery or an imaging demonstration. Other *common* time-varying pointing
+modes remain fixed; beam shape is also fixed in this audit. General common
+trajectories and unknown beam shape must be tested jointly before extending
+the conclusion to a practical solver. The earlier 20-noise-realization solver
+does not yet fit these gain or differential-pointing nuisance parameters.
+
+Reproduce with `OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/gain_observability.py`.
+The small dense audit is intentionally not a production implementation.
+[Archived numerical output](results/gain-observability.json).
 
 In the three-seed spectral-error pilot, flux-only joint fitting produced about 69 arcsec trajectory error. Almost all of it was shared by the array: 68.8 arcsec common versus 4.8 arcsec differential error. Of the common error energy, 99.9% lay in the two-dimensional trajectory family
 

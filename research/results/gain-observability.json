@@ -1,0 +1,143 @@
+[
+  {
+    "beam_axis_ratio": 1.1,
+    "noise_jy_per_component": 0.001,
+    "sky_nuisance_parameters": 16,
+    "gain_model": "fixed",
+    "gain_nuisance_parameters": 0,
+    "differential_pointing_parameters": 0,
+    "observable_common_modes": 2,
+    "singular_values_per_arcmin": [
+      31.32763567233493,
+      29.009153981768907
+    ],
+    "known_sky_singular_values_per_arcmin": [
+      397.5948111695736,
+      248.4092997401051
+    ],
+    "retained_derivative_norm_fraction": 0.09107198377018601,
+    "local_crlb_arcsec": [
+      2.0676479302674204,
+      1.9159594755873024
+    ],
+    "complete_baselines": false,
+    "complex_rows": 538
+  },
+  {
+    "beam_axis_ratio": 1.1,
+    "noise_jy_per_component": 0.001,
+    "sky_nuisance_parameters": 16,
+    "gain_model": "per_time_channel",
+    "gain_nuisance_parameters": 1536,
+    "differential_pointing_parameters": 0,
+    "observable_common_modes": 2,
+    "singular_values_per_arcmin": [
+      6.089441775061773,
+      4.999938769144746
+    ],
+    "known_sky_singular_values_per_arcmin": [
+      397.5948111695736,
+      248.4092997401051
+    ],
+    "retained_derivative_norm_fraction": 0.016806429989730663,
+    "local_crlb_arcsec": [
+      11.217137800476234,
+      10.736075563507326
+    ],
+    "complete_baselines": false,
+    "complex_rows": 538
+  },
+  {
+    "beam_axis_ratio": 1.1,
+    "noise_jy_per_component": 0.001,
+    "sky_nuisance_parameters": 16,
+    "gain_model": "per_time_channel",
+    "gain_nuisance_parameters": 1536,
+    "differential_pointing_parameters": 336,
+    "observable_common_modes": 0,
+    "singular_values_per_arcmin": [
+      2.864861905105698e-12,
+      2.170211741523917e-12
+    ],
+    "known_sky_singular_values_per_arcmin": [
+      397.5948111695736,
+      248.4092997401051
+    ],
+    "retained_derivative_norm_fraction": 7.66623778462553e-15,
+    "local_crlb_arcsec": null,
+    "complete_baselines": false,
+    "complex_rows": 538
+  },
+  {
+    "beam_axis_ratio": 1.1,
+    "noise_jy_per_component": 0.001,
+    "sky_nuisance_parameters": 16,
+    "gain_model": "fixed",
+    "gain_nuisance_parameters": 0,
+    "differential_pointing_parameters": 0,
+    "observable_common_modes": 2,
+    "singular_values_per_arcmin": [
+      69.9394131287765,
+      67.85604394191058
+    ],
+    "known_sky_singular_values_per_arcmin": [
+      903.4109474663745,
+      553.8887177924034
+    ],
+    "retained_derivative_norm_fraction": 0.09195820280782831,
+    "local_crlb_arcsec": [
+      0.8832855410001544,
+      0.8588524647569943
+    ],
+    "complete_baselines": true,
+    "complex_rows": 2688
+  },
+  {
+    "beam_axis_ratio": 1.1,
+    "noise_jy_per_component": 0.001,
+    "sky_nuisance_parameters": 16,
+    "gain_model": "per_time_channel",
+    "gain_nuisance_parameters": 1536,
+    "differential_pointing_parameters": 0,
+    "observable_common_modes": 2,
+    "singular_values_per_arcmin": [
+      58.846660293015546,
+      56.5969867974057
+    ],
+    "known_sky_singular_values_per_arcmin": [
+      903.4109474663745,
+      553.8887177924034
+    ],
+    "retained_derivative_norm_fraction": 0.07704747798358358,
+    "local_crlb_arcsec": [
+      1.060107639855388,
+      1.0196193109657776
+    ],
+    "complete_baselines": true,
+    "complex_rows": 2688
+  },
+  {
+    "beam_axis_ratio": 1.1,
+    "noise_jy_per_component": 0.001,
+    "sky_nuisance_parameters": 16,
+    "gain_model": "per_time_channel",
+    "gain_nuisance_parameters": 1536,
+    "differential_pointing_parameters": 336,
+    "observable_common_modes": 2,
+    "singular_values_per_arcmin": [
+      56.272108091136424,
+      54.20845059510972
+    ],
+    "known_sky_singular_values_per_arcmin": [
+      903.4109474663745,
+      553.8887177924034
+    ],
+    "retained_derivative_norm_fraction": 0.07373395920387792,
+    "local_crlb_arcsec": [
+      1.1068338480088022,
+      1.0662524227701855
+    ],
+    "complete_baselines": true,
+    "complex_rows": 2688
+  }
+]

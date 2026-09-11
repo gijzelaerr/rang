@@ -150,6 +150,7 @@ def sky_locked_information(
     noise_jy,
     beam_axis_ratio=1.0,
     gain_model="fixed",
+    differential_pointing=False,
 ):
     """Project common pointing derivatives off free source/channel fluxes.
 
@@ -158,8 +159,12 @@ def sky_locked_information(
     not a fit or an uncertainty interval for a nonlinear trajectory estimate.
     Optional complex antenna gains are unconstrained nuisances, constant over
     the observation (constant) or independent at each time (per_time). Both
-    models share gains across frequency. Linearization is at unit gains;
+    models share gains across frequency; per_time_channel instead frees each
+    time/channel gain. Linearization is at unit gains;
     least-squares projection handles the redundant gain/sky gauge columns.
+    differential_pointing frees zero-mean antenna offsets independently at
+    each time, without a smoothness prior. Other common temporal modes remain
+    fixed: this audit does not marginalize every possible common trajectory.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before constructing inputs")
@@ -167,8 +172,10 @@ def sky_locked_information(
         raise ValueError("noise must be finite and positive")
     if not np.isfinite(beam_axis_ratio) or beam_axis_ratio <= 0:
         raise ValueError("beam axis ratio must be finite and positive")
-    if gain_model not in ("fixed", "constant", "per_time"):
-        raise ValueError("gain_model must be fixed, constant or per_time")
+    if gain_model not in ("fixed", "constant", "per_time", "per_time_channel"):
+        raise ValueError(
+            "gain_model must be fixed, constant, per_time or per_time_channel"
+        )
     ntime = int(np.max(np.asarray(observation.time_index))) + 1
     angles = np.zeros(ntime)
     for t in range(ntime):
@@ -229,6 +236,12 @@ def sky_locked_information(
             if gain_model == "constant"
             else [time == t for t in np.unique(time)]
         )
+        if gain_model == "per_time_channel":
+            groups = [
+                group & (frequency == f)
+                for group in groups
+                for f in np.unique(frequency)
+            ]
         columns = []
         for group in groups:
             for antenna in range(antenna_count):
@@ -241,6 +254,30 @@ def sky_locked_information(
                     value = visibility * group * derivative
                     columns.append(np.stack((value.real, value.imag), axis=1).ravel())
         nuisance = np.column_stack((nuisance, *columns))
+    gain_count = nuisance.shape[1] - sky_count
+    if differential_pointing:
+        # Independent zero-mean antenna deviations at each time. The last
+        # antenna balances the other antennas, excluding the common modes.
+        def differential_model(values):
+            offsets = jnp.concatenate(
+                (values, -jnp.sum(values, axis=1, keepdims=True)), axis=1
+            )
+            return (
+                real_stack(
+                    predict(
+                        components,
+                        observation,
+                        offsets,
+                        beam_axis_ratio=beam_axis_ratio,
+                    )
+                )
+                / noise_jy
+            )
+
+        derivative = np.asarray(
+            jax.jacfwd(differential_model)(jnp.zeros((ntime, antenna_count - 1, 2)))
+        ).reshape(len(pointing), -1)
+        nuisance = np.column_stack((nuisance, derivative))
     residual = pointing - nuisance @ np.linalg.lstsq(nuisance, pointing, rcond=None)[0]
     singular = np.linalg.svd(residual, compute_uv=False)
     raw_singular = np.linalg.svd(pointing, compute_uv=False)
@@ -254,7 +291,8 @@ def sky_locked_information(
         "noise_jy_per_component": noise_jy,
         "sky_nuisance_parameters": sky_count,
         "gain_model": gain_model,
-        "gain_nuisance_parameters": nuisance.shape[1] - sky_count,
+        "gain_nuisance_parameters": gain_count,
+        "differential_pointing_parameters": nuisance.shape[1] - sky_count - gain_count,
         "observable_common_modes": rank,
         "singular_values_per_arcmin": singular.tolist(),
         "known_sky_singular_values_per_arcmin": raw_singular.tolist(),

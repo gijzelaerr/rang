@@ -722,7 +722,16 @@ pub fn run(config: Config) -> Result<Experiment, String> {
 
 /// Deterministic cross-language fixture; no random noise or fitted solutions.
 pub fn pointing_reference_json() -> String {
-    let samples: Vec<_> = samples().into_iter().step_by(5).collect();
+    pointing_reference_with_stride(5)
+}
+
+/// Complete baseline coverage for calibration identifiability experiments.
+pub fn pointing_full_reference_json() -> String {
+    pointing_reference_with_stride(1)
+}
+
+fn pointing_reference_with_stride(stride: usize) -> String {
+    let samples: Vec<_> = samples().into_iter().step_by(stride).collect();
     let theta: Vec<_> = (0..NPAR).map(|i| 0.4 * (i as f64).sin()).collect();
     let sky = bright_sky();
     let op = Operator::new(&samples, sky.clone());
@@ -738,7 +747,7 @@ pub fn pointing_reference_json() -> String {
                 s.freq,
                 s.p as f64,
                 s.q as f64,
-                (i * 5 / (FREQUENCIES.len() * NANT * (NANT - 1) / 2)) as f64,
+                (i * stride / (FREQUENCIES.len() * NANT * (NANT - 1) / 2)) as f64,
                 s.angle,
             ])
         })

@@ -113,6 +113,12 @@ The strict-budget run at seed 7 returns about 27.78 mJy with protected modes, ve
 
 ## Verification
 
+For the frequency-dependent gain and differential-pointing identifiability
+audit, run `OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/gain_observability.py`.
+This compares complete eight-antenna baseline coverage with the thinned
+cross-language fixture and saves `outputs/gain-observability/results.json`.
+See [the symmetry report](../research/beam-rotation.md) for interpretation.
+
 ```sh
 cargo test --offline --release
 cargo clippy --offline --all-targets -- -D warnings
