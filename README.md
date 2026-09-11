@@ -21,6 +21,11 @@ additional non-collinear off-axis flux anchors do in the idealized audit.
 
 [Exact transformation, controls and research implications →](research/gaussian-gauge.md)
 
+A [katbeam-based follow-up](research/katbeam-pointing.md) tests a simplified
+holography-informed beam. Its native chromatic shape gives local data-only
+bounds near 8 arcsec in the toy; freezing the axis ratio worsens them to
+100–120 arcsec. Beam uncertainty and joint nonlinear recovery remain pending.
+
 The [information-budget diagnostic](research/information-budget.md) now
 separates visibility-only constraints from uncertain, correlated external
 flux priors. In the Gaussian toy, a 1% flux prior yields 6–7 arcsec local

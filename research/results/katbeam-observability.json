@@ -1,0 +1,630 @@
+{
+  "fixture_sha256": "2b962dfbe8105fc2e0eb833e0bc0c4d122132fd4e7b54c7fdc168243a127e61b",
+  "complex_rows": 2688,
+  "jax_version": "0.11.1",
+  "numpy_version": "2.5.3",
+  "results": [
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "native",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        7.768052254039992,
+        7.295605863200067
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        813.3940958853345,
+        491.73899048467007
+      ],
+      "retained_derivative_norm_fraction": 0.011212043428608622,
+      "local_crlb_arcsec": [
+        7.958086833544156,
+        7.997778005327141
+      ],
+      "information_budget": {
+        "data_only_information": [
+          [
+            57.06675708245781,
+            -3.5471533661366434
+          ],
+          [
+            -3.5471533661366434,
+            56.501743650197156
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            57.090896354089885,
+            -3.569948505003864
+          ],
+          [
+            -3.569948505003864,
+            56.54885429906336
+          ]
+        ],
+        "external_information": [
+          [
+            73.21962760978884,
+            -24.211481309887514
+          ],
+          [
+            -24.211481309887514,
+            59.940093752230844
+          ]
+        ],
+        "total_information": [
+          [
+            130.31052396387872,
+            -27.78142981489138
+          ],
+          [
+            -27.78142981489138,
+            116.4889480512942
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          0.3964610945211141,
+          0.5622699820895387
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.008085058999327259,
+            0.001928204373861803
+          ],
+          [
+            0.0019282043738618028,
+            0.009044362509113613
+          ]
+        ],
+        "local_sigma_arcsec": [
+          5.395017367680861,
+          5.70611120052957
+        ]
+      },
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0428150693336606
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "no_squint",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        7.715862362044263,
+        7.445957133076952
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        813.4251427583841,
+        491.64199100913856
+      ],
+      "retained_derivative_norm_fraction": 0.011281627072792516,
+      "local_crlb_arcsec": [
+        7.8641809016465976,
+        7.972211947140879
+      ],
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0428150693336606
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "fixed_axis_ratio",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        0.5679128230008489,
+        0.47937362852950405
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        811.1958356272273,
+        493.8277277652269
+      ],
+      "retained_derivative_norm_fraction": 0.0007825582932346532,
+      "local_crlb_arcsec": [
+        112.11780420558055,
+        119.40428655416363
+      ],
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0428150693336606
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "chromatic_gaussian",
+        "profile": "gaussian"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        7.292434843429028,
+        7.0733448342511975
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        803.328268746644,
+        482.110092043142
+      ],
+      "retained_derivative_norm_fraction": 0.010843643109173282,
+      "local_crlb_arcsec": [
+        8.40284006126083,
+        8.309094663041336
+      ],
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0428150693336606
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "fixed_shape_gaussian",
+        "profile": "gaussian"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        4.795051052630837e-12,
+        3.5478040634218954e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        801.1876847316681,
+        484.245449518369
+      ],
+      "retained_derivative_norm_fraction": 6.3716138463448835e-15,
+      "local_crlb_arcsec": null,
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0428150693336606
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "circular_cosine",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        7.70002516579059e-12,
+        2.8142147953176782e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        817.7190573348236,
+        487.7631356174291
+      ],
+      "retained_derivative_norm_fraction": 8.610237706255447e-15,
+      "local_crlb_arcsec": null,
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0428150693336606
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "H",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "acf2afac4fbdf2d9a0754dc43739a2310807c214c6848ef7015e8e42492dd397",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "native_without_rotation",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        3.2765406286005537e-12,
+        2.5638054818136826e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        834.8758887111114,
+        474.3050838821017
+      ],
+      "retained_derivative_norm_fraction": 4.3328357130526854e-15,
+      "local_crlb_arcsec": null,
+      "beam_rotation": false,
+      "fixed_reference_axis_ratio": 1.0428150693336606
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "V",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "382457e98abc44a6c699e9a67f8ab5dc59a86c4a5f8a15ad55d4ad9ebdcd9225",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "native",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        7.466862765369937,
+        7.3759572808107245
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        810.3674648093094,
+        495.50814366438806
+      ],
+      "retained_derivative_norm_fraction": 0.011049749741647828,
+      "local_crlb_arcsec": [
+        8.03791182363178,
+        8.132157393405564
+      ],
+      "information_budget": {
+        "data_only_information": [
+          [
+            55.721419917437295,
+            -0.20724245387079565
+          ],
+          [
+            -0.20724245387079565,
+            54.4373654477755
+          ]
+        ],
+        "conditioned_data_information": [
+          [
+            55.74526402313743,
+            -0.23064905832133586
+          ],
+          [
+            -0.23064905832133586,
+            54.48662750017083
+          ]
+        ],
+        "external_information": [
+          [
+            72.05058835687531,
+            -24.34600055434419
+          ],
+          [
+            -24.34600055434419,
+            60.8995595720995
+          ]
+        ],
+        "total_information": [
+          [
+            127.79585238001275,
+            -24.576649612665527
+          ],
+          [
+            -24.576649612665527,
+            115.38618707227033
+          ]
+        ],
+        "data_only_fraction_eigenvalues": [
+          0.3771620026613465,
+          0.5686938371514246
+        ],
+        "constrained_rank": 2,
+        "local_covariance": [
+          [
+            0.008159192000153859,
+            0.0017378648865886248
+          ],
+          [
+            0.0017378648865886246,
+            0.009036704677127059
+          ]
+        ],
+        "local_sigma_arcsec": [
+          5.419694751603073,
+          5.703695016185334
+        ]
+      },
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0466566712956704
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "V",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "382457e98abc44a6c699e9a67f8ab5dc59a86c4a5f8a15ad55d4ad9ebdcd9225",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "no_squint",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        7.192884417400489,
+        6.902765116385726
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        809.7373519553173,
+        496.3091532628572
+      ],
+      "retained_derivative_norm_fraction": 0.010496860683532965,
+      "local_crlb_arcsec": [
+        8.571496977743056,
+        8.465527020008409
+      ],
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0466566712956704
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "V",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "382457e98abc44a6c699e9a67f8ab5dc59a86c4a5f8a15ad55d4ad9ebdcd9225",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "fixed_axis_ratio",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        0.617161739914114,
+        0.5214745147289768
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        810.9932330067688,
+        494.65953657456515
+      ],
+      "retained_derivative_norm_fraction": 0.0008505484716928619,
+      "local_crlb_arcsec": [
+        103.24169109944384,
+        109.68664662807097
+      ],
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0466566712956704
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "V",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "382457e98abc44a6c699e9a67f8ab5dc59a86c4a5f8a15ad55d4ad9ebdcd9225",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "chromatic_gaussian",
+        "profile": "gaussian"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 2,
+      "singular_values_per_arcmin": [
+        6.933030514167948,
+        6.624789201151312
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        799.7778117369788,
+        486.67933861763277
+      ],
+      "retained_derivative_norm_fraction": 0.010242613404323959,
+      "local_crlb_arcsec": [
+        8.968987866075373,
+        8.745292668476052
+      ],
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0466566712956704
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "V",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "382457e98abc44a6c699e9a67f8ab5dc59a86c4a5f8a15ad55d4ad9ebdcd9225",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "fixed_shape_gaussian",
+        "profile": "gaussian"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        5.446250288879837e-12,
+        4.358121995679078e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        801.0171880233709,
+        485.0654054106037
+      ],
+      "retained_derivative_norm_fraction": 7.448758871490206e-15,
+      "local_crlb_arcsec": null,
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0466566712956704
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "V",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "382457e98abc44a6c699e9a67f8ab5dc59a86c4a5f8a15ad55d4ad9ebdcd9225",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "circular_cosine",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        4.561843252582362e-12,
+        3.4744616569889373e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        818.0394195384815,
+        487.9891420212154
+      ],
+      "retained_derivative_norm_fraction": 6.020053942249103e-15,
+      "local_crlb_arcsec": null,
+      "beam_rotation": true,
+      "fixed_reference_axis_ratio": 1.0466566712956704
+    },
+    {
+      "beam_metadata": {
+        "model": "MKAT-AA-L-JIM-2020",
+        "polarization": "V",
+        "katbeam_version": "0.1",
+        "parameter_sha256": "382457e98abc44a6c699e9a67f8ab5dc59a86c4a5f8a15ad55d4ad9ebdcd9225",
+        "source": "https://github.com/ska-sa/katbeam",
+        "description": "simplified holography-informed co-polar voltage beam",
+        "ablation": "native_without_rotation",
+        "profile": "cosine"
+      },
+      "beam_axis_ratio": 1.0,
+      "beam_quartic": 0.0,
+      "noise_jy_per_component": 0.001,
+      "sky_nuisance_parameters": 16,
+      "fixed_flux_sources": [],
+      "gain_model": "per_time_channel",
+      "gain_nuisance_parameters": 1536,
+      "differential_pointing_parameters": 336,
+      "common_time_nuisance_parameters": 46,
+      "observable_common_modes": 0,
+      "singular_values_per_arcmin": [
+        3.868452506237144e-12,
+        2.1894768818204764e-12
+      ],
+      "known_sky_singular_values_per_arcmin": [
+        854.8692979945888,
+        461.1434004142087
+      ],
+      "retained_derivative_norm_fraction": 4.576347734589323e-15,
+      "local_crlb_arcsec": null,
+      "beam_rotation": false,
+      "fixed_reference_axis_ratio": 1.0466566712956704
+    }
+  ]
+}

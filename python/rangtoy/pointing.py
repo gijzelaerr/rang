@@ -7,6 +7,7 @@ in the antenna beam tangent plane; other angles are radians.
 
 from __future__ import annotations
 
+from functools import partial
 from typing import NamedTuple
 
 import jax
@@ -137,6 +138,26 @@ def real_stack(values):
     return jnp.stack((values.real, values.imag), axis=-1).reshape(-1)
 
 
+def resolve_predictor(
+    observation, predictor=None, *, beam_axis_ratio=1.0, beam_quartic=0.0
+):
+    """Select a supplied differentiable beam predictor or the analytic baseline."""
+    if predictor is None:
+        return partial(
+            predict, beam_axis_ratio=beam_axis_ratio, beam_quartic=beam_quartic
+        )
+    if not callable(predictor):
+        raise TypeError("predictor must be callable")
+    if beam_axis_ratio != 1.0 or beam_quartic != 0.0:
+        raise ValueError(
+            "analytic beam options cannot be combined with a custom predictor"
+        )
+    validate = getattr(predictor, "validate_observation", None)
+    if validate is not None:
+        validate(observation)
+    return predictor
+
+
 def spline_design(times_s, knots_s):
     """Natural cubic interpolation and exact integrated-curvature penalty.
 
@@ -179,6 +200,7 @@ def solve_pointing(
     spectral_index_prior=None,
     minimum_mode_information=None,
     beam_axis_ratio=1.0,
+    predictor=None,
     max_nfev=100,
 ):
     """Fit smooth offsets, optionally jointly fitting component flux densities.
@@ -194,6 +216,8 @@ def solve_pointing(
     unconstrained; the proper offset prior regularizes those modes. Noise
     sigma applies separately to real and imaginary components. This is a
     penalized point estimate: sky/beam mismatch can bias the inferred motion.
+    An optional predictor(components, observation, offsets_arcmin) can replace
+    the analytic beam; it must support JAX differentiation through sky/offsets.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before creating input arrays")
@@ -207,6 +231,7 @@ def solve_pointing(
         raise ValueError("offset prior must be positive and finite")
     design, penalty = spline_design(times_s, knots_s)
     obs = Observation(*(jnp.asarray(a) for a in observation))
+    prediction = resolve_predictor(obs, predictor, beam_axis_ratio=beam_axis_ratio)
     data = np.asarray(visibilities)
     n = data.size
     if data.shape != (n,) or n == 0 or not np.isfinite(data).all():
@@ -265,7 +290,7 @@ def solve_pointing(
     def residual(flat):
         coefficients = flat[:pointing_size].reshape(shape)
         offsets = jnp.einsum("tk,kad->tad", design_jax, coefficients)
-        model = predict(sky(flat), obs, offsets, beam_axis_ratio=beam_axis_ratio)
+        model = prediction(sky(flat), obs, offsets)
         curvature = jnp.einsum("rk,kad->rad", penalty_jax, coefficients)
         return jnp.concatenate(
             (
@@ -341,6 +366,11 @@ def solve_pointing(
     rank = int(np.sum(singular > cutoff))
     return {
         "flux_jy": np.asarray(sky(jnp.asarray(full_solution)).flux_jy),
+        "beam_metadata": getattr(
+            prediction,
+            "metadata",
+            {"profile": "analytic", "axis_ratio": beam_axis_ratio},
+        ),
         "spectral_index": np.asarray(sky(jnp.asarray(full_solution)).spectral_index),
         "spectral_index_prior": alpha_sigma.copy(),
         "retained_pointing_modes": transform.shape[1] - total_size + pointing_size,

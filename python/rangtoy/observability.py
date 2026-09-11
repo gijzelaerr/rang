@@ -6,7 +6,7 @@ import numpy as np
 from scipy.linalg import null_space
 from scipy.optimize import least_squares
 
-from .pointing import predict, real_stack
+from .pointing import predict, real_stack, resolve_predictor
 
 
 def nuisance_information_budget(pointing, nuisance, prior_factor):
@@ -206,6 +206,7 @@ def sky_locked_information(
     beam_quartic=0.0,
     fixed_flux_sources=(),
     log_flux_prior_covariance=None,
+    predictor=None,
 ):
     """Project common pointing derivatives off free source/channel fluxes.
 
@@ -229,6 +230,12 @@ def sky_locked_information(
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before constructing inputs")
+    prediction = resolve_predictor(
+        observation,
+        predictor,
+        beam_axis_ratio=beam_axis_ratio,
+        beam_quartic=beam_quartic,
+    )
     if not np.isfinite(noise_jy) or noise_jy <= 0:
         raise ValueError("noise must be finite and positive")
     if not np.isfinite(beam_axis_ratio) or beam_axis_ratio <= 0:
@@ -265,12 +272,10 @@ def sky_locked_information(
     def forward(a, flux):
         return (
             real_stack(
-                predict(
+                prediction(
                     components._replace(flux_jy=flux),
                     observation,
                     common_offsets(a),
-                    beam_axis_ratio=beam_axis_ratio,
-                    beam_quartic=beam_quartic,
                 )
             )
             / noise_jy
@@ -298,12 +303,10 @@ def sky_locked_information(
     if gain_model != "fixed":
         visibility = (
             np.asarray(
-                predict(
+                prediction(
                     components,
                     observation,
                     common_offsets(jnp.zeros(2)),
-                    beam_axis_ratio=beam_axis_ratio,
-                    beam_quartic=beam_quartic,
                 )
             )
             / noise_jy
@@ -343,12 +346,10 @@ def sky_locked_information(
             )
             return (
                 real_stack(
-                    predict(
+                    prediction(
                         components,
                         observation,
                         offsets,
-                        beam_axis_ratio=beam_axis_ratio,
-                        beam_quartic=beam_quartic,
                     )
                 )
                 / noise_jy
@@ -370,12 +371,10 @@ def sky_locked_information(
             offsets = jnp.broadcast_to(shifts[:, None, :], (ntime, antenna_count, 2))
             return (
                 real_stack(
-                    predict(
+                    prediction(
                         components,
                         observation,
                         offsets,
-                        beam_axis_ratio=beam_axis_ratio,
-                        beam_quartic=beam_quartic,
                     )
                 )
                 / noise_jy
@@ -394,6 +393,15 @@ def sky_locked_information(
     if rank == 2:
         crlb = (60 * np.sqrt(np.diag(np.linalg.inv(residual.T @ residual)))).tolist()
     result = {
+        "beam_metadata": getattr(
+            prediction,
+            "metadata",
+            {
+                "profile": "analytic",
+                "axis_ratio": beam_axis_ratio,
+                "quartic": beam_quartic,
+            },
+        ),
         "beam_axis_ratio": beam_axis_ratio,
         "beam_quartic": beam_quartic,
         "noise_jy_per_component": noise_jy,
