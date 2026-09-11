@@ -116,6 +116,65 @@ def test_smooth_pointing_recovery(reference):
     assert np.sqrt(np.mean((fit["offsets_arcmin"] - truth) ** 2)) < 1e-3
 
 
+def test_joint_smooth_gains_flux_and_relative_pointing(reference):
+    _, components, obs = reference
+    times, knots = np.linspace(0, 21600, 24), [0, 21600]
+    design, _ = spline_design(times, knots)
+    rng = np.random.default_rng(91)
+    coefficients = rng.normal(0, 0.2, (2, 8, 2))
+    coefficients -= coefficients.mean(axis=1, keepdims=True)
+    truth = np.einsum("tk,kad->tad", design, coefficients)
+    logamp = design @ rng.normal(0, 0.02, (2, 8))
+    phase = design @ rng.normal(0, 0.03, (2, 8))
+    phase -= phase[:, :1]
+    gains = np.exp(logamp + 1j * phase)
+    data = (
+        predict(components, obs, jnp.asarray(truth))
+        * gains[obs.time_index, obs.antenna1]
+        * gains[obs.time_index, obs.antenna2].conj()
+    )
+    wrong = components._replace(
+        flux_jy=components.flux_jy * jnp.array([1, 1.02, 0.98, 1.02])
+    )
+    fit = solve_pointing(
+        wrong,
+        obs,
+        data,
+        times,
+        knots,
+        8,
+        noise_jy=1e-5,
+        smoothness=0.01,
+        zero_mean_pointing=True,
+        gain_prior_sigma=(0.1, 0.1),
+        flux_prior_jy=np.array([0, 0.1, 0.1, 0.1]),
+        max_nfev=100,
+    )
+    assert fit["success"], fit["message"]
+    assert fit["gain_model"] == "smooth_achromatic"
+    np.testing.assert_allclose(fit["offsets_arcmin"], truth, atol=1e-3)
+    np.testing.assert_allclose(fit["gains"], gains, atol=1e-5)
+    np.testing.assert_allclose(fit["flux_jy"], components.flux_jy, atol=1e-5)
+    np.testing.assert_allclose(fit["gains"][:, 0].imag, 0, atol=1e-15)
+
+
+@pytest.mark.parametrize("sigma", [0.1, [0, 1], [1, np.nan], [1, 2, 3]])
+def test_invalid_gain_prior(reference, sigma):
+    _, components, obs = reference
+    data = predict(components, obs, jnp.zeros((24, 8, 2)))
+    with pytest.raises(ValueError, match="gain_prior_sigma"):
+        solve_pointing(
+            components,
+            obs,
+            data,
+            np.linspace(0, 21600, 24),
+            [0, 21600],
+            8,
+            noise_jy=0.001,
+            gain_prior_sigma=sigma,
+        )
+
+
 @pytest.mark.parametrize("knots", [[0, 0, 1], [0], [0, np.nan]])
 def test_invalid_knots(knots):
     with pytest.raises(ValueError):

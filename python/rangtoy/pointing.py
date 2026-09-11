@@ -203,6 +203,7 @@ def solve_pointing(
     beam_axis_ratio=1.0,
     predictor=None,
     zero_mean_pointing=False,
+    gain_prior_sigma=None,
     max_nfev=100,
 ):
     """Fit smooth offsets, optionally jointly fitting component flux densities.
@@ -223,6 +224,11 @@ def solve_pointing(
     zero_mean_pointing constrains the unweighted antenna mean to zero at every
     time, using an orthonormal contrast basis at each spline knot. This solves
     relative pointing only; it does not measure the array's absolute offset.
+    gain_prior_sigma enables smooth achromatic complex gains on the same knots:
+    (log-amplitude sigma, phase sigma in radians), both positive. Antenna zero
+    fixes the phase reference. Proper knot priors regularize gain/flux scale
+    ambiguity; absolute flux scale is consequently prior-dependent. Gains are
+    exp(log-amplitude + i phase), with no additional gain curvature penalty.
     """
     if not jax.config.x64_enabled:
         raise ValueError("enable JAX 64-bit mode before creating input arrays")
@@ -288,16 +294,44 @@ def solve_pointing(
         raise ValueError("spectral index prior sigmas must be finite and nonnegative")
     alpha_free = np.flatnonzero(alpha_sigma > 0)
     flux_end = pointing_size + len(free)
-    total_size = flux_end + len(alpha_free)
+    sky_end = flux_end + len(alpha_free)
+    gain_shape = (len(knots_s), 2 * antenna_count - 1)
+    gain_scale = None
+    if gain_prior_sigma is not None:
+        gain_sigma = np.asarray(gain_prior_sigma, float)
+        if (
+            gain_sigma.shape != (2,)
+            or not np.isfinite(gain_sigma).all()
+            or np.any(gain_sigma <= 0)
+        ):
+            raise ValueError(
+                "gain_prior_sigma must contain positive finite amplitude/phase sigmas"
+            )
+        gain_scale = jnp.asarray(
+            np.r_[
+                np.full(antenna_count, gain_sigma[0]),
+                np.full(antenna_count - 1, gain_sigma[1]),
+            ]
+        )
+    total_size = sky_end + (int(np.prod(gain_shape)) if gain_scale is not None else 0)
 
     def sky(flat):
         flux = components.flux_jy.at[free].add(
             flat[pointing_size:flux_end] * flux_sigma[free]
         )
         alpha = components.spectral_index.at[alpha_free].add(
-            flat[flux_end:] * alpha_sigma[alpha_free]
+            flat[flux_end:sky_end] * alpha_sigma[alpha_free]
         )
         return components._replace(flux_jy=flux, spectral_index=alpha)
+
+    def gains(flat):
+        if gain_scale is None:
+            return jnp.ones((len(times_s), antenna_count), dtype=complex)
+        values = design_jax @ (flat[sky_end:].reshape(gain_shape) * gain_scale)
+        phase = jnp.concatenate(
+            (jnp.zeros((len(times_s), 1)), values[:, antenna_count:]), axis=1
+        )
+        return jnp.exp(values[:, :antenna_count] + 1j * phase)
 
     def unpack_pointing(flat):
         return jnp.einsum(
@@ -308,6 +342,12 @@ def solve_pointing(
         coefficients = unpack_pointing(flat)
         offsets = jnp.einsum("tk,kad->tad", design_jax, coefficients)
         model = prediction(sky(flat), obs, offsets)
+        gain = gains(flat)
+        model = (
+            model
+            * gain[obs.time_index, obs.antenna1]
+            * jnp.conj(gain[obs.time_index, obs.antenna2])
+        )
         curvature = jnp.einsum("rk,kad->rad", penalty_jax, coefficients)
         return jnp.concatenate(
             (
@@ -384,6 +424,11 @@ def solve_pointing(
     return {
         "flux_jy": np.asarray(sky(jnp.asarray(full_solution)).flux_jy),
         "zero_mean_pointing": bool(zero_mean_pointing),
+        "gains": np.asarray(gains(jnp.asarray(full_solution))),
+        "gain_prior_sigma": None
+        if gain_scale is None
+        else np.asarray(gain_prior_sigma).copy(),
+        "gain_model": "fixed" if gain_scale is None else "smooth_achromatic",
         "beam_metadata": getattr(
             prediction,
             "metadata",

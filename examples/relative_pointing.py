@@ -21,6 +21,11 @@ from rangtoy.pointing import Observation, component_list, solve_pointing, spline
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", nargs="+", type=int, default=[7, 11, 19])
+    parser.add_argument(
+        "--joint-gains",
+        action="store_true",
+        help="Inject and fit smooth achromatic gains",
+    )
     args = parser.parse_args()
     jax.config.update("jax_enable_x64", True)
     raw = subprocess.check_output([str(build()), "--pointing-full-reference"])
@@ -45,9 +50,20 @@ def main():
         coefficients -= coefficients.mean(axis=1, keepdims=True)
         relative = np.einsum("tk,kad->tad", design, coefficients)
         noise = sigma * (rng.normal(size=len(r)) + 1j * rng.normal(size=len(r)))
+        gains = np.ones((24, 8), dtype=complex)
+        if args.joint_gains:
+            logamp = design @ rng.normal(0, 0.02, (4, 8))
+            phase = design @ rng.normal(0, 0.03, (4, 8))
+            phase -= phase[:, :1]
+            gains = np.exp(logamp + 1j * phase)
+        baseline_gain = (
+            gains[obs.time_index, obs.antenna1]
+            * gains[obs.time_index, obs.antenna2].conj()
+        )
         for common_arcmin in (0.0, 0.5):
             truth = relative + np.array([common_arcmin, -common_arcmin])[None, None, :]
             clean = np.asarray(predictor(sky, obs, jnp.asarray(truth)))
+            clean = clean * baseline_gain
             data = clean + noise
             for case in ("known_sky", "wrong_fixed_sky", "joint_flux"):
                 supplied = (
@@ -68,6 +84,7 @@ def main():
                     smoothness=0.01,
                     predictor=predictor,
                     zero_mean_pointing=True,
+                    gain_prior_sigma=(0.1, 0.1) if args.joint_gains else None,
                     flux_prior_jy=np.asarray(supplied.flux_jy) * 0.05
                     if case == "joint_flux"
                     else None,
@@ -75,6 +92,12 @@ def main():
                 recovered_sky = supplied._replace(flux_jy=jnp.asarray(fit["flux_jy"]))
                 model = np.asarray(
                     predictor(recovered_sky, obs, jnp.asarray(fit["offsets_arcmin"]))
+                )
+                recovered_gains = fit["gains"]
+                model = (
+                    model
+                    * recovered_gains[obs.time_index, obs.antenna1]
+                    * recovered_gains[obs.time_index, obs.antenna2].conj()
                 )
                 result = {
                     "seed": seed,
@@ -104,10 +127,15 @@ def main():
         "fixture_sha256": sha256(raw).hexdigest(),
         "beam": metadata,
         "noise_per_real_component_jy": sigma,
-        "limitations": "Known unit gains and exact beam; in-sample residuals, not held-out validation. Common offset is physical, not absorbed into the input sky.",
+        "joint_gains": args.joint_gains,
+        "limitations": "Exact beam; in-sample residuals, not held-out validation. Gains are known unity unless joint_gains is enabled, then smooth achromatic with 0.1 log-amplitude/radian knot priors. Joint flux absolute scale is prior-dependent. Common offset is physical, not absorbed into the input sky.",
         "results": results,
     }
-    output = ROOT / "outputs/relative-pointing"
+    output = ROOT / (
+        "outputs/joint-gain-pointing"
+        if args.joint_gains
+        else "outputs/relative-pointing"
+    )
     output.mkdir(parents=True, exist_ok=True)
     (output / "results.json").write_text(json.dumps(payload, indent=2) + "\n")
 

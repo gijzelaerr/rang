@@ -50,3 +50,39 @@ control does not contradict a gauge convention in a sufficiently flexible
 joint calibration model. Next: fit gains jointly and measure both relative
 pointing errors and residual mismatch. Do not interpret a zero fitted mean
 as evidence of zero physical mean.
+
+## Joint smooth gains follow-up
+
+The solver now accepts `gain_prior_sigma=(0.1, 0.1)` to fit log-amplitude and
+phase spline coefficients jointly with pointing and sky. Phase is referenced
+to antenna zero. Gains are achromatic, use the same knots as pointing, and
+have Gaussian knot priors (no extra curvature penalty). This is a restricted
+gain model, not free time/channel calibration. The default remains fixed gains.
+
+```sh
+OPENBLAS_NUM_THREADS=1 .venv/bin/python examples/relative_pointing.py --joint-gains
+```
+
+The [joint-gain results](results/joint-gain-pointing.json) inject smooth gain
+log-amplitude scatter 0.02 and phase scatter 0.03 radians at the knots, then
+fit with 0.1 priors in each coordinate. All 18 fits converge. With zero physical
+common pointing, joint flux/pointing/gain recovery gives 0.575–0.888 arcsec
+relative pointing RMSE; fixed wrong fluxes give 6.51–6.90 arcsec. The joint
+fits have whitened residual mean squares 0.964–0.988.
+
+Absolute flux is not independently recovered: joint cases allow every flux
+to vary, and the amplitude/flux scale is set by their priors. The resulting
+nearly common fractional flux shifts are about -0.10% to +0.43% across seeds.
+A separate noiseless automated test fixes the central source flux and checks
+recovery of gains, off-axis fluxes and relative pointing simultaneously.
+
+With physical (+30,-30) arcsec common pointing, the joint model still gives
+4.33–4.74 arcsec relative error and residual mean squares 31.7–32.8. Smooth
+achromatic gains and power-law source spectra are not flexible enough to
+absorb this model mismatch. This does not test the unrestricted Gaussian
+gauge, nor prove failure of more flexible gain/sky models.
+
+Held-out prediction, gain-only comparison, beam-error robustness and free
+channel-dependent gains remain outstanding. These results establish the
+joint nonlinear implementation under matched assumptions, not deployment
+readiness or a new calibration algorithm.
